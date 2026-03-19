@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUCKYQUANT PRO</title>
+  <style>
+    :root{
+      --bg:#020617;
+      --bg-soft:#0b1220;
+      --card:rgba(15,23,42,.74);
+      --line:rgba(148,163,184,.18);
+      --text:#dbe7ff;
+      --muted:#94a3b8;
+      --blue:#38bdf8;
+      --blue-2:#2563eb;
+      --green:#34d399;
+      --red:#fb7185;
+      --gold:#fbbf24;
+      --shadow:0 20px 80px rgba(0,0,0,.38);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(37,99,235,.18), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(16,185,129,.12), transparent 24%),
+        linear-gradient(180deg,#06101f 0%, #020617 38%, #020617 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(56,189,248,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,.08) 1px, transparent 1px);
+      background-size:40px 40px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 80%);
+      pointer-events:none;
+      opacity:.28;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:-100% 0 0 0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(56,189,248,.00) 0px,
+          rgba(56,189,248,.00) 18px,
+          rgba(56,189,248,.08) 19px,
+          rgba(56,189,248,.00) 20px
+        );
+      animation:rain 14s linear infinite;
+      pointer-events:none;
+      opacity:.18;
+    }
+    @keyframes rain{from{transform:translateY(-10%)}to{transform:translateY(30%)}}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1180px, calc(100% - 32px)); margin:0 auto}
+
+    .ticker-wrap{
+      position:sticky; top:0; z-index:60;
+      backdrop-filter:blur(14px);
+      background:rgba(2,6,23,.78);
+      border-bottom:1px solid rgba(148,163,184,.12);
+    }
+    .ticker{
+      display:flex; gap:24px; align-items:center;
+      overflow:hidden; white-space:nowrap; padding:10px 0;
+      font-size:12px;
+    }
+    .ticker-label{flex:0 0 auto; color:#64748b; font-weight:700; letter-spacing:.18em; text-transform:uppercase}
+    .ticker-track{display:flex; gap:28px; min-width:max-content; animation:marquee 28s linear infinite}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .tick{display:flex; align-items:center; gap:8px; color:var(--muted)}
+    .tick strong{color:#e2e8f0}
+    .up{color:var(--green)} .down{color:var(--red)}
+
+    nav{
+      position:sticky; top:37px; z-index:50;
+      margin-top:10px;
+    }
+    .nav-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 18px;
+      border:1px solid var(--line);
+      background:rgba(2,6,23,.55);
+      backdrop-filter:blur(18px);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.04em}
+    .brand-badge{
+      width:38px; height:38px; border-radius:12px;
+      display:grid; place-items:center;
+      background:linear-gradient(135deg, rgba(56,189,248,.24), rgba(37,99,235,.16));
+      border:1px solid rgba(56,189,248,.25);
+      box-shadow:inset 0 0 20px rgba(56,189,248,.08);
+    }
+    .brand span span{color:var(--blue)}
+    .nav-links{display:flex; gap:28px; color:#cbd5e1; font-size:14px}
+    .nav-links a:hover{color:var(--blue)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      border:none; cursor:pointer; color:white; font-weight:700;
+      border-radius:14px; padding:14px 20px;
+      transition:.25s ease;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg, #2563eb, #0ea5e9);
+      box-shadow:0 10px 30px rgba(37,99,235,.35);
+    }
+    .btn-primary:hover{transform:translateY(-1px); box-shadow:0 16px 40px rgba(37,99,235,.45)}
+    .btn-secondary{
+      background:rgba(15,23,42,.62);
+      border:1px solid var(--line);
+      color:#e5eefc;
+    }
+    .btn-secondary:hover{background:rgba(30,41,59,.8)}
+
+    .hero{padding:68px 0 44px}
+    .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:28px; align-items:center}
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:10px; padding:8px 12px;
+      border:1px solid rgba(56,189,248,.24);
+      background:rgba(8,47,73,.28); border-radius:999px;
+      color:#7dd3fc; font-size:12px; letter-spacing:.08em;
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue)}
+    h1{font-size:clamp(34px, 5.6vw, 68px); line-height:1.04; margin:18px 0 18px; letter-spacing:-.03em}
+    .gradient{background:linear-gradient(90deg, #67e8f9, #34d399); -webkit-background-clip:text; background-clip:text; color:transparent}
+    .lead{font-size:18px; line-height:1.8; color:#bfd0ec; max-width:720px; margin:0 0 28px}
+    .cta-row{display:flex; gap:14px; flex-wrap:wrap}
+
+    .panel{
+      position:relative;
+      min-height:420px;
+      padding:0;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,23,42,.82), rgba(2,6,23,.86));
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .window-top{display:flex; align-items:center; gap:8px; padding:14px 16px; border-bottom:1px solid rgba(148,163,184,.10); color:#64748b; font-size:12px}
+    .window-top i{display:block; width:10px; height:10px; border-radius:50%}
+    .window-top i:nth-child(1){background:#fb7185}.window-top i:nth-child(2){background:#fbbf24}.window-top i:nth-child(3){background:#34d399}
+    .console{padding:18px 20px 22px; font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace; color:#93c5fd}
+    .console .line{opacity:.94}
+    .console .good{color:#86efac}
+    .console .muted{color:#64748b}
+    .chart-area{display:grid; grid-template-columns:1fr 180px; gap:16px; padding:0 20px 20px}
+    .chart-box,.stats-box{border:1px solid rgba(148,163,184,.14); background:rgba(15,23,42,.55); border-radius:18px}
+    .chart-box{padding:18px}
+    .stats-box{padding:16px}
+    .mini-grid{display:grid; gap:10px}
+    .stat{padding:12px; background:rgba(2,6,23,.55); border:1px solid rgba(148,163,184,.12); border-radius:14px}
+    .stat small{display:block; color:#7c8ca5; margin-bottom:4px}
+    .stat strong{font-size:20px}
+
+    section{padding:42px 0}
+    .section-head{text-align:center; margin-bottom:28px}
+    .section-head h2{font-size:clamp(28px,3.5vw,42px); margin:0 0 10px}
+    .section-head p{color:#a9bbd3; margin:0 auto; max-width:760px; line-height:1.8}
+    .grid{display:grid; gap:18px}
+    .grid-4{grid-template-columns:repeat(4,1fr)}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .card{
+      position:relative;
+      padding:22px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:var(--card);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card:hover{transform:translateY(-2px); transition:.25s ease; border-color:rgba(56,189,248,.28)}
+    .icon{
+      width:52px; height:52px; border-radius:16px;
+      display:grid; place-items:center; margin-bottom:18px;
+      background:linear-gradient(135deg, rgba(56,189,248,.18), rgba(37,99,235,.12));
+      border:1px solid rgba(56,189,248,.18);
+      font-size:24px;
+    }
+    .card h3{margin:0 0 10px; font-size:21px}
+    .card p{margin:0; color:#aebed5; line-height:1.75}
+    .tagline{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px}
+    .tag{padding:6px 10px; border-radius:999px; font-size:12px; color:#cfe7ff; background:rgba(30,41,59,.78); border:1px solid rgba(148,163,184,.16)}
+    .type{display:inline-flex; margin-bottom:12px; padding:6px 10px; border-radius:999px; font-size:12px; color:#7dd3fc; background:rgba(8,47,73,.25); border:1px solid rgba(56,189,248,.18)}
+
+    .services{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+    .step{padding:22px; border-radius:20px; background:rgba(15,23,42,.65); border:1px solid var(--line); box-shadow:var(--shadow)}
+    .step .num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#38bdf8,#2563eb);font-weight:800;margin-bottom:12px}
+    .step h4{margin:0 0 8px; font-size:18px}
+    .step p{margin:0; color:#aebed5; line-height:1.7}
+
+    .footer{
+      padding:56px 0 72px; text-align:center; color:#8ea1bb;
+    }
+    .footer-box{
+      border:1px solid var(--line);
+      background:rgba(15,23,42,.65);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+
+    .svg-chart{width:100%; height:180px; display:block}
+    .axis{stroke:rgba(148,163,184,.18); stroke-width:1}
+    .line1{fill:none; stroke:#38bdf8; stroke-width:3}
+    .line2{fill:none; stroke:#34d399; stroke-width:2; opacity:.8}
+    .area{fill:url(#fillBlue); opacity:.18}
+
+    @media (max-width: 1040px){
+      .hero-grid,.services,.grid-4,.grid-3{grid-template-columns:1fr 1fr}
+      .chart-area{grid-template-columns:1fr}
+      nav{top:37px}
+    }
+    @media (max-width: 760px){
+      .nav-links{display:none}
+      .hero-grid,.services,.grid-4,.grid-3{grid-template-columns:1fr}
+      .ticker{padding-inline:12px}
+      nav{top:37px}
+      .nav-inner{padding:12px 14px}
+      .btn{width:100%}
+      .cta-row{display:grid}
+      .hero{padding-top:42px}
+      .panel{min-height:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="ticker-wrap">
+    <div class="container ticker">
+      <div class="ticker-label">MARKET METER</div>
+      <div class="ticker-track">
+        <div class="tick"><strong>BTC/USDT</strong><span class="up">68,245.00 ▲ 2.4%</span></div>
+        <div class="tick"><strong>AAPL</strong><span class="down">173.50 ▼ 0.8%</span></div>
+        <div class="tick"><strong>沪深300</strong><span class="up">3,542.12 ▲ 1.2%</span></div>
+        <div class="tick"><strong>黄金/USD</strong><span class="up">2,150.30 ▲ 0.5%</span></div>
+        <div class="tick"><strong>NVDA</strong><span class="up">890.05 ▲ 4.1%</span></div>
+        <div class="tick"><strong>ETH/USDT</strong><span class="down">3,850.20 ▼ 1.1%</span></div>
+        <div class="tick"><strong>IF主力</strong><span class="up">3,560.80 ▲ 1.0%</span></div>
+        <div class="tick"><strong>BTC/USDT</strong><span class="up">68,245.00 ▲ 2.4%</span></div>
+        <div class="tick"><strong>AAPL</strong><span class="down">173.50 ▼ 0.8%</span></div>
+        <div class="tick"><strong>沪深300</strong><span class="up">3,542.12 ▲ 1.2%</span></div>
+        <div class="tick"><strong>黄金/USD</strong><span class="up">2,150.30 ▲ 0.5%</span></div>
+        <div class="tick"><strong>NVDA</strong><span class="up">890.05 ▲ 4.1%</span></div>
+        <div class="tick"><strong>ETH/USDT</strong><span class="down">3,850.20 ▼ 1.1%</span></div>
+        <div class="tick"><strong>IF主力</strong><span class="up">3,560.80 ▲ 1.0%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="brand-badge">⌘</div>
+        <span>LUCKY<span>QUANT</span> PRO</span>
+      </div>
+      <div class="nav-links">
+        <a href="#markets">全市场覆盖</a>
+        <a href="#strategies">策略模型库</a>
+        <a href="#services">定制流程</a>
+      </div>
+      <a class="btn btn-primary" href="#footer">预约咨询</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow"><span class="dot"></span><span>SYSTEM ONLINE / READY FOR DEPLOYMENT</span></div>
+          <h1>将您的交易灵感转化为<span class="gradient">无情执行的代码</span></h1>
+          <p class="lead">针对 A股、美股、期货及加密货币市场的机构级量化策略定制服务。我们负责底层架构、回测逻辑与执行接口，您只需专注于交易思想。</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#services">提交定制需求 →</a>
+            <a class="btn btn-secondary" href="#strategies">查看策略模型库</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="window-top"><i></i><i></i><i></i><span style="margin-left:10px">live_trading_engine.py</span></div>
+          <div class="console">
+            <div class="line"><span class="muted">09:30:00.001</span> [INFO] System initialized. Connecting to CTP / Binance API...</div>
+            <div class="line"><span class="muted">09:30:00.150</span> [SUCCESS] Market data feed established.</div>
+            <div class="line"><span class="muted">09:30:01.022</span> [CALC] Alpha Factor 103 generating signals.</div>
+            <div class="line good"><span class="muted">09:30:05.410</span> [EXEC] BUY 500 AAPL @ 173.50 (Latency: 12ms)</div>
+            <div class="line"><span class="muted">09:30:12.800</span> [CALC] Updating risk matrix and portfolio beta...</div>
+            <div class="line good"><span class="muted">09:30:15.000</span> [EXEC] LONG 2 BTC/USDT @ 68,245.00</div>
+          </div>
+          <div class="chart-area">
+            <div class="chart-box">
+              <svg class="svg-chart" viewBox="0 0 560 180" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="fillBlue" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"></stop>
+                    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"></stop>
+                  </linearGradient>
+                </defs>
+                <line class="axis" x1="0" y1="150" x2="560" y2="150"></line>
+                <line class="axis" x1="0" y1="110" x2="560" y2="110"></line>
+                <line class="axis" x1="0" y1="70" x2="560" y2="70"></line>
+                <path class="area" d="M0,136 C40,132 68,120 100,118 C130,116 160,96 190,98 C220,100 250,78 280,82 C314,86 340,54 380,58 C425,62 455,40 490,34 C516,30 536,26 560,18 L560,180 L0,180 Z"></path>
+                <path class="line1" d="M0,136 C40,132 68,120 100,118 C130,116 160,96 190,98 C220,100 250,78 280,82 C314,86 340,54 380,58 C425,62 455,40 490,34 C516,30 536,26 560,18"></path>
+                <path class="line2" d="M0,142 C30,134 68,132 98,124 C132,116 158,122 194,108 C230,94 252,100 282,92 C318,84 350,92 386,74 C420,58 454,66 492,50 C518,40 538,44 560,38"></path>
+              </svg>
+            </div>
+            <div class="stats-box">
+              <div class="mini-grid">
+                <div class="stat"><small>策略胜率</small><strong>64.8%</strong></div>
+                <div class="stat"><small>年化收益</small><strong>31.2%</strong></div>
+                <div class="stat"><small>最大回撤</small><strong>8.7%</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="markets">
+      <div class="container">
+        <div class="section-head">
+          <h2>跨越全市场的交易支持</h2>
+          <p>无论您深耕哪个金融领域，我们的底层架构都能无缝对接，确保您的策略在全球市场中低延迟、稳定运行。</p>
+        </div>
+        <div class="grid grid-4">
+          <div class="card"><div class="icon">₿</div><h3>全球加密货币</h3><p>支持 Binance、OKX、Bybit 等主流交易所的高频与趋势策略，覆盖现货、合约和套利场景。</p></div>
+          <div class="card"><div class="icon">📈</div><h3>中国 A 股市场</h3><p>提供基于量价、基本面因子的选股模型及自动化网格交易，适配多类回测和实盘框架。</p></div>
+          <div class="card"><div class="icon">🌐</div><h3>美股及期权</h3><p>覆盖纳斯达克与纽交所，支持复杂期权组合、波动率交易和跨品种量化策略。</p></div>
+          <div class="card"><div class="icon">⚡</div><h3>商品及股指期货</h3><p>支持 CTA 趋势、跨期套利及多账户执行，适配高频与低延迟风控需求。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="strategies">
+      <div class="container">
+        <div class="section-head">
+          <h2>经典量化策略模型库</h2>
+          <p>展示经过长期验证的常见量化模型。可基于以下基础逻辑，根据资金体量、风险偏好与市场范围进一步扩展和定制。</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="type">趋势突破</div>
+            <h3>海龟交易法则</h3>
+            <div class="tagline"><span class="tag">期货</span><span class="tag">加密货币</span></div>
+            <p>基于唐奇安通道的经典趋势跟踪策略，包含头寸管理与动态止损逻辑，适合高波动市场。</p>
+          </div>
+          <div class="card">
+            <div class="type">量化选股</div>
+            <h3>多因子 Alpha 选股</h3>
+            <div class="tagline"><span class="tag">A股</span><span class="tag">美股</span></div>
+            <p>结合估值、成长、盈利、动量等多因子，通过横截面回归或机器学习算法构建投资组合。</p>
+          </div>
+          <div class="card">
+            <div class="type">均值回归</div>
+            <h3>统计套利与配对交易</h3>
+            <div class="tagline"><span class="tag">美股</span><span class="tag">商品期货</span></div>
+            <p>利用协整关系寻找高相关资产对，在价差偏离历史均值时进行多空双向建仓。</p>
+          </div>
+          <div class="card">
+            <div class="type">动量反转</div>
+            <h3>MACD + RSI 复合动量</h3>
+            <div class="tagline"><span class="tag">全市场</span></div>
+            <p>结合 MACD 的趋势确认与 RSI 的超买超卖信号，过滤虚假突破，提高信号稳定性。</p>
+          </div>
+          <div class="card">
+            <div class="type">震荡套利</div>
+            <h3>网格交易与马丁格尔</h3>
+            <div class="tagline"><span class="tag">加密货币</span><span class="tag">A股 ETF</span></div>
+            <p>在设定价格区间内执行机械化高抛低吸，适合横盘震荡或宽幅波动标的。</p>
+          </div>
+          <div class="card">
+            <div class="type">期权策略</div>
+            <h3>VIX 波动率曲面套利</h3>
+            <div class="tagline"><span class="tag">美股期权</span></div>
+            <p>利用隐含波动率的期限结构与偏度特征，构建 Delta 中性的波动率套利组合。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <div class="section-head">
+          <h2>定制流程</h2>
+          <p>从交易想法梳理到回测验证，再到实盘部署与监控，形成完整交付链路。</p>
+        </div>
+        <div class="services">
+          <div class="step"><div class="num">1</div><h4>需求梳理</h4><p>明确交易市场、策略逻辑、资金体量、风险约束与交付目标。</p></div>
+          <div class="step"><div class="num">2</div><h4>回测开发</h4><p>完成因子定义、信号生成、撮合逻辑与绩效评估，输出核心指标。</p></div>
+          <div class="step"><div class="num">3</div><h4>风控部署</h4><p>接入行情与交易接口，建立仓位、滑点、止损与异常监控规则。</p></div>
+          <div class="step"><div class="num">4</div><h4>实盘迭代</h4><p>根据实盘表现持续优化参数、执行效率与策略稳定性。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="footer" id="footer">
+      <div class="container footer-box">
+        <h2 style="margin:0 0 12px;font-size:34px">让策略从想法进入实盘</h2>
+        <p style="margin:0 0 22px;line-height:1.8;color:#aebed5">这是一个可直接本地打开的静态演示页，无需 React、Node.js 或构建工具即可显示。</p>
+        <a class="btn btn-primary" href="mailto:contact@example.com">立即联系</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
