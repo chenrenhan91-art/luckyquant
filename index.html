@@ -37,33 +37,30 @@
       content:"";
       position:fixed;
       inset:0;
-      background-image:
-        linear-gradient(rgba(56,189,248,.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(56,189,248,.08) 1px, transparent 1px);
-      background-size:40px 40px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 80%);
+      z-index:1;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(37,99,235,.14), transparent 30%),
+        radial-gradient(circle at 78% 10%, rgba(16,185,129,.08), transparent 24%),
+        linear-gradient(180deg, rgba(2,6,23,.15), rgba(2,6,23,.55));
       pointer-events:none;
-      opacity:.28;
+      opacity:1;
     }
     body::after{
-      content:"";
-      position:fixed;
-      inset:-100% 0 0 0;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(56,189,248,.00) 0px,
-          rgba(56,189,248,.00) 18px,
-          rgba(56,189,248,.08) 19px,
-          rgba(56,189,248,.00) 20px
-        );
-      animation:rain 14s linear infinite;
-      pointer-events:none;
-      opacity:.18;
+      display:none;
     }
-    @keyframes rain{from{transform:translateY(-10%)}to{transform:translateY(30%)}}
+    #shader-bg{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+      z-index:0;
+      pointer-events:none;
+      opacity:.72;
+    }
+    .ticker-wrap,nav,main{position:relative; z-index:2}
     a{color:inherit;text-decoration:none}
-    .container{width:min(1180px, calc(100% - 32px)); margin:0 auto}
+    .container{width:min(1220px, calc(100% - 32px)); margin:0 auto}
 
     .ticker-wrap{
       position:sticky; top:0; z-index:60;
@@ -126,7 +123,7 @@
     .btn-secondary:hover{background:rgba(30,41,59,.8)}
 
     .hero{padding:68px 0 44px}
-    .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:28px; align-items:center}
+    .hero-grid{display:grid; grid-template-columns:1.06fr .94fr; gap:32px; align-items:center}
     .eyebrow{
       display:inline-flex; align-items:center; gap:10px; padding:8px 12px;
       border:1px solid rgba(56,189,248,.24);
@@ -141,7 +138,7 @@
 
     .panel{
       position:relative;
-      min-height:420px;
+      min-height:438px;
       padding:0;
       border:1px solid var(--line);
       background:linear-gradient(180deg, rgba(15,23,42,.82), rgba(2,6,23,.86));
@@ -156,10 +153,21 @@
     .console .line{opacity:.94}
     .console .good{color:#86efac}
     .console .muted{color:#64748b}
-    .chart-area{display:grid; grid-template-columns:1fr 180px; gap:16px; padding:0 20px 20px}
+    .chart-area{display:grid; grid-template-columns:minmax(0, 1fr) 188px; gap:14px; padding:0 20px 20px; align-items:start}
     .chart-box,.stats-box{border:1px solid rgba(148,163,184,.14); background:rgba(15,23,42,.55); border-radius:18px}
-    .chart-box{padding:18px}
-    .stats-box{padding:16px}
+    .chart-box{padding:16px 16px 12px}
+    .stats-box{padding:16px; display:grid; align-content:center}
+    .report-image{display:block; width:100%; border-radius:14px; aspect-ratio:2.95 / 1; object-fit:cover}
+    .report-meta{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:10px;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#7c8ca5;
+    }
     .mini-grid{display:grid; gap:10px}
     .stat{padding:12px; background:rgba(2,6,23,.55); border:1px solid rgba(148,163,184,.12); border-radius:14px}
     .stat small{display:block; color:#7c8ca5; margin-bottom:4px}
@@ -212,12 +220,6 @@
       box-shadow:var(--shadow);
     }
 
-    .svg-chart{width:100%; height:180px; display:block}
-    .axis{stroke:rgba(148,163,184,.18); stroke-width:1}
-    .line1{fill:none; stroke:#38bdf8; stroke-width:3}
-    .line2{fill:none; stroke:#34d399; stroke-width:2; opacity:.8}
-    .area{fill:url(#fillBlue); opacity:.18}
-
     @media (max-width: 1040px){
       .hero-grid,.services,.grid-4,.grid-3{grid-template-columns:1fr 1fr}
       .chart-area{grid-template-columns:1fr}
@@ -237,6 +239,7 @@
   </style>
 </head>
 <body>
+  <canvas id="shader-bg" aria-hidden="true"></canvas>
   <div class="ticker-wrap">
     <div class="container ticker">
       <div class="ticker-label">MARKET METER</div>
@@ -299,26 +302,17 @@
           </div>
           <div class="chart-area">
             <div class="chart-box">
-              <svg class="svg-chart" viewBox="0 0 560 180" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="fillBlue" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"></stop>
-                    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"></stop>
-                  </linearGradient>
-                </defs>
-                <line class="axis" x1="0" y1="150" x2="560" y2="150"></line>
-                <line class="axis" x1="0" y1="110" x2="560" y2="110"></line>
-                <line class="axis" x1="0" y1="70" x2="560" y2="70"></line>
-                <path class="area" d="M0,136 C40,132 68,120 100,118 C130,116 160,96 190,98 C220,100 250,78 280,82 C314,86 340,54 380,58 C425,62 455,40 490,34 C516,30 536,26 560,18 L560,180 L0,180 Z"></path>
-                <path class="line1" d="M0,136 C40,132 68,120 100,118 C130,116 160,96 190,98 C220,100 250,78 280,82 C314,86 340,54 380,58 C425,62 455,40 490,34 C516,30 536,26 560,18"></path>
-                <path class="line2" d="M0,142 C30,134 68,132 98,124 C132,116 158,122 194,108 C230,94 252,100 282,92 C318,84 350,92 386,74 C420,58 454,66 492,50 C518,40 538,44 560,38"></path>
-              </svg>
+              <img class="report-image" src="assets/hero-equity-curve.png" alt="BTC/USDT 回测报告中的收益曲线" />
+              <div class="report-meta">
+                <span>2022.03 - 2026.03</span>
+                <span>PDF Backtest</span>
+              </div>
             </div>
             <div class="stats-box">
               <div class="mini-grid">
-                <div class="stat"><small>策略胜率</small><strong>64.8%</strong></div>
-                <div class="stat"><small>年化收益</small><strong>31.2%</strong></div>
-                <div class="stat"><small>最大回撤</small><strong>8.7%</strong></div>
+                <div class="stat"><small>平均年化收益率</small><strong>165.30%</strong></div>
+                <div class="stat"><small>最大回撤</small><strong>29.29%</strong></div>
+                <div class="stat"><small>夏普比例</small><strong>1.983</strong></div>
               </div>
             </div>
           </div>
@@ -411,5 +405,127 @@
       </div>
     </section>
   </main>
+  <script>
+    (function () {
+      const canvas = document.getElementById("shader-bg");
+      if (!canvas) return;
+
+      const gl = canvas.getContext("webgl", { alpha: true, antialias: true });
+      if (!gl) return;
+
+      const vertexShaderSource = `
+        attribute vec3 position;
+        void main() {
+          gl_Position = vec4(position, 1.0);
+        }
+      `;
+
+      const fragmentShaderSource = `
+        precision highp float;
+        uniform vec2 resolution;
+        uniform float time;
+        uniform float xScale;
+        uniform float yScale;
+        uniform float distortion;
+
+        void main() {
+          vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+
+          float d = length(p) * distortion;
+
+          float rx = p.x * (1.0 + d);
+          float gx = p.x;
+          float bx = p.x * (1.0 - d);
+
+          float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
+          float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
+          float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
+
+          gl_FragColor = vec4(r, g, b, 1.0);
+        }
+      `;
+
+      const compileShader = (type, source) => {
+        const shader = gl.createShader(type);
+        if (!shader) return null;
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          console.error(gl.getShaderInfoLog(shader));
+          gl.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      };
+
+      const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
+      const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+      if (!vertexShader || !fragmentShader) return;
+
+      const program = gl.createProgram();
+      if (!program) return;
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(program));
+        return;
+      }
+
+      const positions = new Float32Array([
+        -1.0, -1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0,  1.0, 0.0
+      ]);
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+      gl.useProgram(program);
+
+      const positionLocation = gl.getAttribLocation(program, "position");
+      const resolutionLocation = gl.getUniformLocation(program, "resolution");
+      const timeLocation = gl.getUniformLocation(program, "time");
+      const xScaleLocation = gl.getUniformLocation(program, "xScale");
+      const yScaleLocation = gl.getUniformLocation(program, "yScale");
+      const distortionLocation = gl.getUniformLocation(program, "distortion");
+
+      gl.enableVertexAttribArray(positionLocation);
+      gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+
+      gl.uniform1f(xScaleLocation, 1.15);
+      gl.uniform1f(yScaleLocation, 0.42);
+      gl.uniform1f(distortionLocation, 0.08);
+
+      const resize = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        const width = Math.floor(window.innerWidth * dpr);
+        const height = Math.floor(window.innerHeight * dpr);
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        gl.viewport(0, 0, width, height);
+        gl.uniform2f(resolutionLocation, width, height);
+      };
+
+      const render = (now) => {
+        gl.clearColor(0.01, 0.03, 0.08, 0.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1f(timeLocation, now * 0.00045);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        window.requestAnimationFrame(render);
+      };
+
+      window.addEventListener("resize", resize);
+      resize();
+      window.requestAnimationFrame(render);
+    })();
+  </script>
 </body>
 </html>
