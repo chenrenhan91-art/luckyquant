@@ -100,9 +100,52 @@
     .brand-badge{
       width:38px; height:38px; border-radius:12px;
       display:grid; place-items:center;
-      background:linear-gradient(135deg, rgba(56,189,248,.24), rgba(37,99,235,.16));
+      background:
+        radial-gradient(circle at 26% 22%, rgba(103,232,249,.24), transparent 34%),
+        linear-gradient(145deg, rgba(56,189,248,.26), rgba(37,99,235,.12));
       border:1px solid rgba(56,189,248,.25);
-      box-shadow:inset 0 0 20px rgba(56,189,248,.08);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 0 24px rgba(56,189,248,.08),
+        0 10px 22px rgba(2,6,23,.24);
+      position:relative;
+      overflow:hidden;
+    }
+    .brand-badge::before{
+      content:"";
+      position:absolute;
+      inset:1px;
+      border-radius:11px;
+      border:1px solid rgba(255,255,255,.04);
+      pointer-events:none;
+    }
+    .brand-mark{
+      width:24px;
+      height:24px;
+      display:block;
+      filter:drop-shadow(0 4px 10px rgba(56,189,248,.18));
+    }
+    .brand-mark .mark-frame{
+      fill:url(#brandBadgeBg);
+      stroke:rgba(255,255,255,.18);
+      stroke-width:.7;
+    }
+    .brand-mark .mark-l{
+      fill:url(#brandLStroke);
+    }
+    .brand-mark .mark-q-ring{
+      fill:none;
+      stroke:url(#brandQStroke);
+      stroke-width:2.5;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .brand-mark .mark-q-tail{
+      fill:none;
+      stroke:url(#brandTailStroke);
+      stroke-width:2.4;
+      stroke-linecap:round;
+      stroke-linejoin:round;
     }
     .brand span span{color:var(--blue)}
     .nav-links{display:flex; gap:28px; color:#cbd5e1; font-size:14px}
@@ -966,7 +1009,34 @@
   <nav>
     <div class="container nav-inner">
       <div class="brand">
-        <div class="brand-badge">⌘</div>
+        <div class="brand-badge" aria-hidden="true">
+          <svg class="brand-mark" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="brandBadgeBg" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#ffffff" stop-opacity=".1" />
+                <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="brandLStroke" x1="5.5" y1="5" x2="11.5" y2="19" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#dff7ff" />
+                <stop offset=".55" stop-color="#7dd3fc" />
+                <stop offset="1" stop-color="#38bdf8" />
+              </linearGradient>
+              <linearGradient id="brandQStroke" x1="10" y1="7" x2="19" y2="17" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e8fbff" />
+                <stop offset=".5" stop-color="#8be6ff" />
+                <stop offset="1" stop-color="#34d399" />
+              </linearGradient>
+              <linearGradient id="brandTailStroke" x1="14.5" y1="15" x2="20.5" y2="19.5" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#8be6ff" />
+                <stop offset="1" stop-color="#34d399" />
+              </linearGradient>
+            </defs>
+            <rect class="mark-frame" x="2.5" y="2.5" width="19" height="19" rx="6" />
+            <path class="mark-l" d="M6.2 6.1C6.2 5.52 6.67 5.05 7.25 5.05C7.83 5.05 8.3 5.52 8.3 6.1V16.2H12.55C13.1 16.2 13.55 16.65 13.55 17.2C13.55 17.75 13.1 18.2 12.55 18.2H7.2C6.65 18.2 6.2 17.75 6.2 17.2V6.1Z" />
+            <circle class="mark-q-ring" cx="15.2" cy="11.4" r="4.2" />
+            <path class="mark-q-tail" d="M17.7 14.1L20.1 16.55" />
+          </svg>
+        </div>
         <span>LUCKY<span>QUANT</span> PRO</span>
       </div>
       <div class="nav-links">
@@ -984,7 +1054,7 @@
       <button class="modal-close" type="button" aria-label="关闭" data-close-consultation>&times;</button>
       <h3 id="consultation-title">预约咨询</h3>
       <p>扫码添加微信后，请备注“量化策略开发”，方便我快速了解你的需求方向，并尽快和你对接策略、执行或风控相关问题。</p>
-      <div class="modal-note">支持咨询回测开发、实盘接入、风控联调、策略迭代等量化项目合作内容。</div>
+      <div class="modal-note">首页右侧量化策略回测数据为我个人开发的 BTC 量化策略，支持跟单、策略买断、咨询回测开发、实盘接入、风控联调、策略迭代等量化项目合作内容。</div>
       <div class="modal-qr">
         <img src="./qr_author_800.png" alt="微信二维码" />
         <span>微信扫码添加</span>
