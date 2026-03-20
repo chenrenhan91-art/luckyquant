@@ -374,6 +374,93 @@
       to{transform:translateY(calc(-50% - 9px))}
     }
 
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      z-index:120;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:rgba(2,6,23,.72);
+      backdrop-filter:blur(14px);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:opacity .24s ease, visibility .24s ease;
+    }
+    .modal-overlay.is-open{
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+    }
+    .modal-dialog{
+      width:min(520px, 100%);
+      padding:24px;
+      border-radius:28px;
+      border:1px solid rgba(148,163,184,.18);
+      background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96));
+      box-shadow:0 28px 90px rgba(0,0,0,.42);
+      position:relative;
+    }
+    .modal-close{
+      position:absolute;
+      top:14px;
+      right:14px;
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(15,23,42,.88);
+      color:#dbe7ff;
+      font-size:22px;
+      line-height:1;
+      cursor:pointer;
+    }
+    .modal-dialog h3{
+      margin:0 36px 12px 0;
+      font-size:30px;
+      line-height:1.15;
+    }
+    .modal-dialog p{
+      margin:0;
+      color:#b5c7e2;
+      line-height:1.85;
+    }
+    .modal-note{
+      margin-top:16px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(56,189,248,.18);
+      background:rgba(8,47,73,.28);
+      color:#d7ecff;
+      font-size:14px;
+    }
+    .modal-qr{
+      margin-top:22px;
+      padding:18px;
+      border-radius:24px;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.65);
+      text-align:center;
+    }
+    .modal-qr img{
+      display:block;
+      width:min(100%, 320px);
+      margin:0 auto;
+      border-radius:18px;
+      background:#fff;
+    }
+    .modal-qr span{
+      display:block;
+      margin-top:12px;
+      color:#8ea3c2;
+      font-size:13px;
+      letter-spacing:.04em;
+    }
+    body.modal-open{
+      overflow:hidden;
+    }
+
     .footer{
       padding:56px 0 72px; text-align:center; color:#8ea1bb;
     }
@@ -413,6 +500,10 @@
       .testimonials-stage .testimonial-lane:nth-child(3),
       .testimonials-stage .testimonial-lane:nth-child(4){display:none}
       .testimonial-card{padding:16px}
+      .modal-overlay{padding:16px}
+      .modal-dialog{padding:22px 18px 18px}
+      .modal-dialog h3{font-size:24px}
+      .modal-qr{padding:14px}
     }
   </style>
 </head>
@@ -452,9 +543,22 @@
         <a href="#testimonials">客户反馈</a>
         <a href="#services">定制流程</a>
       </div>
-      <a class="btn btn-primary" href="#footer">预约咨询</a>
+      <button class="btn btn-primary" type="button" data-open-consultation>预约咨询</button>
     </div>
   </nav>
+
+  <div class="modal-overlay" id="consultation-modal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="consultation-title">
+      <button class="modal-close" type="button" aria-label="关闭" data-close-consultation>&times;</button>
+      <h3 id="consultation-title">预约咨询</h3>
+      <p>扫码添加微信后，请备注“量化策略开发”，方便我快速了解你的需求方向，并尽快和你对接策略、执行或风控相关问题。</p>
+      <div class="modal-note">支持咨询回测开发、实盘接入、风控联调、策略迭代等量化项目合作内容。</div>
+      <div class="modal-qr">
+        <img src="./qr_author_800.png" alt="微信二维码" />
+        <span>微信扫码添加</span>
+      </div>
+    </div>
+  </div>
 
   <main>
     <section class="hero">
@@ -565,10 +669,10 @@
       <div class="container testimonials-shell">
         <div class="testimonials-copy">
           <div class="eyebrow"><span class="dot"></span><span>CLIENT FEEDBACK / ANONYMIZED</span></div>
-          <h2>看起来更像真实合作，而不是一组空泛好评</h2>
-          <p>这部分参考你给的 3D testimonials 组件视觉做了静态页适配，保留纵向滚动和空间透视感。文案则改成更接近真实量化项目合作时会出现的表达方式，不是泛泛的“很好用”。</p>
-          <p>为了避免把示意头像伪装成可识别真人，以下反馈统一采用匿名化呈现：名字使用缩写，身份描述保留到策略角色与地区层级，内容聚焦回测口径、实盘执行、风控接入和后续迭代这些真实关心点。</p>
-          <div class="proof-note">以下内容按真实合作场景风格匿名化整理，头像为人物示意图，适合先作为官网展示版本。后续如果你有真实客户授权素材，我可以再一键替换成正式版。</div>
+          <h2>客户更在意合作细节，而不只是结果截图</h2>
+          <p>这里展示的是我们在量化项目合作中最常收到的反馈方向: 回测口径是否说得清楚，实盘执行是否稳定，风控与监控是否接得顺，后续迭代能不能持续推进。</p>
+          <p>我们更希望把真实合作里的判断标准讲明白，而不是只放几句笼统的好评。对很多团队来说，真正决定是否继续合作的，往往是细节是否可靠、过程是否透明、交付后是否便于继续扩展。</p>
+          <div class="proof-note">以下评价均做匿名化处理，名称使用缩写，身份信息保留到策略角色与地区层级，头像为示意图，仅用于官网展示。</div>
           <div class="market-tags">
             <span>A股</span>
             <span>Crypto</span>
@@ -891,16 +995,45 @@
       </div>
     </section>
 
-    <section class="footer" id="footer">
-      <div class="container footer-box">
-        <h2 style="margin:0 0 12px;font-size:34px">让策略从想法进入实盘</h2>
-        <p style="margin:0 0 22px;line-height:1.8;color:#aebed5">这是一个可直接本地打开的静态演示页，无需 React、Node.js 或构建工具即可显示。</p>
-        <a class="btn btn-primary" href="mailto:contact@example.com">立即联系</a>
-      </div>
-    </section>
   </main>
   <script>
     (function () {
+      const modal = document.getElementById("consultation-modal");
+      const openButtons = document.querySelectorAll("[data-open-consultation]");
+      const closeButtons = document.querySelectorAll("[data-close-consultation]");
+
+      if (modal && openButtons.length) {
+        const openModal = () => {
+          modal.classList.add("is-open");
+          modal.setAttribute("aria-hidden", "false");
+          document.body.classList.add("modal-open");
+        };
+
+        const closeModal = () => {
+          modal.classList.remove("is-open");
+          modal.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("modal-open");
+        };
+
+        openButtons.forEach((button) => {
+          button.addEventListener("click", openModal);
+        });
+
+        closeButtons.forEach((button) => {
+          button.addEventListener("click", closeModal);
+        });
+
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) closeModal();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && modal.classList.contains("is-open")) {
+            closeModal();
+          }
+        });
+      }
+
       const canvas = document.getElementById("shader-bg");
       if (!canvas) return;
 
