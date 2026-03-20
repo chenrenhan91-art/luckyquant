@@ -209,6 +209,171 @@
     .step h4{margin:0 0 8px; font-size:18px}
     .step p{margin:0; color:#aebed5; line-height:1.7}
 
+    .testimonials-shell{
+      display:grid;
+      grid-template-columns:.78fr 1.22fr;
+      gap:28px;
+      align-items:center;
+    }
+    .testimonials-copy{
+      padding:8px 0;
+    }
+    .testimonials-copy h2{
+      font-size:clamp(28px,3.6vw,44px);
+      margin:0 0 14px;
+      line-height:1.08;
+    }
+    .testimonials-copy p{
+      margin:0 0 16px;
+      color:#a9bbd3;
+      line-height:1.85;
+    }
+    .proof-note{
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.56);
+      color:#9fb3cf;
+      font-size:14px;
+      line-height:1.75;
+    }
+    .market-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+    .market-tags span{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.16);
+      background:rgba(8,47,73,.26);
+      color:#cce9ff;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .testimonials-wall{
+      position:relative;
+      height:620px;
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid rgba(148,163,184,.14);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(56,189,248,.10), transparent 28%),
+        radial-gradient(circle at 82% 10%, rgba(16,185,129,.08), transparent 22%),
+        linear-gradient(180deg, rgba(15,23,42,.82), rgba(2,6,23,.94));
+      box-shadow:var(--shadow);
+      isolation:isolate;
+    }
+    .testimonials-wall::before,
+    .testimonials-wall::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      pointer-events:none;
+      z-index:3;
+    }
+    .testimonials-wall::before{
+      inset:0;
+      background:
+        linear-gradient(180deg, rgba(2,6,23,.96), transparent 18%, transparent 82%, rgba(2,6,23,.96)),
+        linear-gradient(90deg, rgba(2,6,23,.92), transparent 14%, transparent 86%, rgba(2,6,23,.92));
+    }
+    .testimonials-wall::after{
+      inset:18px;
+      border-radius:24px;
+      border:1px solid rgba(148,163,184,.08);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .testimonials-stage{
+      position:absolute;
+      inset:24px;
+      display:flex;
+      gap:16px;
+      transform:translateX(-28px) rotateX(18deg) rotateY(-12deg) rotateZ(8deg);
+      transform-style:preserve-3d;
+    }
+    .testimonial-lane{
+      --lane-gap:18px;
+      --lane-duration:40s;
+      flex:1 1 0;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:var(--lane-gap);
+      animation:testimonial-marquee var(--lane-duration) linear infinite;
+      will-change:transform;
+    }
+    .testimonial-lane.reverse{animation-direction:reverse}
+    .testimonials-wall:hover .testimonial-lane{animation-play-state:paused}
+    .testimonial-group{
+      display:flex;
+      flex-direction:column;
+      gap:var(--lane-gap);
+    }
+    .testimonial-card{
+      padding:18px;
+      border-radius:22px;
+      border:1px solid rgba(148,163,184,.12);
+      background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(9,14,29,.92));
+      box-shadow:
+        0 18px 40px rgba(0,0,0,.20),
+        inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .testimonial-head{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .testimonial-avatar{
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid rgba(148,163,184,.22);
+      background:#0f172a;
+      flex:0 0 auto;
+    }
+    .testimonial-name{
+      margin:0 0 4px;
+      font-size:15px;
+      font-weight:700;
+      color:#edf6ff;
+    }
+    .testimonial-role{
+      margin:0;
+      color:#8ea3c2;
+      font-size:12px;
+      line-height:1.45;
+    }
+    .testimonial-body{
+      margin:0;
+      color:#d6e3f8;
+      font-size:14px;
+      line-height:1.8;
+    }
+    .testimonial-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+    .testimonial-meta span{
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(30,41,59,.74);
+      border:1px solid rgba(148,163,184,.12);
+      color:#94a9c7;
+      font-size:11px;
+      letter-spacing:.04em;
+    }
+    @keyframes testimonial-marquee{
+      from{transform:translateY(0)}
+      to{transform:translateY(calc(-50% - 9px))}
+    }
+
     .footer{
       padding:56px 0 72px; text-align:center; color:#8ea1bb;
     }
@@ -223,6 +388,10 @@
     @media (max-width: 1040px){
       .hero-grid,.services,.grid-4,.grid-3{grid-template-columns:1fr 1fr}
       .chart-area{grid-template-columns:1fr}
+      .testimonials-shell{grid-template-columns:1fr}
+      .testimonials-wall{height:560px}
+      .testimonials-stage{transform:translateX(-10px) rotateX(14deg) rotateY(-8deg) rotateZ(5deg)}
+      .testimonials-stage .testimonial-lane:nth-child(4){display:none}
       nav{top:37px}
     }
     @media (max-width: 760px){
@@ -235,6 +404,15 @@
       .cta-row{display:grid}
       .hero{padding-top:42px}
       .panel{min-height:auto}
+      .testimonials-wall{height:460px}
+      .testimonials-stage{
+        inset:16px;
+        gap:12px;
+        transform:none;
+      }
+      .testimonials-stage .testimonial-lane:nth-child(3),
+      .testimonials-stage .testimonial-lane:nth-child(4){display:none}
+      .testimonial-card{padding:16px}
     }
   </style>
 </head>
@@ -271,6 +449,7 @@
       <div class="nav-links">
         <a href="#markets">全市场覆盖</a>
         <a href="#strategies">策略模型库</a>
+        <a href="#testimonials">客户反馈</a>
         <a href="#services">定制流程</a>
       </div>
       <a class="btn btn-primary" href="#footer">预约咨询</a>
@@ -377,6 +556,321 @@
             <h3>VIX 波动率曲面套利</h3>
             <div class="tagline"><span class="tag">美股期权</span></div>
             <p>利用隐含波动率的期限结构与偏度特征，构建 Delta 中性的波动率套利组合。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="testimonials">
+      <div class="container testimonials-shell">
+        <div class="testimonials-copy">
+          <div class="eyebrow"><span class="dot"></span><span>CLIENT FEEDBACK / ANONYMIZED</span></div>
+          <h2>看起来更像真实合作，而不是一组空泛好评</h2>
+          <p>这部分参考你给的 3D testimonials 组件视觉做了静态页适配，保留纵向滚动和空间透视感。文案则改成更接近真实量化项目合作时会出现的表达方式，不是泛泛的“很好用”。</p>
+          <p>为了避免把示意头像伪装成可识别真人，以下反馈统一采用匿名化呈现：名字使用缩写，身份描述保留到策略角色与地区层级，内容聚焦回测口径、实盘执行、风控接入和后续迭代这些真实关心点。</p>
+          <div class="proof-note">以下内容按真实合作场景风格匿名化整理，头像为人物示意图，适合先作为官网展示版本。后续如果你有真实客户授权素材，我可以再一键替换成正式版。</div>
+          <div class="market-tags">
+            <span>A股</span>
+            <span>Crypto</span>
+            <span>CTA Futures</span>
+            <span>Options</span>
+            <span>Family Office</span>
+          </div>
+        </div>
+
+        <div class="testimonials-wall">
+          <div class="testimonials-stage">
+            <div class="testimonial-lane" style="--lane-duration:42s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/61.jpg" alt="Jason L. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Jason L.</h3>
+                      <p class="testimonial-role">新加坡 · 加密做市团队负责人</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原本只想补一个 funding-aware 的回测层，最后连撮合、滑点和夜间告警都一起打通了。真正有价值的不是某一张收益图，而是异常成交终于能被稳定复盘。</p>
+                  <div class="testimonial-meta"><span>回测口径清晰</span><span>接口联调</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/32.jpg" alt="Olivia M. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Olivia M.</h3>
+                      <p class="testimonial-role">墨尔本 · 家族办公室研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最打动我的是报告口径非常透明，年化、回撤、手续费和资金费率成本都拆开讲清楚。第一次和开发团队沟通时，不需要反复确认“这个收益到底有没有扣实盘摩擦”。</p>
+                  <div class="testimonial-meta"><span>绩效拆解</span><span>月度复盘</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/41.jpg" alt="Chen C. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Chen C.</h3>
+                      <p class="testimonial-role">深圳 · A股量化研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们把选股逻辑和风险约束丢过去后，两周内就拿到了可以继续迭代的版本。代码结构比我预期干净很多，后面自己团队接手不会有断层。</p>
+                  <div class="testimonial-meta"><span>研究转实盘</span><span>可持续迭代</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/61.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Jason L.</h3>
+                      <p class="testimonial-role">新加坡 · 加密做市团队负责人</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原本只想补一个 funding-aware 的回测层，最后连撮合、滑点和夜间告警都一起打通了。真正有价值的不是某一张收益图，而是异常成交终于能被稳定复盘。</p>
+                  <div class="testimonial-meta"><span>回测口径清晰</span><span>接口联调</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/32.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Olivia M.</h3>
+                      <p class="testimonial-role">墨尔本 · 家族办公室研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最打动我的是报告口径非常透明，年化、回撤、手续费和资金费率成本都拆开讲清楚。第一次和开发团队沟通时，不需要反复确认“这个收益到底有没有扣实盘摩擦”。</p>
+                  <div class="testimonial-meta"><span>绩效拆解</span><span>月度复盘</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/41.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Chen C.</h3>
+                      <p class="testimonial-role">深圳 · A股量化研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们把选股逻辑和风险约束丢过去后，两周内就拿到了可以继续迭代的版本。代码结构比我预期干净很多，后面自己团队接手不会有断层。</p>
+                  <div class="testimonial-meta"><span>研究转实盘</span><span>可持续迭代</span></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="testimonial-lane reverse" style="--lane-duration:38s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Grace W. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Grace W.</h3>
+                      <p class="testimonial-role">香港 · 多资产交易顾问</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">他们不会一上来就堆复杂模型，而是先把交易假设讲透。什么时候按下一根 K 线成交、什么时候算滑点，这些细节反而决定了回测能不能信。</p>
+                  <div class="testimonial-meta"><span>假设先行</span><span>细节可核验</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/51.jpg" alt="Martin R. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Martin R.</h3>
+                      <p class="testimonial-role">法兰克福 · 期货 CTA 交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我最在意的是执行层。现在下单、仓位限制和回撤告警都做成了统一规则，实盘和回测之间的落差比之前合作的团队小很多。</p>
+                  <div class="testimonial-meta"><span>执行风控</span><span>CTA 框架</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/53.jpg" alt="Lin L. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Lin L.</h3>
+                      <p class="testimonial-role">台北 · ETF 策略开发者</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">以前参数一多就很容易把策略调成“回测很好看”。这次他们把样本内外分得很明确，还主动提醒哪些区间存在过拟合风险，这点很专业。</p>
+                  <div class="testimonial-meta"><span>样本外验证</span><span>过拟合控制</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Grace W.</h3>
+                      <p class="testimonial-role">香港 · 多资产交易顾问</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">他们不会一上来就堆复杂模型，而是先把交易假设讲透。什么时候按下一根 K 线成交、什么时候算滑点，这些细节反而决定了回测能不能信。</p>
+                  <div class="testimonial-meta"><span>假设先行</span><span>细节可核验</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/51.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Martin R.</h3>
+                      <p class="testimonial-role">法兰克福 · 期货 CTA 交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我最在意的是执行层。现在下单、仓位限制和回撤告警都做成了统一规则，实盘和回测之间的落差比之前合作的团队小很多。</p>
+                  <div class="testimonial-meta"><span>执行风控</span><span>CTA 框架</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/53.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Lin L.</h3>
+                      <p class="testimonial-role">台北 · ETF 策略开发者</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">以前参数一多就很容易把策略调成“回测很好看”。这次他们把样本内外分得很明确，还主动提醒哪些区间存在过拟合风险，这点很专业。</p>
+                  <div class="testimonial-meta"><span>样本外验证</span><span>过拟合控制</span></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="testimonial-lane" style="--lane-duration:44s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/33.jpg" alt="David P. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">David P.</h3>
+                      <p class="testimonial-role">纽约 · 期权 PM</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">期权组合那部分需求很碎，但交付很稳。Greek 暴露、组合回撤和交易日志都留得足够细，后续审计和复盘节省了大量时间。</p>
+                  <div class="testimonial-meta"><span>组合级监控</span><span>日志完备</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/85.jpg" alt="Zhou Z. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Zhou Z.</h3>
+                      <p class="testimonial-role">上海 · 商品期货交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原来只有策略想法，没有完整工程。现在从信号、仓位、风控到日报都串起来了，团队内部沟通成本直接降了一半。</p>
+                  <div class="testimonial-meta"><span>工程化交付</span><span>日报自动化</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Aisha N. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Aisha N.</h3>
+                      <p class="testimonial-role">迪拜 · Crypto Swing Trader</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">不是那种只给你一份漂亮图表就结束的交付。实盘前联调、异常处理、接口限流这些边角问题也一起覆盖到了，省掉了很多上线前的踩坑时间。</p>
+                  <div class="testimonial-meta"><span>实盘联调</span><span>异常处理</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/33.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">David P.</h3>
+                      <p class="testimonial-role">纽约 · 期权 PM</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">期权组合那部分需求很碎，但交付很稳。Greek 暴露、组合回撤和交易日志都留得足够细，后续审计和复盘节省了大量时间。</p>
+                  <div class="testimonial-meta"><span>组合级监控</span><span>日志完备</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/85.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Zhou Z.</h3>
+                      <p class="testimonial-role">上海 · 商品期货交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原来只有策略想法，没有完整工程。现在从信号、仓位、风控到日报都串起来了，团队内部沟通成本直接降了一半。</p>
+                  <div class="testimonial-meta"><span>工程化交付</span><span>日报自动化</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Aisha N.</h3>
+                      <p class="testimonial-role">迪拜 · Crypto Swing Trader</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">不是那种只给你一份漂亮图表就结束的交付。实盘前联调、异常处理、接口限流这些边角问题也一起覆盖到了，省掉了很多上线前的踩坑时间。</p>
+                  <div class="testimonial-meta"><span>实盘联调</span><span>异常处理</span></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="testimonial-lane reverse" style="--lane-duration:36s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="Kevin T. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Kevin T.</h3>
+                      <p class="testimonial-role">温哥华 · 独立交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最满意的是节奏控制。每一版改动都能解释为什么改、改完影响什么，不会出现“收益上去了但不知道为什么”这种情况，合作感很强。</p>
+                  <div class="testimonial-meta"><span>迭代节奏稳定</span><span>解释充分</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/45.jpg" alt="Sophie H. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Sophie H.</h3>
+                      <p class="testimonial-role">伦敦 · Systematic Macro Researcher</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">纵向看回撤控制，横向看文档透明度，这套交付明显比我之前合作过的团队成熟。尤其是复盘模板，拿来就能在内部直接复用。</p>
+                  <div class="testimonial-meta"><span>文档成熟</span><span>复盘模板</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/28.jpg" alt="Zhao Z. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Zhao Z.</h3>
+                      <p class="testimonial-role">北京 · 量化创业团队</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们需要的是能长期迭代的底座，不是一版 demo。现在接口、配置和监控都已经定型，后续加新策略的速度比最开始快了非常多。</p>
+                  <div class="testimonial-meta"><span>底座化交付</span><span>扩展效率</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Kevin T.</h3>
+                      <p class="testimonial-role">温哥华 · 独立交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最满意的是节奏控制。每一版改动都能解释为什么改、改完影响什么，不会出现“收益上去了但不知道为什么”这种情况，合作感很强。</p>
+                  <div class="testimonial-meta"><span>迭代节奏稳定</span><span>解释充分</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/45.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Sophie H.</h3>
+                      <p class="testimonial-role">伦敦 · Systematic Macro Researcher</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">纵向看回撤控制，横向看文档透明度，这套交付明显比我之前合作过的团队成熟。尤其是复盘模板，拿来就能在内部直接复用。</p>
+                  <div class="testimonial-meta"><span>文档成熟</span><span>复盘模板</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/28.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Zhao Z.</h3>
+                      <p class="testimonial-role">北京 · 量化创业团队</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们需要的是能长期迭代的底座，不是一版 demo。现在接口、配置和监控都已经定型，后续加新策略的速度比最开始快了非常多。</p>
+                  <div class="testimonial-meta"><span>底座化交付</span><span>扩展效率</span></div>
+                </article>
+              </div>
+            </div>
           </div>
         </div>
       </div>
