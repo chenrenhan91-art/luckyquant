@@ -127,6 +127,9 @@
 
     .hero{padding:68px 0 44px}
     .hero-grid{display:grid; grid-template-columns:1.06fr .94fr; gap:32px; align-items:center}
+    .hero-copy{
+      transform:translateY(-10px);
+    }
     .eyebrow{
       display:inline-flex; align-items:center; gap:10px; padding:8px 12px;
       border:1px solid rgba(56,189,248,.24);
@@ -134,7 +137,7 @@
       color:#7dd3fc; font-size:12px; letter-spacing:.08em;
     }
     .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue)}
-    h1{font-size:clamp(34px, 5.6vw, 68px); line-height:1.04; margin:18px 0 18px; letter-spacing:-.03em}
+    h1{font-size:clamp(34px, 5.6vw, 68px); line-height:1.1; margin:22px 0 22px; letter-spacing:-.03em}
     .gradient{background:linear-gradient(90deg, #67e8f9, #34d399); -webkit-background-clip:text; background-clip:text; color:transparent}
     .lead{font-size:18px; line-height:1.8; color:#bfd0ec; max-width:720px; margin:0 0 28px}
     .cta-row{display:flex; gap:14px; flex-wrap:wrap}
@@ -148,16 +151,110 @@
       border-radius:var(--radius);
       overflow:hidden;
       box-shadow:var(--shadow);
+      isolation:isolate;
+      transition:
+        transform 700ms var(--ease-smooth),
+        border-color 700ms var(--ease-smooth),
+        box-shadow 700ms var(--ease-smooth),
+        background 700ms var(--ease-smooth);
     }
-    .window-top{display:flex; align-items:center; gap:8px; padding:14px 16px; border-bottom:1px solid rgba(148,163,184,.10); color:#64748b; font-size:12px}
+    .panel::before,
+    .panel::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
+    .panel::before{
+      background:
+        linear-gradient(118deg, rgba(255,255,255,.10), transparent 24%, transparent 58%, rgba(56,189,248,.06) 78%, transparent),
+        radial-gradient(circle at 18% 16%, rgba(56,189,248,.18), transparent 28%),
+        radial-gradient(circle at 84% 72%, rgba(52,211,153,.12), transparent 26%);
+      opacity:.82;
+      mix-blend-mode:screen;
+    }
+    .panel::after{
+      inset:1px;
+      border-radius:calc(var(--radius) - 1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        inset 0 -24px 60px rgba(2,6,23,.24);
+      opacity:.92;
+    }
+    .panel:hover{
+      transform:translateY(-4px);
+      border-color:rgba(125,211,252,.18);
+      background:linear-gradient(180deg, rgba(18,30,53,.88), rgba(3,8,20,.94));
+      box-shadow:0 32px 110px rgba(0,0,0,.44), 0 0 0 1px rgba(125,211,252,.04);
+    }
+    .window-top{display:flex; align-items:center; gap:8px; padding:14px 16px; border-bottom:1px solid rgba(148,163,184,.10); color:#64748b; font-size:12px; position:relative; z-index:1; background:linear-gradient(180deg, rgba(15,23,42,.36), rgba(15,23,42,.16))}
     .window-top i{display:block; width:10px; height:10px; border-radius:50%}
     .window-top i:nth-child(1){background:#fb7185}.window-top i:nth-child(2){background:#fbbf24}.window-top i:nth-child(3){background:#34d399}
-    .console{padding:18px 20px 22px; font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace; color:#93c5fd}
+    .console{padding:18px 20px 22px; font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace; color:#93c5fd; position:relative; z-index:1}
     .console .line{opacity:.94}
     .console .good{color:#86efac}
     .console .muted{color:#64748b}
-    .chart-area{display:grid; grid-template-columns:minmax(0, 1fr) 188px; gap:14px; padding:14px 20px 20px; align-items:center}
-    .chart-box,.stats-box{border:1px solid rgba(148,163,184,.14); background:rgba(15,23,42,.55); border-radius:18px}
+    .chart-area{display:grid; grid-template-columns:minmax(0, 1fr) 188px; gap:14px; padding:14px 20px 20px; align-items:center; position:relative; z-index:1}
+    .chart-box,.stats-box{
+      position:relative;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.55);
+      border-radius:18px;
+      overflow:hidden;
+      transition:
+        transform 620ms var(--ease-smooth),
+        border-color 620ms var(--ease-smooth),
+        box-shadow 620ms var(--ease-smooth),
+        background 620ms var(--ease-smooth);
+    }
+    .chart-box::before,
+    .chart-box::after,
+    .stats-box::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    .chart-box::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), transparent 28%),
+        linear-gradient(120deg, rgba(255,255,255,.10), transparent 24%, transparent 56%, rgba(56,189,248,.08) 76%, transparent);
+      opacity:.72;
+    }
+    .chart-box::after{
+      background:
+        linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      width:34%;
+      inset:-24% auto -24% -28%;
+      border-radius:28px;
+      opacity:0;
+      transform:translateX(-180%) rotate(15deg);
+      transition:transform 1200ms var(--ease-soft), opacity 520ms var(--ease-soft);
+    }
+    .stats-box::before{
+      background:
+        radial-gradient(circle at 22% 16%, rgba(56,189,248,.14), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 38%);
+      opacity:.8;
+    }
+    .panel:hover .chart-box,
+    .panel:hover .stats-box{
+      border-color:rgba(125,211,252,.18);
+      box-shadow:0 18px 36px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .panel:hover .chart-box{
+      transform:translateY(-2px);
+      background:rgba(15,23,42,.68);
+    }
+    .panel:hover .chart-box::after{
+      opacity:.82;
+      transform:translateX(340%) rotate(15deg);
+    }
+    .panel:hover .stats-box{
+      transform:translateY(-1px);
+      background:rgba(15,23,42,.7);
+    }
     .chart-box{padding:16px 16px 12px}
     .stats-box{padding:16px; display:grid; align-content:center}
     .report-image{display:block; width:100%; border-radius:14px; aspect-ratio:2.95 / 1; object-fit:cover}
@@ -172,9 +269,40 @@
       color:#7c8ca5;
     }
     .mini-grid{display:grid; gap:10px}
-    .stat{padding:12px; background:rgba(2,6,23,.55); border:1px solid rgba(148,163,184,.12); border-radius:14px}
+    .stat{
+      position:relative;
+      padding:12px;
+      background:rgba(2,6,23,.55);
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:14px;
+      overflow:hidden;
+      transition:
+        transform 560ms var(--ease-smooth),
+        border-color 560ms var(--ease-smooth),
+        box-shadow 560ms var(--ease-smooth),
+        background 560ms var(--ease-smooth);
+    }
+    .stat::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56,189,248,.16), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 42%);
+      opacity:.64;
+      pointer-events:none;
+    }
     .stat small{display:block; color:#7c8ca5; margin-bottom:4px}
-    .stat strong{font-size:20px}
+    .stat strong{font-size:20px; position:relative}
+    .panel:hover .stat{
+      transform:translateY(-1px);
+      border-color:rgba(125,211,252,.16);
+      background:rgba(4,12,26,.72);
+      box-shadow:0 14px 32px rgba(0,0,0,.22);
+    }
+    .panel:hover .stat:nth-child(1){transition-delay:40ms}
+    .panel:hover .stat:nth-child(2){transition-delay:90ms}
+    .panel:hover .stat:nth-child(3){transition-delay:140ms}
 
     section{padding:42px 0}
     .section-head{text-align:center; margin-bottom:28px}
@@ -211,6 +339,10 @@
         background var(--card-duration) var(--ease-smooth),
         filter var(--card-duration) var(--ease-smooth);
     }
+    #markets .card,
+    #strategies .card{
+      backdrop-filter:blur(10px);
+    }
     .card::before,
     .card::after,
     .step::before,
@@ -233,6 +365,21 @@
       opacity:.24;
       transition:opacity var(--card-duration) var(--ease-smooth), transform var(--card-duration) var(--ease-smooth);
       z-index:0;
+    }
+    #markets .card::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 24%),
+        radial-gradient(circle at var(--pointer-x, 18%) var(--pointer-y, 2%), rgba(103,232,249,.16), transparent 32%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.028) 0 1px, transparent 1px 34px),
+        repeating-linear-gradient(180deg, rgba(255,255,255,.02) 0 1px, transparent 1px 28px);
+      opacity:.3;
+    }
+    #strategies .card::before{
+      background:
+        radial-gradient(circle at 18% 16%, rgba(103,232,249,.14), transparent 28%),
+        radial-gradient(circle at 85% 82%, rgba(52,211,153,.08), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,.07), transparent 30%);
+      opacity:.34;
     }
     .card::after,
     .testimonial-card::after{
@@ -257,11 +404,22 @@
       box-shadow:0 28px 90px rgba(0,0,0,.42), 0 0 0 1px rgba(103,232,249,.05);
       background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(6,12,26,.92));
     }
+    #markets .card:hover{
+      box-shadow:0 30px 96px rgba(0,0,0,.44), 0 0 0 1px rgba(103,232,249,.05), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    #strategies .card:hover{
+      box-shadow:0 26px 84px rgba(0,0,0,.4), 0 0 0 1px rgba(103,232,249,.04);
+      background:linear-gradient(180deg, rgba(17,28,49,.88), rgba(8,14,27,.93));
+    }
     .card:hover::before{opacity:.58}
     .card:hover::after{
       opacity:.9;
       transform:translateX(290%) rotate(14deg);
     }
+    #markets .card:nth-child(1) .icon{box-shadow:0 0 0 1px rgba(56,189,248,.12), 0 14px 30px rgba(56,189,248,.14), inset 0 1px 0 rgba(255,255,255,.06)}
+    #markets .card:nth-child(2) .icon{box-shadow:0 0 0 1px rgba(251,191,36,.1), 0 14px 30px rgba(251,191,36,.12), inset 0 1px 0 rgba(255,255,255,.06)}
+    #markets .card:nth-child(3) .icon{box-shadow:0 0 0 1px rgba(52,211,153,.1), 0 14px 30px rgba(52,211,153,.12), inset 0 1px 0 rgba(255,255,255,.06)}
+    #markets .card:nth-child(4) .icon{box-shadow:0 0 0 1px rgba(147,197,253,.1), 0 14px 30px rgba(59,130,246,.12), inset 0 1px 0 rgba(255,255,255,.06)}
     .icon{
       width:52px; height:52px; border-radius:16px;
       display:grid; place-items:center; margin-bottom:18px;
@@ -291,16 +449,24 @@
     .card h3{margin:0 0 10px; font-size:21px}
     .card p{margin:0; color:#aebed5; line-height:1.75}
     .tagline{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px}
-    .tag{padding:6px 10px; border-radius:999px; font-size:12px; color:#cfe7ff; background:rgba(30,41,59,.78); border:1px solid rgba(148,163,184,.16); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth)}
-    .type{display:inline-flex; margin-bottom:12px; padding:6px 10px; border-radius:999px; font-size:12px; color:#7dd3fc; background:rgba(8,47,73,.25); border:1px solid rgba(56,189,248,.18); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth)}
+    .tag{padding:6px 10px; border-radius:999px; font-size:12px; color:#cfe7ff; background:rgba(30,41,59,.78); border:1px solid rgba(148,163,184,.16); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth), box-shadow 420ms var(--ease-smooth)}
+    .type{display:inline-flex; margin-bottom:12px; padding:6px 10px; border-radius:999px; font-size:12px; color:#7dd3fc; background:rgba(8,47,73,.25); border:1px solid rgba(56,189,248,.18); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth), box-shadow 420ms var(--ease-smooth)}
     .card:hover .tag,
     .card:hover .type{
       transform:translateY(-1px);
       border-color:rgba(125,211,252,.24);
       background:rgba(30,41,59,.92);
       color:#e6f4ff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
     }
     .card:hover h3{color:#f6fbff}
+    #strategies .card .type{
+      background:linear-gradient(180deg, rgba(8,47,73,.34), rgba(8,47,73,.18));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    #strategies .card .tag{
+      background:linear-gradient(180deg, rgba(30,41,59,.82), rgba(15,23,42,.82));
+    }
 
     .services{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
     .step{
@@ -331,6 +497,12 @@
         border-color var(--card-duration) var(--ease-smooth),
         box-shadow var(--card-duration) var(--ease-smooth),
         background var(--card-duration) var(--ease-smooth);
+    }
+    .step::before{
+      background:
+        radial-gradient(circle at var(--pointer-x, 18%) var(--pointer-y, 0%), rgba(103,232,249,.14), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 28%);
+      opacity:.28;
     }
     .step::after{
       inset:0 18px auto 18px;
@@ -369,6 +541,9 @@
       transform:translateY(-2px) scale(1.04);
       box-shadow:0 0 0 8px rgba(56,189,248,.08), 0 18px 34px rgba(37,99,235,.24);
       filter:brightness(1.05);
+    }
+    .services:hover .step:not(:hover){
+      filter:saturate(.94) brightness(.96);
     }
     .step h4{margin:0 0 8px; font-size:18px}
     .step p{margin:0; color:#aebed5; line-height:1.7}
@@ -704,6 +879,7 @@
       .btn{width:100%}
       .cta-row{display:grid}
       .hero{padding-top:42px}
+      .hero-copy{transform:none}
       .panel{min-height:auto}
       .testimonials-wall{height:460px}
       .testimonials-stage{
@@ -819,12 +995,12 @@
   <main>
     <section class="hero">
       <div class="container hero-grid">
-        <div>
+        <div class="hero-copy">
           <div class="eyebrow"><span class="dot"></span><span>SYSTEM ONLINE / READY FOR DEPLOYMENT</span></div>
           <h1>将您的交易灵感转化为<span class="gradient">无情执行的代码</span></h1>
           <p class="lead">针对 A股、美股、期货及加密货币市场的机构级量化策略定制服务。我们负责底层架构、回测逻辑与执行接口，您只需专注于交易思想。</p>
           <div class="cta-row">
-            <a class="btn btn-primary" href="#services">提交定制需求 →</a>
+            <a class="btn btn-primary" href="#services">查看定制流程 →</a>
             <a class="btn btn-secondary" href="#strategies">查看策略模型库</a>
           </div>
         </div>
