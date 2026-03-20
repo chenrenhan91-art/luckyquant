@@ -19,6 +19,9 @@
       --gold:#fbbf24;
       --shadow:0 20px 80px rgba(0,0,0,.38);
       --radius:22px;
+      --ease-smooth:cubic-bezier(.22,1,.36,1);
+      --ease-soft:cubic-bezier(.16,1,.3,1);
+      --card-duration:420ms;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -153,7 +156,7 @@
     .console .line{opacity:.94}
     .console .good{color:#86efac}
     .console .muted{color:#64748b}
-    .chart-area{display:grid; grid-template-columns:minmax(0, 1fr) 188px; gap:14px; padding:0 20px 20px; align-items:start}
+    .chart-area{display:grid; grid-template-columns:minmax(0, 1fr) 188px; gap:14px; padding:14px 20px 20px; align-items:center}
     .chart-box,.stats-box{border:1px solid rgba(148,163,184,.14); background:rgba(15,23,42,.55); border-radius:18px}
     .chart-box{padding:16px 16px 12px}
     .stats-box{padding:16px; display:grid; align-content:center}
@@ -181,6 +184,11 @@
     .grid-4{grid-template-columns:repeat(4,1fr)}
     .grid-3{grid-template-columns:repeat(3,1fr)}
     .card{
+      --card-tilt-x:0deg;
+      --card-tilt-y:0deg;
+      --card-shift-x:0px;
+      --card-shift-y:0px;
+      --card-lift:0px;
       position:relative;
       padding:22px;
       border-radius:20px;
@@ -188,24 +196,180 @@
       background:var(--card);
       box-shadow:var(--shadow);
       overflow:hidden;
+      isolation:isolate;
+      backface-visibility:hidden;
+      transform-style:preserve-3d;
+      transform:
+        perspective(1200px)
+        translate3d(var(--card-shift-x), calc(var(--card-shift-y) + var(--card-lift)), 0)
+        rotateX(var(--card-tilt-x))
+        rotateY(var(--card-tilt-y));
+      transition:
+        transform var(--card-duration) var(--ease-smooth),
+        border-color var(--card-duration) var(--ease-smooth),
+        box-shadow var(--card-duration) var(--ease-smooth),
+        background var(--card-duration) var(--ease-smooth),
+        filter var(--card-duration) var(--ease-smooth);
     }
-    .card:hover{transform:translateY(-2px); transition:.25s ease; border-color:rgba(56,189,248,.28)}
+    .card::before,
+    .card::after,
+    .step::before,
+    .step::after,
+    .testimonial-card::before,
+    .testimonial-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius:inherit;
+    }
+    .card::before,
+    .step::before,
+    .testimonial-card::before{
+      inset:-1px;
+      background:
+        radial-gradient(circle at var(--pointer-x, 20%) var(--pointer-y, 0%), rgba(103,232,249,.16), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,.08), transparent 38%, transparent 68%, rgba(56,189,248,.08));
+      opacity:.24;
+      transition:opacity var(--card-duration) var(--ease-smooth), transform var(--card-duration) var(--ease-smooth);
+      z-index:0;
+    }
+    .card::after,
+    .testimonial-card::after{
+      inset:-32% auto -32% -38%;
+      width:44%;
+      border-radius:32px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      opacity:0;
+      transform:translateX(-160%) rotate(14deg);
+      transition:transform 900ms var(--ease-soft), opacity 420ms var(--ease-soft);
+      z-index:0;
+    }
+    .card > *,
+    .step > *,
+    .testimonial-card > *{
+      position:relative;
+      z-index:1;
+    }
+    .card:hover{
+      --card-lift:-6px;
+      border-color:rgba(103,232,249,.28);
+      box-shadow:0 28px 90px rgba(0,0,0,.42), 0 0 0 1px rgba(103,232,249,.05);
+      background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(6,12,26,.92));
+    }
+    .card:hover::before{opacity:.58}
+    .card:hover::after{
+      opacity:.9;
+      transform:translateX(290%) rotate(14deg);
+    }
     .icon{
       width:52px; height:52px; border-radius:16px;
       display:grid; place-items:center; margin-bottom:18px;
       background:linear-gradient(135deg, rgba(56,189,248,.18), rgba(37,99,235,.12));
       border:1px solid rgba(56,189,248,.18);
       font-size:24px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+      transform:translateZ(18px);
+      transition:
+        transform 560ms var(--ease-smooth),
+        box-shadow 560ms var(--ease-smooth),
+        border-color 560ms var(--ease-smooth),
+        background 560ms var(--ease-smooth),
+        filter 560ms var(--ease-smooth);
+      animation:icon-breathe 7s var(--ease-soft) infinite;
+    }
+    @keyframes icon-breathe{
+      0%,100%{transform:translate3d(0,0,18px); filter:brightness(1)}
+      50%{transform:translate3d(0,-2px,18px); filter:brightness(1.06)}
+    }
+    .card:hover .icon{
+      transform:translate3d(0,-3px,26px) scale(1.03);
+      border-color:rgba(125,211,252,.34);
+      background:linear-gradient(135deg, rgba(56,189,248,.28), rgba(37,99,235,.16));
+      box-shadow:0 18px 36px rgba(14,165,233,.18), inset 0 1px 0 rgba(255,255,255,.08);
     }
     .card h3{margin:0 0 10px; font-size:21px}
     .card p{margin:0; color:#aebed5; line-height:1.75}
     .tagline{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px}
-    .tag{padding:6px 10px; border-radius:999px; font-size:12px; color:#cfe7ff; background:rgba(30,41,59,.78); border:1px solid rgba(148,163,184,.16)}
-    .type{display:inline-flex; margin-bottom:12px; padding:6px 10px; border-radius:999px; font-size:12px; color:#7dd3fc; background:rgba(8,47,73,.25); border:1px solid rgba(56,189,248,.18)}
+    .tag{padding:6px 10px; border-radius:999px; font-size:12px; color:#cfe7ff; background:rgba(30,41,59,.78); border:1px solid rgba(148,163,184,.16); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth)}
+    .type{display:inline-flex; margin-bottom:12px; padding:6px 10px; border-radius:999px; font-size:12px; color:#7dd3fc; background:rgba(8,47,73,.25); border:1px solid rgba(56,189,248,.18); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth)}
+    .card:hover .tag,
+    .card:hover .type{
+      transform:translateY(-1px);
+      border-color:rgba(125,211,252,.24);
+      background:rgba(30,41,59,.92);
+      color:#e6f4ff;
+    }
+    .card:hover h3{color:#f6fbff}
 
     .services{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
-    .step{padding:22px; border-radius:20px; background:rgba(15,23,42,.65); border:1px solid var(--line); box-shadow:var(--shadow)}
-    .step .num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#38bdf8,#2563eb);font-weight:800;margin-bottom:12px}
+    .step{
+      --card-tilt-x:0deg;
+      --card-tilt-y:0deg;
+      --card-shift-x:0px;
+      --card-shift-y:0px;
+      --card-lift:0px;
+      --reveal-offset:0px;
+      position:relative;
+      padding:22px;
+      border-radius:20px;
+      background:rgba(15,23,42,.65);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      isolation:isolate;
+      backface-visibility:hidden;
+      transform-style:preserve-3d;
+      transform:
+        perspective(1200px)
+        translate3d(var(--card-shift-x), calc(var(--card-shift-y) + var(--card-lift) + var(--reveal-offset)), 0)
+        rotateX(var(--card-tilt-x))
+        rotateY(var(--card-tilt-y));
+      transition:
+        opacity 680ms var(--ease-smooth),
+        transform var(--card-duration) var(--ease-smooth),
+        border-color var(--card-duration) var(--ease-smooth),
+        box-shadow var(--card-duration) var(--ease-smooth),
+        background var(--card-duration) var(--ease-smooth);
+    }
+    .step::after{
+      inset:0 18px auto 18px;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(103,232,249,.82), transparent);
+      opacity:.28;
+      transform:scaleX(.18);
+      transform-origin:left center;
+      transition:transform 720ms var(--ease-smooth), opacity 420ms var(--ease-smooth);
+    }
+    body.motion-ready .step{
+      opacity:0;
+      --reveal-offset:30px;
+    }
+    body.motion-ready .step.is-visible{
+      opacity:1;
+      --reveal-offset:0px;
+    }
+    .step:hover{
+      --card-lift:-6px;
+      border-color:rgba(103,232,249,.24);
+      background:linear-gradient(180deg, rgba(18,30,53,.82), rgba(10,18,33,.92));
+      box-shadow:0 28px 90px rgba(0,0,0,.42), 0 0 0 1px rgba(103,232,249,.04);
+    }
+    .step:hover::before{opacity:.5}
+    .step:hover::after{
+      opacity:.88;
+      transform:scaleX(1);
+    }
+    .step .num{
+      width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#38bdf8,#2563eb);font-weight:800;margin-bottom:12px;
+      box-shadow:0 0 0 0 rgba(56,189,248,.22), 0 14px 28px rgba(37,99,235,.18);
+      transition:transform 520ms var(--ease-smooth), box-shadow 520ms var(--ease-smooth), filter 520ms var(--ease-smooth);
+    }
+    .step:hover .num{
+      transform:translateY(-2px) scale(1.04);
+      box-shadow:0 0 0 8px rgba(56,189,248,.08), 0 18px 34px rgba(37,99,235,.24);
+      filter:brightness(1.05);
+    }
     .step h4{margin:0 0 8px; font-size:18px}
     .step p{margin:0; color:#aebed5; line-height:1.7}
 
@@ -313,6 +477,7 @@
       gap:var(--lane-gap);
     }
     .testimonial-card{
+      position:relative;
       padding:18px;
       border-radius:22px;
       border:1px solid rgba(148,163,184,.12);
@@ -320,6 +485,31 @@
       box-shadow:
         0 18px 40px rgba(0,0,0,.20),
         inset 0 1px 0 rgba(255,255,255,.03);
+      overflow:hidden;
+      isolation:isolate;
+      transform:translate3d(0,0,0);
+      filter:saturate(.96) brightness(.97);
+      transition:
+        transform 460ms var(--ease-smooth),
+        border-color 460ms var(--ease-smooth),
+        box-shadow 460ms var(--ease-smooth),
+        filter 460ms var(--ease-smooth),
+        background 460ms var(--ease-smooth);
+    }
+    .testimonial-card:hover{
+      transform:translate3d(0,-6px,0) scale(1.01);
+      border-color:rgba(125,211,252,.22);
+      background:linear-gradient(180deg, rgba(18,30,53,.96), rgba(8,15,28,.96));
+      box-shadow:
+        0 26px 56px rgba(0,0,0,.30),
+        0 0 0 1px rgba(103,232,249,.04),
+        inset 0 1px 0 rgba(255,255,255,.04);
+      filter:saturate(1.03) brightness(1.03);
+    }
+    .testimonial-card:hover::before{opacity:.56}
+    .testimonial-card:hover::after{
+      opacity:.82;
+      transform:translateX(285%) rotate(14deg);
     }
     .testimonial-head{
       display:flex;
@@ -335,6 +525,17 @@
       border:1px solid rgba(148,163,184,.22);
       background:#0f172a;
       flex:0 0 auto;
+      transition:
+        transform 460ms var(--ease-smooth),
+        box-shadow 460ms var(--ease-smooth),
+        border-color 460ms var(--ease-smooth),
+        filter 460ms var(--ease-smooth);
+    }
+    .testimonial-card:hover .testimonial-avatar{
+      transform:translateY(-1px) scale(1.03);
+      border-color:rgba(125,211,252,.32);
+      box-shadow:0 0 0 5px rgba(56,189,248,.08), 0 16px 28px rgba(14,165,233,.18);
+      filter:saturate(1.04);
     }
     .testimonial-name{
       margin:0 0 4px;
@@ -368,6 +569,19 @@
       color:#94a9c7;
       font-size:11px;
       letter-spacing:.04em;
+      transition:
+        transform 420ms var(--ease-smooth),
+        border-color 420ms var(--ease-smooth),
+        background 420ms var(--ease-smooth),
+        color 420ms var(--ease-smooth),
+        box-shadow 420ms var(--ease-smooth);
+    }
+    .testimonial-card:hover .testimonial-meta span{
+      transform:translateY(-1px);
+      border-color:rgba(125,211,252,.18);
+      background:rgba(30,41,59,.92);
+      color:#dff1ff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
     }
     @keyframes testimonial-marquee{
       from{transform:translateY(0)}
@@ -504,6 +718,48 @@
       .modal-dialog{padding:22px 18px 18px}
       .modal-dialog h3{font-size:24px}
       .modal-qr{padding:14px}
+    }
+    @media (hover:none), (pointer:coarse){
+      .card,
+      .step{
+        transform:none;
+      }
+      .card::after,
+      .testimonial-card::after{
+        display:none;
+      }
+    }
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      .ticker-track,
+      .testimonial-lane,
+      .icon{
+        animation:none !important;
+      }
+      .card,
+      .step,
+      .testimonial-card,
+      .icon,
+      .testimonial-avatar,
+      .tag,
+      .type,
+      .testimonial-meta span,
+      .step .num{
+        transition:none !important;
+      }
+      .card,
+      .step,
+      .testimonial-card{
+        transform:none !important;
+        filter:none !important;
+      }
+      .card::after,
+      .testimonial-card::after{
+        display:none;
+      }
+      body.motion-ready .step{
+        opacity:1;
+      }
     }
   </style>
 </head>
@@ -673,13 +929,6 @@
           <p>这里展示的是我们在量化项目合作中最常收到的反馈方向: 回测口径是否说得清楚，实盘执行是否稳定，风控与监控是否接得顺，后续迭代能不能持续推进。</p>
           <p>我们更希望把真实合作里的判断标准讲明白，而不是只放几句笼统的好评。对很多团队来说，真正决定是否继续合作的，往往是细节是否可靠、过程是否透明、交付后是否便于继续扩展。</p>
           <div class="proof-note">以下评价均做匿名化处理，名称使用缩写，身份信息保留到策略角色与地区层级，头像为示意图，仅用于官网展示。</div>
-          <div class="market-tags">
-            <span>A股</span>
-            <span>Crypto</span>
-            <span>CTA Futures</span>
-            <span>Options</span>
-            <span>Family Office</span>
-          </div>
         </div>
 
         <div class="testimonials-wall">
@@ -1001,6 +1250,8 @@
       const modal = document.getElementById("consultation-modal");
       const openButtons = document.querySelectorAll("[data-open-consultation]");
       const closeButtons = document.querySelectorAll("[data-close-consultation]");
+      const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
 
       if (modal && openButtons.length) {
         const openModal = () => {
@@ -1032,6 +1283,65 @@
             closeModal();
           }
         });
+      }
+
+      if (!reduceMotionQuery.matches) {
+        const steps = document.querySelectorAll(".step");
+        if (steps.length && "IntersectionObserver" in window) {
+          document.body.classList.add("motion-ready");
+          const stepObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const revealDelay = Number(entry.target.dataset.stepIndex || 0) * 80;
+              window.setTimeout(() => {
+                entry.target.classList.add("is-visible");
+              }, revealDelay);
+              observer.unobserve(entry.target);
+            });
+          }, { threshold: 0.24, rootMargin: "0px 0px -8% 0px" });
+
+          steps.forEach((step, index) => {
+            step.dataset.stepIndex = String(index);
+            stepObserver.observe(step);
+          });
+        }
+
+        if (finePointerQuery.matches) {
+          const interactiveCards = document.querySelectorAll(".card, .step");
+          const resetCardMotion = (element) => {
+            element.style.setProperty("--pointer-x", "20%");
+            element.style.setProperty("--pointer-y", "0%");
+            element.style.setProperty("--card-tilt-x", "0deg");
+            element.style.setProperty("--card-tilt-y", "0deg");
+            element.style.setProperty("--card-shift-x", "0px");
+            element.style.setProperty("--card-shift-y", "0px");
+          };
+
+          interactiveCards.forEach((card) => {
+            resetCardMotion(card);
+
+            card.addEventListener("mousemove", (event) => {
+              const rect = card.getBoundingClientRect();
+              const x = (event.clientX - rect.left) / rect.width;
+              const y = (event.clientY - rect.top) / rect.height;
+              const rotateY = (x - 0.5) * 8;
+              const rotateX = (0.5 - y) * 8;
+              const shiftX = (x - 0.5) * 6;
+              const shiftY = (y - 0.5) * 5;
+
+              card.style.setProperty("--pointer-x", `${(x * 100).toFixed(2)}%`);
+              card.style.setProperty("--pointer-y", `${(y * 100).toFixed(2)}%`);
+              card.style.setProperty("--card-tilt-x", `${rotateX.toFixed(2)}deg`);
+              card.style.setProperty("--card-tilt-y", `${rotateY.toFixed(2)}deg`);
+              card.style.setProperty("--card-shift-x", `${shiftX.toFixed(2)}px`);
+              card.style.setProperty("--card-shift-y", `${shiftY.toFixed(2)}px`);
+            });
+
+            card.addEventListener("mouseleave", () => {
+              resetCardMotion(card);
+            });
+          });
+        }
       }
 
       const canvas = document.getElementById("shader-bg");
