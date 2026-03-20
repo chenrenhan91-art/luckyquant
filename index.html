@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUCKYQUANT PRO</title>
+  <style>
+    :root{
+      --bg:#020617;
+      --bg-soft:#0b1220;
+      --card:rgba(15,23,42,.74);
+      --line:rgba(148,163,184,.18);
+      --text:#dbe7ff;
+      --muted:#94a3b8;
+      --blue:#38bdf8;
+      --blue-2:#2563eb;
+      --green:#34d399;
+      --red:#fb7185;
+      --gold:#fbbf24;
+      --shadow:0 20px 80px rgba(0,0,0,.38);
+      --radius:22px;
+      --ease-smooth:cubic-bezier(.22,1,.36,1);
+      --ease-soft:cubic-bezier(.16,1,.3,1);
+      --card-duration:420ms;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(37,99,235,.18), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(16,185,129,.12), transparent 24%),
+        linear-gradient(180deg,#06101f 0%, #020617 38%, #020617 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:1;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(37,99,235,.14), transparent 30%),
+        radial-gradient(circle at 78% 10%, rgba(16,185,129,.08), transparent 24%),
+        linear-gradient(180deg, rgba(2,6,23,.15), rgba(2,6,23,.55));
+      pointer-events:none;
+      opacity:1;
+    }
+    body::after{
+      display:none;
+    }
+    #shader-bg{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+      z-index:0;
+      pointer-events:none;
+      opacity:.72;
+    }
+    .ticker-wrap,nav,main{position:relative; z-index:2}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1220px, calc(100% - 32px)); margin:0 auto}
+
+    .ticker-wrap{
+      position:sticky; top:0; z-index:60;
+      backdrop-filter:blur(14px);
+      background:rgba(2,6,23,.78);
+      border-bottom:1px solid rgba(148,163,184,.12);
+    }
+    .ticker{
+      display:flex; gap:24px; align-items:center;
+      overflow:hidden; white-space:nowrap; padding:10px 0;
+      font-size:12px;
+    }
+    .ticker-label{flex:0 0 auto; color:#64748b; font-weight:700; letter-spacing:.18em; text-transform:uppercase}
+    .ticker-track{display:flex; gap:28px; min-width:max-content; animation:marquee 28s linear infinite}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .tick{display:flex; align-items:center; gap:8px; color:var(--muted)}
+    .tick strong{color:#e2e8f0}
+    .up{color:var(--green)} .down{color:var(--red)} .flat{color:#cbd5e1}
+
+    nav{
+      position:sticky; top:37px; z-index:50;
+      margin-top:10px;
+    }
+    .nav-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 18px;
+      border:1px solid var(--line);
+      background:rgba(2,6,23,.55);
+      backdrop-filter:blur(18px);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.04em}
+    .brand-badge{
+      width:38px; height:38px; border-radius:12px;
+      display:grid; place-items:center;
+      background:
+        radial-gradient(circle at 26% 22%, rgba(103,232,249,.24), transparent 34%),
+        linear-gradient(145deg, rgba(56,189,248,.26), rgba(37,99,235,.12));
+      border:1px solid rgba(56,189,248,.25);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 0 24px rgba(56,189,248,.08),
+        0 10px 22px rgba(2,6,23,.24);
+      position:relative;
+      overflow:hidden;
+    }
+    .brand-badge::before{
+      content:"";
+      position:absolute;
+      inset:1px;
+      border-radius:11px;
+      border:1px solid rgba(255,255,255,.04);
+      pointer-events:none;
+    }
+    .brand-mark{
+      width:24px;
+      height:24px;
+      display:block;
+      filter:drop-shadow(0 4px 10px rgba(56,189,248,.18));
+    }
+    .brand-mark .mark-frame{
+      fill:url(#brandBadgeBg);
+      stroke:rgba(255,255,255,.18);
+      stroke-width:.7;
+    }
+    .brand-mark .mark-l{
+      fill:url(#brandLStroke);
+    }
+    .brand-mark .mark-q-ring{
+      fill:none;
+      stroke:url(#brandQStroke);
+      stroke-width:2.5;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .brand-mark .mark-q-tail{
+      fill:none;
+      stroke:url(#brandTailStroke);
+      stroke-width:2.4;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .brand span span{color:var(--blue)}
+    .nav-links{display:flex; gap:28px; color:#cbd5e1; font-size:14px}
+    .nav-links a:hover{color:var(--blue)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      border:none; cursor:pointer; color:white; font-weight:700;
+      border-radius:14px; padding:14px 20px;
+      transition:.25s ease;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg, #2563eb, #0ea5e9);
+      box-shadow:0 10px 30px rgba(37,99,235,.35);
+    }
+    .btn-primary:hover{transform:translateY(-1px); box-shadow:0 16px 40px rgba(37,99,235,.45)}
+    .btn-secondary{
+      background:rgba(15,23,42,.62);
+      border:1px solid var(--line);
+      color:#e5eefc;
+    }
+    .btn-secondary:hover{background:rgba(30,41,59,.8)}
+
+    .hero{padding:68px 0 44px}
+    .hero-grid{display:grid; grid-template-columns:1.06fr .94fr; gap:32px; align-items:center}
+    .hero-copy{
+      transform:translateY(-10px);
+    }
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:10px; padding:8px 12px;
+      border:1px solid rgba(56,189,248,.24);
+      background:rgba(8,47,73,.28); border-radius:999px;
+      color:#7dd3fc; font-size:12px; letter-spacing:.08em;
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue)}
+    h1{font-size:clamp(34px, 5.6vw, 68px); line-height:1.1; margin:22px 0 22px; letter-spacing:-.03em}
+    .gradient{background:linear-gradient(90deg, #67e8f9, #34d399); -webkit-background-clip:text; background-clip:text; color:transparent}
+    .lead{font-size:18px; line-height:1.8; color:#bfd0ec; max-width:720px; margin:0 0 28px}
+    .cta-row{display:flex; gap:14px; flex-wrap:wrap}
+
+    .panel{
+      position:relative;
+      min-height:438px;
+      padding:0;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,23,42,.82), rgba(2,6,23,.86));
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      isolation:isolate;
+      transition:
+        transform 700ms var(--ease-smooth),
+        border-color 700ms var(--ease-smooth),
+        box-shadow 700ms var(--ease-smooth),
+        background 700ms var(--ease-smooth);
+    }
+    .panel::before,
+    .panel::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
+    .panel::before{
+      background:
+        linear-gradient(118deg, rgba(255,255,255,.10), transparent 24%, transparent 58%, rgba(56,189,248,.06) 78%, transparent),
+        radial-gradient(circle at 18% 16%, rgba(56,189,248,.18), transparent 28%),
+        radial-gradient(circle at 84% 72%, rgba(52,211,153,.12), transparent 26%);
+      opacity:.82;
+      mix-blend-mode:screen;
+    }
+    .panel::after{
+      inset:1px;
+      border-radius:calc(var(--radius) - 1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        inset 0 -24px 60px rgba(2,6,23,.24);
+      opacity:.92;
+    }
+    .panel:hover{
+      transform:translateY(-4px);
+      border-color:rgba(125,211,252,.18);
+      background:linear-gradient(180deg, rgba(18,30,53,.88), rgba(3,8,20,.94));
+      box-shadow:0 32px 110px rgba(0,0,0,.44), 0 0 0 1px rgba(125,211,252,.04);
+    }
+    .window-top{display:flex; align-items:center; gap:8px; padding:14px 16px; border-bottom:1px solid rgba(148,163,184,.10); color:#64748b; font-size:12px; position:relative; z-index:1; background:linear-gradient(180deg, rgba(15,23,42,.36), rgba(15,23,42,.16))}
+    .window-top i{display:block; width:10px; height:10px; border-radius:50%}
+    .window-top i:nth-child(1){background:#fb7185}.window-top i:nth-child(2){background:#fbbf24}.window-top i:nth-child(3){background:#34d399}
+    .console{padding:18px 20px 22px; font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace; color:#93c5fd; position:relative; z-index:1}
+    .console .line{opacity:.94}
+    .console .good{color:#86efac}
+    .console .muted{color:#64748b}
+    .chart-area{display:grid; grid-template-columns:minmax(0, 1fr) 188px; gap:14px; padding:14px 20px 20px; align-items:center; position:relative; z-index:1}
+    .chart-box,.stats-box{
+      position:relative;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.55);
+      border-radius:18px;
+      overflow:hidden;
+      transition:
+        transform 620ms var(--ease-smooth),
+        border-color 620ms var(--ease-smooth),
+        box-shadow 620ms var(--ease-smooth),
+        background 620ms var(--ease-smooth);
+    }
+    .chart-box::before,
+    .chart-box::after,
+    .stats-box::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    .chart-box::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), transparent 28%),
+        linear-gradient(120deg, rgba(255,255,255,.10), transparent 24%, transparent 56%, rgba(56,189,248,.08) 76%, transparent);
+      opacity:.72;
+    }
+    .chart-box::after{
+      background:
+        linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      width:34%;
+      inset:-24% auto -24% -28%;
+      border-radius:28px;
+      opacity:0;
+      transform:translateX(-180%) rotate(15deg);
+      transition:transform 1200ms var(--ease-soft), opacity 520ms var(--ease-soft);
+    }
+    .stats-box::before{
+      background:
+        radial-gradient(circle at 22% 16%, rgba(56,189,248,.14), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 38%);
+      opacity:.8;
+    }
+    .panel:hover .chart-box,
+    .panel:hover .stats-box{
+      border-color:rgba(125,211,252,.18);
+      box-shadow:0 18px 36px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .panel:hover .chart-box{
+      transform:translateY(-2px);
+      background:rgba(15,23,42,.68);
+    }
+    .panel:hover .chart-box::after{
+      opacity:.82;
+      transform:translateX(340%) rotate(15deg);
+    }
+    .panel:hover .stats-box{
+      transform:translateY(-1px);
+      background:rgba(15,23,42,.7);
+    }
+    .chart-box{padding:16px 16px 12px}
+    .stats-box{padding:16px; display:grid; align-content:center}
+    .report-image{display:block; width:100%; border-radius:14px; aspect-ratio:2.95 / 1; object-fit:cover}
+    .report-meta{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:10px;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#7c8ca5;
+    }
+    .mini-grid{display:grid; gap:10px}
+    .stat{
+      position:relative;
+      padding:12px;
+      background:rgba(2,6,23,.55);
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:14px;
+      overflow:hidden;
+      transition:
+        transform 560ms var(--ease-smooth),
+        border-color 560ms var(--ease-smooth),
+        box-shadow 560ms var(--ease-smooth),
+        background 560ms var(--ease-smooth);
+    }
+    .stat::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56,189,248,.16), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 42%);
+      opacity:.64;
+      pointer-events:none;
+    }
+    .stat small{display:block; color:#7c8ca5; margin-bottom:4px}
+    .stat strong{font-size:20px; position:relative}
+    .panel:hover .stat{
+      transform:translateY(-1px);
+      border-color:rgba(125,211,252,.16);
+      background:rgba(4,12,26,.72);
+      box-shadow:0 14px 32px rgba(0,0,0,.22);
+    }
+    .panel:hover .stat:nth-child(1){transition-delay:40ms}
+    .panel:hover .stat:nth-child(2){transition-delay:90ms}
+    .panel:hover .stat:nth-child(3){transition-delay:140ms}
+
+    section{padding:42px 0}
+    .section-head{text-align:center; margin-bottom:28px}
+    .section-head h2{font-size:clamp(28px,3.5vw,42px); margin:0 0 10px}
+    .section-head p{color:#a9bbd3; margin:0 auto; max-width:760px; line-height:1.8}
+    .grid{display:grid; gap:18px}
+    .grid-4{grid-template-columns:repeat(4,1fr)}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .card{
+      --card-tilt-x:0deg;
+      --card-tilt-y:0deg;
+      --card-shift-x:0px;
+      --card-shift-y:0px;
+      --card-lift:0px;
+      position:relative;
+      padding:22px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:var(--card);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      isolation:isolate;
+      backface-visibility:hidden;
+      transform-style:preserve-3d;
+      transform:
+        perspective(1200px)
+        translate3d(var(--card-shift-x), calc(var(--card-shift-y) + var(--card-lift)), 0)
+        rotateX(var(--card-tilt-x))
+        rotateY(var(--card-tilt-y));
+      transition:
+        transform var(--card-duration) var(--ease-smooth),
+        border-color var(--card-duration) var(--ease-smooth),
+        box-shadow var(--card-duration) var(--ease-smooth),
+        background var(--card-duration) var(--ease-smooth),
+        filter var(--card-duration) var(--ease-smooth);
+    }
+    #markets .card,
+    #strategies .card{
+      backdrop-filter:blur(10px);
+    }
+    .card::before,
+    .card::after,
+    .step::before,
+    .step::after,
+    .testimonial-card::before,
+    .testimonial-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius:inherit;
+    }
+    .card::before,
+    .step::before,
+    .testimonial-card::before{
+      inset:-1px;
+      background:
+        radial-gradient(circle at var(--pointer-x, 20%) var(--pointer-y, 0%), rgba(103,232,249,.16), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,.08), transparent 38%, transparent 68%, rgba(56,189,248,.08));
+      opacity:.24;
+      transition:opacity var(--card-duration) var(--ease-smooth), transform var(--card-duration) var(--ease-smooth);
+      z-index:0;
+    }
+    #markets .card::before{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 24%),
+        radial-gradient(circle at var(--pointer-x, 18%) var(--pointer-y, 2%), rgba(103,232,249,.16), transparent 32%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.028) 0 1px, transparent 1px 34px),
+        repeating-linear-gradient(180deg, rgba(255,255,255,.02) 0 1px, transparent 1px 28px);
+      opacity:.3;
+    }
+    #strategies .card::before{
+      background:
+        radial-gradient(circle at 18% 16%, rgba(103,232,249,.14), transparent 28%),
+        radial-gradient(circle at 85% 82%, rgba(52,211,153,.08), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,.07), transparent 30%);
+      opacity:.34;
+    }
+    .card::after,
+    .testimonial-card::after{
+      inset:-32% auto -32% -38%;
+      width:44%;
+      border-radius:32px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      opacity:0;
+      transform:translateX(-160%) rotate(14deg);
+      transition:transform 900ms var(--ease-soft), opacity 420ms var(--ease-soft);
+      z-index:0;
+    }
+    .card > *,
+    .step > *,
+    .testimonial-card > *{
+      position:relative;
+      z-index:1;
+    }
+    .card:hover{
+      --card-lift:-6px;
+      border-color:rgba(103,232,249,.28);
+      box-shadow:0 28px 90px rgba(0,0,0,.42), 0 0 0 1px rgba(103,232,249,.05);
+      background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(6,12,26,.92));
+    }
+    #markets .card:hover{
+      box-shadow:0 30px 96px rgba(0,0,0,.44), 0 0 0 1px rgba(103,232,249,.05), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    #strategies .card:hover{
+      box-shadow:0 26px 84px rgba(0,0,0,.4), 0 0 0 1px rgba(103,232,249,.04);
+      background:linear-gradient(180deg, rgba(17,28,49,.88), rgba(8,14,27,.93));
+    }
+    .card:hover::before{opacity:.58}
+    .card:hover::after{
+      opacity:.9;
+      transform:translateX(290%) rotate(14deg);
+    }
+    #markets .card:nth-child(1) .icon{box-shadow:0 0 0 1px rgba(56,189,248,.12), 0 14px 30px rgba(56,189,248,.14), inset 0 1px 0 rgba(255,255,255,.06)}
+    #markets .card:nth-child(2) .icon{box-shadow:0 0 0 1px rgba(251,191,36,.1), 0 14px 30px rgba(251,191,36,.12), inset 0 1px 0 rgba(255,255,255,.06)}
+    #markets .card:nth-child(3) .icon{box-shadow:0 0 0 1px rgba(52,211,153,.1), 0 14px 30px rgba(52,211,153,.12), inset 0 1px 0 rgba(255,255,255,.06)}
+    #markets .card:nth-child(4) .icon{box-shadow:0 0 0 1px rgba(147,197,253,.1), 0 14px 30px rgba(59,130,246,.12), inset 0 1px 0 rgba(255,255,255,.06)}
+    .icon{
+      width:52px; height:52px; border-radius:16px;
+      display:grid; place-items:center; margin-bottom:18px;
+      background:linear-gradient(135deg, rgba(56,189,248,.18), rgba(37,99,235,.12));
+      border:1px solid rgba(56,189,248,.18);
+      font-size:24px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+      transform:translateZ(18px);
+      transition:
+        transform 560ms var(--ease-smooth),
+        box-shadow 560ms var(--ease-smooth),
+        border-color 560ms var(--ease-smooth),
+        background 560ms var(--ease-smooth),
+        filter 560ms var(--ease-smooth);
+      animation:icon-breathe 7s var(--ease-soft) infinite;
+    }
+    @keyframes icon-breathe{
+      0%,100%{transform:translate3d(0,0,18px); filter:brightness(1)}
+      50%{transform:translate3d(0,-2px,18px); filter:brightness(1.06)}
+    }
+    .card:hover .icon{
+      transform:translate3d(0,-3px,26px) scale(1.03);
+      border-color:rgba(125,211,252,.34);
+      background:linear-gradient(135deg, rgba(56,189,248,.28), rgba(37,99,235,.16));
+      box-shadow:0 18px 36px rgba(14,165,233,.18), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .card h3{margin:0 0 10px; font-size:21px}
+    .card p{margin:0; color:#aebed5; line-height:1.75}
+    .tagline{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px}
+    .tag{padding:6px 10px; border-radius:999px; font-size:12px; color:#cfe7ff; background:rgba(30,41,59,.78); border:1px solid rgba(148,163,184,.16); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth), box-shadow 420ms var(--ease-smooth)}
+    .type{display:inline-flex; margin-bottom:12px; padding:6px 10px; border-radius:999px; font-size:12px; color:#7dd3fc; background:rgba(8,47,73,.25); border:1px solid rgba(56,189,248,.18); transition:transform 420ms var(--ease-smooth), border-color 420ms var(--ease-smooth), background 420ms var(--ease-smooth), color 420ms var(--ease-smooth), box-shadow 420ms var(--ease-smooth)}
+    .card:hover .tag,
+    .card:hover .type{
+      transform:translateY(-1px);
+      border-color:rgba(125,211,252,.24);
+      background:rgba(30,41,59,.92);
+      color:#e6f4ff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .card:hover h3{color:#f6fbff}
+    #strategies .card .type{
+      background:linear-gradient(180deg, rgba(8,47,73,.34), rgba(8,47,73,.18));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    #strategies .card .tag{
+      background:linear-gradient(180deg, rgba(30,41,59,.82), rgba(15,23,42,.82));
+    }
+
+    .services{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+    .step{
+      --card-tilt-x:0deg;
+      --card-tilt-y:0deg;
+      --card-shift-x:0px;
+      --card-shift-y:0px;
+      --card-lift:0px;
+      --reveal-offset:0px;
+      position:relative;
+      padding:22px;
+      border-radius:20px;
+      background:rgba(15,23,42,.65);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      isolation:isolate;
+      backface-visibility:hidden;
+      transform-style:preserve-3d;
+      transform:
+        perspective(1200px)
+        translate3d(var(--card-shift-x), calc(var(--card-shift-y) + var(--card-lift) + var(--reveal-offset)), 0)
+        rotateX(var(--card-tilt-x))
+        rotateY(var(--card-tilt-y));
+      transition:
+        opacity 680ms var(--ease-smooth),
+        transform var(--card-duration) var(--ease-smooth),
+        border-color var(--card-duration) var(--ease-smooth),
+        box-shadow var(--card-duration) var(--ease-smooth),
+        background var(--card-duration) var(--ease-smooth);
+    }
+    .step::before{
+      background:
+        radial-gradient(circle at var(--pointer-x, 18%) var(--pointer-y, 0%), rgba(103,232,249,.14), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 28%);
+      opacity:.28;
+    }
+    .step::after{
+      inset:0 18px auto 18px;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(103,232,249,.82), transparent);
+      opacity:.28;
+      transform:scaleX(.18);
+      transform-origin:left center;
+      transition:transform 720ms var(--ease-smooth), opacity 420ms var(--ease-smooth);
+    }
+    body.motion-ready .step{
+      opacity:0;
+      --reveal-offset:30px;
+    }
+    body.motion-ready .step.is-visible{
+      opacity:1;
+      --reveal-offset:0px;
+    }
+    .step:hover{
+      --card-lift:-6px;
+      border-color:rgba(103,232,249,.24);
+      background:linear-gradient(180deg, rgba(18,30,53,.82), rgba(10,18,33,.92));
+      box-shadow:0 28px 90px rgba(0,0,0,.42), 0 0 0 1px rgba(103,232,249,.04);
+    }
+    .step:hover::before{opacity:.5}
+    .step:hover::after{
+      opacity:.88;
+      transform:scaleX(1);
+    }
+    .step .num{
+      width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#38bdf8,#2563eb);font-weight:800;margin-bottom:12px;
+      box-shadow:0 0 0 0 rgba(56,189,248,.22), 0 14px 28px rgba(37,99,235,.18);
+      transition:transform 520ms var(--ease-smooth), box-shadow 520ms var(--ease-smooth), filter 520ms var(--ease-smooth);
+    }
+    .step:hover .num{
+      transform:translateY(-2px) scale(1.04);
+      box-shadow:0 0 0 8px rgba(56,189,248,.08), 0 18px 34px rgba(37,99,235,.24);
+      filter:brightness(1.05);
+    }
+    .services:hover .step:not(:hover){
+      filter:saturate(.94) brightness(.96);
+    }
+    .step h4{margin:0 0 8px; font-size:18px}
+    .step p{margin:0; color:#aebed5; line-height:1.7}
+
+    .testimonials-shell{
+      display:grid;
+      grid-template-columns:.78fr 1.22fr;
+      gap:28px;
+      align-items:center;
+    }
+    .testimonials-copy{
+      padding:8px 0;
+    }
+    .testimonials-copy h2{
+      font-size:clamp(28px,3.6vw,44px);
+      margin:0 0 14px;
+      line-height:1.08;
+    }
+    .testimonials-copy p{
+      margin:0 0 16px;
+      color:#a9bbd3;
+      line-height:1.85;
+    }
+    .proof-note{
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.56);
+      color:#9fb3cf;
+      font-size:14px;
+      line-height:1.75;
+    }
+    .market-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+    .market-tags span{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.16);
+      background:rgba(8,47,73,.26);
+      color:#cce9ff;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .testimonials-wall{
+      position:relative;
+      height:620px;
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid rgba(148,163,184,.14);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(56,189,248,.10), transparent 28%),
+        radial-gradient(circle at 82% 10%, rgba(16,185,129,.08), transparent 22%),
+        linear-gradient(180deg, rgba(15,23,42,.82), rgba(2,6,23,.94));
+      box-shadow:var(--shadow);
+      isolation:isolate;
+    }
+    .testimonials-wall::before,
+    .testimonials-wall::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      pointer-events:none;
+      z-index:3;
+    }
+    .testimonials-wall::before{
+      inset:0;
+      background:
+        linear-gradient(180deg, rgba(2,6,23,.96), transparent 18%, transparent 82%, rgba(2,6,23,.96)),
+        linear-gradient(90deg, rgba(2,6,23,.92), transparent 14%, transparent 86%, rgba(2,6,23,.92));
+    }
+    .testimonials-wall::after{
+      inset:18px;
+      border-radius:24px;
+      border:1px solid rgba(148,163,184,.08);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .testimonials-stage{
+      position:absolute;
+      inset:24px;
+      display:flex;
+      gap:16px;
+      transform:translateX(-28px) rotateX(18deg) rotateY(-12deg) rotateZ(8deg);
+      transform-style:preserve-3d;
+    }
+    .testimonial-lane{
+      --lane-gap:18px;
+      --lane-duration:40s;
+      flex:1 1 0;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:var(--lane-gap);
+      animation:testimonial-marquee var(--lane-duration) linear infinite;
+      will-change:transform;
+    }
+    .testimonial-lane.reverse{animation-direction:reverse}
+    .testimonials-wall:hover .testimonial-lane{animation-play-state:paused}
+    .testimonial-group{
+      display:flex;
+      flex-direction:column;
+      gap:var(--lane-gap);
+    }
+    .testimonial-card{
+      position:relative;
+      padding:18px;
+      border-radius:22px;
+      border:1px solid rgba(148,163,184,.12);
+      background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(9,14,29,.92));
+      box-shadow:
+        0 18px 40px rgba(0,0,0,.20),
+        inset 0 1px 0 rgba(255,255,255,.03);
+      overflow:hidden;
+      isolation:isolate;
+      transform:translate3d(0,0,0);
+      filter:saturate(.96) brightness(.97);
+      transition:
+        transform 460ms var(--ease-smooth),
+        border-color 460ms var(--ease-smooth),
+        box-shadow 460ms var(--ease-smooth),
+        filter 460ms var(--ease-smooth),
+        background 460ms var(--ease-smooth);
+    }
+    .testimonial-card:hover{
+      transform:translate3d(0,-6px,0) scale(1.01);
+      border-color:rgba(125,211,252,.22);
+      background:linear-gradient(180deg, rgba(18,30,53,.96), rgba(8,15,28,.96));
+      box-shadow:
+        0 26px 56px rgba(0,0,0,.30),
+        0 0 0 1px rgba(103,232,249,.04),
+        inset 0 1px 0 rgba(255,255,255,.04);
+      filter:saturate(1.03) brightness(1.03);
+    }
+    .testimonial-card:hover::before{opacity:.56}
+    .testimonial-card:hover::after{
+      opacity:.82;
+      transform:translateX(285%) rotate(14deg);
+    }
+    .testimonial-head{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .testimonial-avatar{
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid rgba(148,163,184,.22);
+      background:#0f172a;
+      flex:0 0 auto;
+      transition:
+        transform 460ms var(--ease-smooth),
+        box-shadow 460ms var(--ease-smooth),
+        border-color 460ms var(--ease-smooth),
+        filter 460ms var(--ease-smooth);
+    }
+    .testimonial-card:hover .testimonial-avatar{
+      transform:translateY(-1px) scale(1.03);
+      border-color:rgba(125,211,252,.32);
+      box-shadow:0 0 0 5px rgba(56,189,248,.08), 0 16px 28px rgba(14,165,233,.18);
+      filter:saturate(1.04);
+    }
+    .testimonial-name{
+      margin:0 0 4px;
+      font-size:15px;
+      font-weight:700;
+      color:#edf6ff;
+    }
+    .testimonial-role{
+      margin:0;
+      color:#8ea3c2;
+      font-size:12px;
+      line-height:1.45;
+    }
+    .testimonial-body{
+      margin:0;
+      color:#d6e3f8;
+      font-size:14px;
+      line-height:1.8;
+    }
+    .testimonial-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+    .testimonial-meta span{
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(30,41,59,.74);
+      border:1px solid rgba(148,163,184,.12);
+      color:#94a9c7;
+      font-size:11px;
+      letter-spacing:.04em;
+      transition:
+        transform 420ms var(--ease-smooth),
+        border-color 420ms var(--ease-smooth),
+        background 420ms var(--ease-smooth),
+        color 420ms var(--ease-smooth),
+        box-shadow 420ms var(--ease-smooth);
+    }
+    .testimonial-card:hover .testimonial-meta span{
+      transform:translateY(-1px);
+      border-color:rgba(125,211,252,.18);
+      background:rgba(30,41,59,.92);
+      color:#dff1ff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    @keyframes testimonial-marquee{
+      from{transform:translateY(0)}
+      to{transform:translateY(calc(-50% - 9px))}
+    }
+
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      z-index:120;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:rgba(2,6,23,.72);
+      backdrop-filter:blur(14px);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:opacity .24s ease, visibility .24s ease;
+    }
+    .modal-overlay.is-open{
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+    }
+    .modal-dialog{
+      width:min(520px, 100%);
+      padding:24px;
+      border-radius:28px;
+      border:1px solid rgba(148,163,184,.18);
+      background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96));
+      box-shadow:0 28px 90px rgba(0,0,0,.42);
+      position:relative;
+    }
+    .modal-close{
+      position:absolute;
+      top:14px;
+      right:14px;
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(15,23,42,.88);
+      color:#dbe7ff;
+      font-size:22px;
+      line-height:1;
+      cursor:pointer;
+    }
+    .modal-dialog h3{
+      margin:0 36px 12px 0;
+      font-size:30px;
+      line-height:1.15;
+    }
+    .modal-dialog p{
+      margin:0;
+      color:#b5c7e2;
+      line-height:1.85;
+    }
+    .modal-note{
+      margin-top:16px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(56,189,248,.18);
+      background:rgba(8,47,73,.28);
+      color:#d7ecff;
+      font-size:14px;
+    }
+    .modal-qr{
+      margin-top:22px;
+      padding:18px;
+      border-radius:24px;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.65);
+      text-align:center;
+    }
+    .modal-qr img{
+      display:block;
+      width:min(100%, 320px);
+      margin:0 auto;
+      border-radius:18px;
+      background:#fff;
+    }
+    .modal-qr span{
+      display:block;
+      margin-top:12px;
+      color:#8ea3c2;
+      font-size:13px;
+      letter-spacing:.04em;
+    }
+    body.modal-open{
+      overflow:hidden;
+    }
+
+    .footer{
+      padding:56px 0 72px; text-align:center; color:#8ea1bb;
+    }
+    .footer-box{
+      border:1px solid var(--line);
+      background:rgba(15,23,42,.65);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+
+    @media (max-width: 1040px){
+      .hero-grid,.services,.grid-4,.grid-3{grid-template-columns:1fr 1fr}
+      .chart-area{grid-template-columns:1fr}
+      .testimonials-shell{grid-template-columns:1fr}
+      .testimonials-wall{height:560px}
+      .testimonials-stage{transform:translateX(-10px) rotateX(14deg) rotateY(-8deg) rotateZ(5deg)}
+      .testimonials-stage .testimonial-lane:nth-child(4){display:none}
+      nav{top:37px}
+    }
+    @media (max-width: 760px){
+      .nav-links{display:none}
+      .hero-grid,.services,.grid-4,.grid-3{grid-template-columns:1fr}
+      .ticker{padding-inline:12px}
+      nav{top:37px}
+      .nav-inner{padding:12px 14px}
+      .btn{width:100%}
+      .cta-row{display:grid}
+      .hero{padding-top:42px}
+      .hero-copy{transform:none}
+      .panel{min-height:auto}
+      .testimonials-wall{height:460px}
+      .testimonials-stage{
+        inset:16px;
+        gap:12px;
+        transform:none;
+      }
+      .testimonials-stage .testimonial-lane:nth-child(3),
+      .testimonials-stage .testimonial-lane:nth-child(4){display:none}
+      .testimonial-card{padding:16px}
+      .modal-overlay{padding:16px}
+      .modal-dialog{padding:22px 18px 18px}
+      .modal-dialog h3{font-size:24px}
+      .modal-qr{padding:14px}
+    }
+    @media (hover:none), (pointer:coarse){
+      .card,
+      .step{
+        transform:none;
+      }
+      .card::after,
+      .testimonial-card::after{
+        display:none;
+      }
+    }
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      .ticker-track,
+      .testimonial-lane,
+      .icon{
+        animation:none !important;
+      }
+      .card,
+      .step,
+      .testimonial-card,
+      .icon,
+      .testimonial-avatar,
+      .tag,
+      .type,
+      .testimonial-meta span,
+      .step .num{
+        transition:none !important;
+      }
+      .card,
+      .step,
+      .testimonial-card{
+        transform:none !important;
+        filter:none !important;
+      }
+      .card::after,
+      .testimonial-card::after{
+        display:none;
+      }
+      body.motion-ready .step{
+        opacity:1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="shader-bg" aria-hidden="true"></canvas>
+  <div class="ticker-wrap">
+    <div class="container ticker">
+      <div class="ticker-label">MARKET METER</div>
+      <div class="ticker-track" data-market-ticker-track>
+        <div class="tick"><strong>BTC/USDT</strong><span class="up">68,245.00 ▲ 2.4%</span></div>
+        <div class="tick"><strong>AAPL</strong><span class="down">173.50 ▼ 0.8%</span></div>
+        <div class="tick"><strong>沪深300</strong><span class="up">3,542.12 ▲ 1.2%</span></div>
+        <div class="tick"><strong>黄金/USD</strong><span class="up">2,150.30 ▲ 0.5%</span></div>
+        <div class="tick"><strong>NVDA</strong><span class="up">890.05 ▲ 4.1%</span></div>
+        <div class="tick"><strong>ETH/USDT</strong><span class="down">3,850.20 ▼ 1.1%</span></div>
+        <div class="tick"><strong>IF主力</strong><span class="up">3,560.80 ▲ 1.0%</span></div>
+        <div class="tick"><strong>BTC/USDT</strong><span class="up">68,245.00 ▲ 2.4%</span></div>
+        <div class="tick"><strong>AAPL</strong><span class="down">173.50 ▼ 0.8%</span></div>
+        <div class="tick"><strong>沪深300</strong><span class="up">3,542.12 ▲ 1.2%</span></div>
+        <div class="tick"><strong>黄金/USD</strong><span class="up">2,150.30 ▲ 0.5%</span></div>
+        <div class="tick"><strong>NVDA</strong><span class="up">890.05 ▲ 4.1%</span></div>
+        <div class="tick"><strong>ETH/USDT</strong><span class="down">3,850.20 ▼ 1.1%</span></div>
+        <div class="tick"><strong>IF主力</strong><span class="up">3,560.80 ▲ 1.0%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="brand-badge" aria-hidden="true">
+          <svg class="brand-mark" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="brandBadgeBg" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#ffffff" stop-opacity=".1" />
+                <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="brandLStroke" x1="5.5" y1="5" x2="11.5" y2="19" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#dff7ff" />
+                <stop offset=".55" stop-color="#7dd3fc" />
+                <stop offset="1" stop-color="#38bdf8" />
+              </linearGradient>
+              <linearGradient id="brandQStroke" x1="10" y1="7" x2="19" y2="17" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e8fbff" />
+                <stop offset=".5" stop-color="#8be6ff" />
+                <stop offset="1" stop-color="#34d399" />
+              </linearGradient>
+              <linearGradient id="brandTailStroke" x1="14.5" y1="15" x2="20.5" y2="19.5" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#8be6ff" />
+                <stop offset="1" stop-color="#34d399" />
+              </linearGradient>
+            </defs>
+            <rect class="mark-frame" x="2.5" y="2.5" width="19" height="19" rx="6" />
+            <path class="mark-l" d="M6.2 6.1C6.2 5.52 6.67 5.05 7.25 5.05C7.83 5.05 8.3 5.52 8.3 6.1V16.2H12.55C13.1 16.2 13.55 16.65 13.55 17.2C13.55 17.75 13.1 18.2 12.55 18.2H7.2C6.65 18.2 6.2 17.75 6.2 17.2V6.1Z" />
+            <circle class="mark-q-ring" cx="15.2" cy="11.4" r="4.2" />
+            <path class="mark-q-tail" d="M17.7 14.1L20.1 16.55" />
+          </svg>
+        </div>
+        <span>LUCKY<span>QUANT</span> PRO</span>
+      </div>
+      <div class="nav-links">
+        <a href="#markets">全市场覆盖</a>
+        <a href="#strategies">策略模型库</a>
+        <a href="#testimonials">客户反馈</a>
+        <a href="#services">定制流程</a>
+      </div>
+      <button class="btn btn-primary" type="button" data-open-consultation>预约咨询</button>
+    </div>
+  </nav>
+
+  <div class="modal-overlay" id="consultation-modal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="consultation-title">
+      <button class="modal-close" type="button" aria-label="关闭" data-close-consultation>&times;</button>
+      <h3 id="consultation-title">预约咨询</h3>
+      <p>扫码添加微信后，请备注“量化策略开发”，方便我快速了解你的需求方向，并尽快和你对接策略、执行或风控相关问题。</p>
+      <div class="modal-note">首页右侧量化策略回测数据为我个人开发的 BTC 量化策略，支持跟单、策略买断、咨询回测开发、实盘接入、风控联调、策略迭代等量化项目合作内容。</div>
+      <div class="modal-qr">
+        <img src="./qr_author_800.png" alt="微信二维码" />
+        <span>微信扫码添加</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="dot"></span><span>SYSTEM ONLINE / READY FOR DEPLOYMENT</span></div>
+          <h1>将您的交易灵感转化为<span class="gradient">无情执行的代码</span></h1>
+          <p class="lead">针对 A股、美股、期货及加密货币市场的机构级量化策略定制服务。我们负责底层架构、回测逻辑与执行接口，您只需专注于交易思想。</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#services">查看定制流程 →</a>
+            <a class="btn btn-secondary" href="#strategies">查看策略模型库</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="window-top"><i></i><i></i><i></i><span style="margin-left:10px">live_trading_engine.py</span></div>
+          <div class="console">
+            <div class="line"><span class="muted">09:30:00.001</span> [INFO] System initialized. Connecting to CTP / Binance API...</div>
+            <div class="line"><span class="muted">09:30:00.150</span> [SUCCESS] Market data feed established.</div>
+            <div class="line"><span class="muted">09:30:01.022</span> [CALC] Alpha Factor 103 generating signals.</div>
+            <div class="line good"><span class="muted">09:30:05.410</span> [EXEC] BUY 500 AAPL @ 173.50 (Latency: 12ms)</div>
+            <div class="line"><span class="muted">09:30:12.800</span> [CALC] Updating risk matrix and portfolio beta...</div>
+            <div class="line good"><span class="muted">09:30:15.000</span> [EXEC] LONG 2 BTC/USDT @ 68,245.00</div>
+          </div>
+          <div class="chart-area">
+            <div class="chart-box">
+              <img class="report-image" src="hero-equity-curve.png" alt="BTC/USDT 回测报告中的收益曲线" />
+              <div class="report-meta">
+                <span>2022.03 - 2026.03</span>
+                <span>PDF Backtest</span>
+              </div>
+            </div>
+            <div class="stats-box">
+              <div class="mini-grid">
+                <div class="stat"><small>平均年化收益率</small><strong>165.30%</strong></div>
+                <div class="stat"><small>最大回撤</small><strong>29.29%</strong></div>
+                <div class="stat"><small>夏普比例</small><strong>1.983</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="markets">
+      <div class="container">
+        <div class="section-head">
+          <h2>跨越全市场的交易支持</h2>
+          <p>无论您深耕哪个金融领域，我们的底层架构都能无缝对接，确保您的策略在全球市场中低延迟、稳定运行。</p>
+        </div>
+        <div class="grid grid-4">
+          <div class="card"><div class="icon">₿</div><h3>全球加密货币</h3><p>支持 Binance、OKX、Bybit 等主流交易所的高频与趋势策略，覆盖现货、合约和套利场景。</p></div>
+          <div class="card"><div class="icon">📈</div><h3>中国 A 股市场</h3><p>提供基于量价、基本面因子的选股模型及自动化网格交易，适配多类回测和实盘框架。</p></div>
+          <div class="card"><div class="icon">🌐</div><h3>美股及期权</h3><p>覆盖纳斯达克与纽交所，支持复杂期权组合、波动率交易和跨品种量化策略。</p></div>
+          <div class="card"><div class="icon">⚡</div><h3>商品及股指期货</h3><p>支持 CTA 趋势、跨期套利及多账户执行，适配高频与低延迟风控需求。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="strategies">
+      <div class="container">
+        <div class="section-head">
+          <h2>经典量化策略模型库</h2>
+          <p>展示经过长期验证的常见量化模型。可基于以下基础逻辑，根据资金体量、风险偏好与市场范围进一步扩展和定制。</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="type">趋势突破</div>
+            <h3>海龟交易法则</h3>
+            <div class="tagline"><span class="tag">期货</span><span class="tag">加密货币</span></div>
+            <p>基于唐奇安通道的经典趋势跟踪策略，包含头寸管理与动态止损逻辑，适合高波动市场。</p>
+          </div>
+          <div class="card">
+            <div class="type">量化选股</div>
+            <h3>多因子 Alpha 选股</h3>
+            <div class="tagline"><span class="tag">A股</span><span class="tag">美股</span></div>
+            <p>结合估值、成长、盈利、动量等多因子，通过横截面回归或机器学习算法构建投资组合。</p>
+          </div>
+          <div class="card">
+            <div class="type">均值回归</div>
+            <h3>统计套利与配对交易</h3>
+            <div class="tagline"><span class="tag">美股</span><span class="tag">商品期货</span></div>
+            <p>利用协整关系寻找高相关资产对，在价差偏离历史均值时进行多空双向建仓。</p>
+          </div>
+          <div class="card">
+            <div class="type">动量反转</div>
+            <h3>MACD + RSI 复合动量</h3>
+            <div class="tagline"><span class="tag">全市场</span></div>
+            <p>结合 MACD 的趋势确认与 RSI 的超买超卖信号，过滤虚假突破，提高信号稳定性。</p>
+          </div>
+          <div class="card">
+            <div class="type">震荡套利</div>
+            <h3>网格交易与马丁格尔</h3>
+            <div class="tagline"><span class="tag">加密货币</span><span class="tag">A股 ETF</span></div>
+            <p>在设定价格区间内执行机械化高抛低吸，适合横盘震荡或宽幅波动标的。</p>
+          </div>
+          <div class="card">
+            <div class="type">期权策略</div>
+            <h3>VIX 波动率曲面套利</h3>
+            <div class="tagline"><span class="tag">美股期权</span></div>
+            <p>利用隐含波动率的期限结构与偏度特征，构建 Delta 中性的波动率套利组合。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="testimonials">
+      <div class="container testimonials-shell">
+        <div class="testimonials-copy">
+          <div class="eyebrow"><span class="dot"></span><span>CLIENT FEEDBACK / ANONYMIZED</span></div>
+          <h2>客户更在意合作细节，而不只是结果截图</h2>
+          <p>这里展示的是我们在量化项目合作中最常收到的反馈方向: 回测口径是否说得清楚，实盘执行是否稳定，风控与监控是否接得顺，后续迭代能不能持续推进。</p>
+          <p>我们更希望把真实合作里的判断标准讲明白，而不是只放几句笼统的好评。对很多团队来说，真正决定是否继续合作的，往往是细节是否可靠、过程是否透明、交付后是否便于继续扩展。</p>
+          <div class="proof-note">以下评价均做匿名化处理，名称使用缩写，身份信息保留到策略角色与地区层级，头像为示意图，仅用于官网展示。</div>
+        </div>
+
+        <div class="testimonials-wall">
+          <div class="testimonials-stage">
+            <div class="testimonial-lane" style="--lane-duration:42s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/61.jpg" alt="Jason L. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Jason L.</h3>
+                      <p class="testimonial-role">新加坡 · 加密做市团队负责人</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原本只想补一个 funding-aware 的回测层，最后连撮合、滑点和夜间告警都一起打通了。真正有价值的不是某一张收益图，而是异常成交终于能被稳定复盘。</p>
+                  <div class="testimonial-meta"><span>回测口径清晰</span><span>接口联调</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/32.jpg" alt="Olivia M. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Olivia M.</h3>
+                      <p class="testimonial-role">墨尔本 · 家族办公室研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最打动我的是报告口径非常透明，年化、回撤、手续费和资金费率成本都拆开讲清楚。第一次和开发团队沟通时，不需要反复确认“这个收益到底有没有扣实盘摩擦”。</p>
+                  <div class="testimonial-meta"><span>绩效拆解</span><span>月度复盘</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/41.jpg" alt="Chen C. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Chen C.</h3>
+                      <p class="testimonial-role">深圳 · A股量化研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们把选股逻辑和风险约束丢过去后，两周内就拿到了可以继续迭代的版本。代码结构比我预期干净很多，后面自己团队接手不会有断层。</p>
+                  <div class="testimonial-meta"><span>研究转实盘</span><span>可持续迭代</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/61.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Jason L.</h3>
+                      <p class="testimonial-role">新加坡 · 加密做市团队负责人</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原本只想补一个 funding-aware 的回测层，最后连撮合、滑点和夜间告警都一起打通了。真正有价值的不是某一张收益图，而是异常成交终于能被稳定复盘。</p>
+                  <div class="testimonial-meta"><span>回测口径清晰</span><span>接口联调</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/32.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Olivia M.</h3>
+                      <p class="testimonial-role">墨尔本 · 家族办公室研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最打动我的是报告口径非常透明，年化、回撤、手续费和资金费率成本都拆开讲清楚。第一次和开发团队沟通时，不需要反复确认“这个收益到底有没有扣实盘摩擦”。</p>
+                  <div class="testimonial-meta"><span>绩效拆解</span><span>月度复盘</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/41.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Chen C.</h3>
+                      <p class="testimonial-role">深圳 · A股量化研究员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们把选股逻辑和风险约束丢过去后，两周内就拿到了可以继续迭代的版本。代码结构比我预期干净很多，后面自己团队接手不会有断层。</p>
+                  <div class="testimonial-meta"><span>研究转实盘</span><span>可持续迭代</span></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="testimonial-lane reverse" style="--lane-duration:38s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Grace W. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Grace W.</h3>
+                      <p class="testimonial-role">香港 · 多资产交易顾问</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">他们不会一上来就堆复杂模型，而是先把交易假设讲透。什么时候按下一根 K 线成交、什么时候算滑点，这些细节反而决定了回测能不能信。</p>
+                  <div class="testimonial-meta"><span>假设先行</span><span>细节可核验</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/51.jpg" alt="Martin R. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Martin R.</h3>
+                      <p class="testimonial-role">法兰克福 · 期货 CTA 交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我最在意的是执行层。现在下单、仓位限制和回撤告警都做成了统一规则，实盘和回测之间的落差比之前合作的团队小很多。</p>
+                  <div class="testimonial-meta"><span>执行风控</span><span>CTA 框架</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/53.jpg" alt="Lin L. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Lin L.</h3>
+                      <p class="testimonial-role">台北 · ETF 策略开发者</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">以前参数一多就很容易把策略调成“回测很好看”。这次他们把样本内外分得很明确，还主动提醒哪些区间存在过拟合风险，这点很专业。</p>
+                  <div class="testimonial-meta"><span>样本外验证</span><span>过拟合控制</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Grace W.</h3>
+                      <p class="testimonial-role">香港 · 多资产交易顾问</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">他们不会一上来就堆复杂模型，而是先把交易假设讲透。什么时候按下一根 K 线成交、什么时候算滑点，这些细节反而决定了回测能不能信。</p>
+                  <div class="testimonial-meta"><span>假设先行</span><span>细节可核验</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/51.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Martin R.</h3>
+                      <p class="testimonial-role">法兰克福 · 期货 CTA 交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我最在意的是执行层。现在下单、仓位限制和回撤告警都做成了统一规则，实盘和回测之间的落差比之前合作的团队小很多。</p>
+                  <div class="testimonial-meta"><span>执行风控</span><span>CTA 框架</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/53.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Lin L.</h3>
+                      <p class="testimonial-role">台北 · ETF 策略开发者</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">以前参数一多就很容易把策略调成“回测很好看”。这次他们把样本内外分得很明确，还主动提醒哪些区间存在过拟合风险，这点很专业。</p>
+                  <div class="testimonial-meta"><span>样本外验证</span><span>过拟合控制</span></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="testimonial-lane" style="--lane-duration:44s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/33.jpg" alt="David P. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">David P.</h3>
+                      <p class="testimonial-role">纽约 · 期权 PM</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">期权组合那部分需求很碎，但交付很稳。Greek 暴露、组合回撤和交易日志都留得足够细，后续审计和复盘节省了大量时间。</p>
+                  <div class="testimonial-meta"><span>组合级监控</span><span>日志完备</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/85.jpg" alt="Zhou Z. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Zhou Z.</h3>
+                      <p class="testimonial-role">上海 · 商品期货交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原来只有策略想法，没有完整工程。现在从信号、仓位、风控到日报都串起来了，团队内部沟通成本直接降了一半。</p>
+                  <div class="testimonial-meta"><span>工程化交付</span><span>日报自动化</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Aisha N. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Aisha N.</h3>
+                      <p class="testimonial-role">迪拜 · Crypto Swing Trader</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">不是那种只给你一份漂亮图表就结束的交付。实盘前联调、异常处理、接口限流这些边角问题也一起覆盖到了，省掉了很多上线前的踩坑时间。</p>
+                  <div class="testimonial-meta"><span>实盘联调</span><span>异常处理</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/33.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">David P.</h3>
+                      <p class="testimonial-role">纽约 · 期权 PM</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">期权组合那部分需求很碎，但交付很稳。Greek 暴露、组合回撤和交易日志都留得足够细，后续审计和复盘节省了大量时间。</p>
+                  <div class="testimonial-meta"><span>组合级监控</span><span>日志完备</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/85.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Zhou Z.</h3>
+                      <p class="testimonial-role">上海 · 商品期货交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们原来只有策略想法，没有完整工程。现在从信号、仓位、风控到日报都串起来了，团队内部沟通成本直接降了一半。</p>
+                  <div class="testimonial-meta"><span>工程化交付</span><span>日报自动化</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Aisha N.</h3>
+                      <p class="testimonial-role">迪拜 · Crypto Swing Trader</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">不是那种只给你一份漂亮图表就结束的交付。实盘前联调、异常处理、接口限流这些边角问题也一起覆盖到了，省掉了很多上线前的踩坑时间。</p>
+                  <div class="testimonial-meta"><span>实盘联调</span><span>异常处理</span></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="testimonial-lane reverse" style="--lane-duration:36s">
+              <div class="testimonial-group">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="Kevin T. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Kevin T.</h3>
+                      <p class="testimonial-role">温哥华 · 独立交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最满意的是节奏控制。每一版改动都能解释为什么改、改完影响什么，不会出现“收益上去了但不知道为什么”这种情况，合作感很强。</p>
+                  <div class="testimonial-meta"><span>迭代节奏稳定</span><span>解释充分</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/45.jpg" alt="Sophie H. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Sophie H.</h3>
+                      <p class="testimonial-role">伦敦 · Systematic Macro Researcher</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">纵向看回撤控制，横向看文档透明度，这套交付明显比我之前合作过的团队成熟。尤其是复盘模板，拿来就能在内部直接复用。</p>
+                  <div class="testimonial-meta"><span>文档成熟</span><span>复盘模板</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/28.jpg" alt="Zhao Z. portrait" />
+                    <div>
+                      <h3 class="testimonial-name">Zhao Z.</h3>
+                      <p class="testimonial-role">北京 · 量化创业团队</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们需要的是能长期迭代的底座，不是一版 demo。现在接口、配置和监控都已经定型，后续加新策略的速度比最开始快了非常多。</p>
+                  <div class="testimonial-meta"><span>底座化交付</span><span>扩展效率</span></div>
+                </article>
+              </div>
+              <div class="testimonial-group" aria-hidden="true">
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Kevin T.</h3>
+                      <p class="testimonial-role">温哥华 · 独立交易员</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">最满意的是节奏控制。每一版改动都能解释为什么改、改完影响什么，不会出现“收益上去了但不知道为什么”这种情况，合作感很强。</p>
+                  <div class="testimonial-meta"><span>迭代节奏稳定</span><span>解释充分</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/45.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Sophie H.</h3>
+                      <p class="testimonial-role">伦敦 · Systematic Macro Researcher</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">纵向看回撤控制，横向看文档透明度，这套交付明显比我之前合作过的团队成熟。尤其是复盘模板，拿来就能在内部直接复用。</p>
+                  <div class="testimonial-meta"><span>文档成熟</span><span>复盘模板</span></div>
+                </article>
+                <article class="testimonial-card">
+                  <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://randomuser.me/api/portraits/women/28.jpg" alt="" />
+                    <div>
+                      <h3 class="testimonial-name">Zhao Z.</h3>
+                      <p class="testimonial-role">北京 · 量化创业团队</p>
+                    </div>
+                  </div>
+                  <p class="testimonial-body">我们需要的是能长期迭代的底座，不是一版 demo。现在接口、配置和监控都已经定型，后续加新策略的速度比最开始快了非常多。</p>
+                  <div class="testimonial-meta"><span>底座化交付</span><span>扩展效率</span></div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <div class="section-head">
+          <h2>定制流程</h2>
+          <p>从交易想法梳理到回测验证，再到实盘部署与监控，形成完整交付链路。</p>
+        </div>
+        <div class="services">
+          <div class="step"><div class="num">1</div><h4>需求梳理</h4><p>明确交易市场、策略逻辑、资金体量、风险约束与交付目标。</p></div>
+          <div class="step"><div class="num">2</div><h4>回测开发</h4><p>完成因子定义、信号生成、撮合逻辑与绩效评估，输出核心指标。</p></div>
+          <div class="step"><div class="num">3</div><h4>风控部署</h4><p>接入行情与交易接口，建立仓位、滑点、止损与异常监控规则。</p></div>
+          <div class="step"><div class="num">4</div><h4>实盘迭代</h4><p>根据实盘表现持续优化参数、执行效率与策略稳定性。</p></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <script src="./market-data.js"></script>
+  <script>
+    (function () {
+      const preloadedMarketTicker = window.__MARKET_TICKER_DATA__;
+      const tickerTrack = document.querySelector("[data-market-ticker-track]");
+      const tickerWrap = document.querySelector(".ticker-wrap");
+
+      const escapeHtml = (value) => String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+
+      const renderTickerItems = (items) => {
+        if (!tickerTrack || !Array.isArray(items) || !items.length) return;
+        const marqueeItems = items.concat(items);
+        tickerTrack.innerHTML = marqueeItems.map((item) => {
+          const trendClass = item.trend === "down" ? "down" : item.trend === "flat" ? "flat" : "up";
+          const changeArrow = item.trend === "down" ? "▼" : item.trend === "flat" ? "•" : "▲";
+          return `<div class="tick"><strong>${escapeHtml(item.label)}</strong><span class="${trendClass}">${escapeHtml(item.priceDisplay)} ${changeArrow} ${escapeHtml(item.changeDisplay)}</span></div>`;
+        }).join("");
+      };
+
+      const loadMarketTicker = async () => {
+        if (!tickerTrack) return;
+        if (preloadedMarketTicker && Array.isArray(preloadedMarketTicker.items) && preloadedMarketTicker.items.length) {
+          renderTickerItems(preloadedMarketTicker.items);
+          if (tickerWrap && preloadedMarketTicker.updatedAt) {
+            const updatedAt = new Date(preloadedMarketTicker.updatedAt);
+            if (!Number.isNaN(updatedAt.getTime())) {
+              tickerWrap.title = `市场数据更新于 ${updatedAt.toLocaleString("zh-CN", { hour12: false })}`;
+            }
+          }
+          return;
+        }
+        try {
+          const response = await fetch(`./market-data.json?ts=${Date.now()}`, { cache: "no-store" });
+          if (!response.ok) throw new Error(`Ticker request failed: ${response.status}`);
+          const payload = await response.json();
+          if (!Array.isArray(payload.items) || !payload.items.length) return;
+          renderTickerItems(payload.items);
+          if (tickerWrap && payload.updatedAt) {
+            const updatedAt = new Date(payload.updatedAt);
+            if (!Number.isNaN(updatedAt.getTime())) {
+              tickerWrap.title = `市场数据更新于 ${updatedAt.toLocaleString("zh-CN", { hour12: false })}`;
+            }
+          }
+        } catch (error) {
+          console.warn("Failed to load market ticker data.", error);
+        }
+      };
+
+      loadMarketTicker();
+
+      const modal = document.getElementById("consultation-modal");
+      const openButtons = document.querySelectorAll("[data-open-consultation]");
+      const closeButtons = document.querySelectorAll("[data-close-consultation]");
+      const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+      if (modal && openButtons.length) {
+        const openModal = () => {
+          modal.classList.add("is-open");
+          modal.setAttribute("aria-hidden", "false");
+          document.body.classList.add("modal-open");
+        };
+
+        const closeModal = () => {
+          modal.classList.remove("is-open");
+          modal.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("modal-open");
+        };
+
+        openButtons.forEach((button) => {
+          button.addEventListener("click", openModal);
+        });
+
+        closeButtons.forEach((button) => {
+          button.addEventListener("click", closeModal);
+        });
+
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) closeModal();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && modal.classList.contains("is-open")) {
+            closeModal();
+          }
+        });
+      }
+
+      if (!reduceMotionQuery.matches) {
+        const steps = document.querySelectorAll(".step");
+        if (steps.length && "IntersectionObserver" in window) {
+          document.body.classList.add("motion-ready");
+          const stepObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const revealDelay = Number(entry.target.dataset.stepIndex || 0) * 80;
+              window.setTimeout(() => {
+                entry.target.classList.add("is-visible");
+              }, revealDelay);
+              observer.unobserve(entry.target);
+            });
+          }, { threshold: 0.24, rootMargin: "0px 0px -8% 0px" });
+
+          steps.forEach((step, index) => {
+            step.dataset.stepIndex = String(index);
+            stepObserver.observe(step);
+          });
+        }
+
+        if (finePointerQuery.matches) {
+          const interactiveCards = document.querySelectorAll(".card, .step");
+          const resetCardMotion = (element) => {
+            element.style.setProperty("--pointer-x", "20%");
+            element.style.setProperty("--pointer-y", "0%");
+            element.style.setProperty("--card-tilt-x", "0deg");
+            element.style.setProperty("--card-tilt-y", "0deg");
+            element.style.setProperty("--card-shift-x", "0px");
+            element.style.setProperty("--card-shift-y", "0px");
+          };
+
+          interactiveCards.forEach((card) => {
+            resetCardMotion(card);
+
+            card.addEventListener("mousemove", (event) => {
+              const rect = card.getBoundingClientRect();
+              const x = (event.clientX - rect.left) / rect.width;
+              const y = (event.clientY - rect.top) / rect.height;
+              const rotateY = (x - 0.5) * 8;
+              const rotateX = (0.5 - y) * 8;
+              const shiftX = (x - 0.5) * 6;
+              const shiftY = (y - 0.5) * 5;
+
+              card.style.setProperty("--pointer-x", `${(x * 100).toFixed(2)}%`);
+              card.style.setProperty("--pointer-y", `${(y * 100).toFixed(2)}%`);
+              card.style.setProperty("--card-tilt-x", `${rotateX.toFixed(2)}deg`);
+              card.style.setProperty("--card-tilt-y", `${rotateY.toFixed(2)}deg`);
+              card.style.setProperty("--card-shift-x", `${shiftX.toFixed(2)}px`);
+              card.style.setProperty("--card-shift-y", `${shiftY.toFixed(2)}px`);
+            });
+
+            card.addEventListener("mouseleave", () => {
+              resetCardMotion(card);
+            });
+          });
+        }
+      }
+
+      const canvas = document.getElementById("shader-bg");
+      if (!canvas) return;
+
+      const gl = canvas.getContext("webgl", { alpha: true, antialias: true });
+      if (!gl) return;
+
+      const vertexShaderSource = `
+        attribute vec3 position;
+        void main() {
+          gl_Position = vec4(position, 1.0);
+        }
+      `;
+
+      const fragmentShaderSource = `
+        precision highp float;
+        uniform vec2 resolution;
+        uniform float time;
+        uniform float xScale;
+        uniform float yScale;
+        uniform float distortion;
+
+        void main() {
+          vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+
+          float d = length(p) * distortion;
+
+          float rx = p.x * (1.0 + d);
+          float gx = p.x;
+          float bx = p.x * (1.0 - d);
+
+          float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
+          float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
+          float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
+
+          gl_FragColor = vec4(r, g, b, 1.0);
+        }
+      `;
+
+      const compileShader = (type, source) => {
+        const shader = gl.createShader(type);
+        if (!shader) return null;
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          console.error(gl.getShaderInfoLog(shader));
+          gl.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      };
+
+      const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
+      const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+      if (!vertexShader || !fragmentShader) return;
+
+      const program = gl.createProgram();
+      if (!program) return;
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(program));
+        return;
+      }
+
+      const positions = new Float32Array([
+        -1.0, -1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0, -1.0, 0.0,
+        -1.0,  1.0, 0.0,
+         1.0,  1.0, 0.0
+      ]);
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+      gl.useProgram(program);
+
+      const positionLocation = gl.getAttribLocation(program, "position");
+      const resolutionLocation = gl.getUniformLocation(program, "resolution");
+      const timeLocation = gl.getUniformLocation(program, "time");
+      const xScaleLocation = gl.getUniformLocation(program, "xScale");
+      const yScaleLocation = gl.getUniformLocation(program, "yScale");
+      const distortionLocation = gl.getUniformLocation(program, "distortion");
+
+      gl.enableVertexAttribArray(positionLocation);
+      gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+
+      gl.uniform1f(xScaleLocation, 1.15);
+      gl.uniform1f(yScaleLocation, 0.42);
+      gl.uniform1f(distortionLocation, 0.08);
+
+      const resize = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        const width = Math.floor(window.innerWidth * dpr);
+        const height = Math.floor(window.innerHeight * dpr);
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        gl.viewport(0, 0, width, height);
+        gl.uniform2f(resolutionLocation, width, height);
+      };
+
+      const render = (now) => {
+        gl.clearColor(0.01, 0.03, 0.08, 0.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1f(timeLocation, now * 0.00045);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        window.requestAnimationFrame(render);
+      };
+
+      window.addEventListener("resize", resize);
+      resize();
+      window.requestAnimationFrame(render);
+    })();
+  </script>
+</body>
+</html>
