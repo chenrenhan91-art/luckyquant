@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-20T13:53:38.461224Z",
+  "updatedAt": "2026-03-21T03:13:37.995974Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
@@ -14,10 +14,10 @@
     },
     {
       "label": "AAPL",
-      "price": 246.885,
-      "priceDisplay": "246.88",
-      "changePercent": -0.83,
-      "changeDisplay": "0.8%",
+      "price": 247.99,
+      "priceDisplay": "247.99",
+      "changePercent": -0.39,
+      "changeDisplay": "0.4%",
       "trend": "down",
       "source": "stooq"
     },
@@ -32,19 +32,19 @@
     },
     {
       "label": "黄金/USD",
-      "price": 4624.44,
-      "priceDisplay": "4,624.44",
-      "changePercent": -0.66,
-      "changeDisplay": "0.7%",
+      "price": 4493.95,
+      "priceDisplay": "4,493.95",
+      "changePercent": -3.47,
+      "changeDisplay": "3.5%",
       "trend": "down",
       "source": "stooq"
     },
     {
       "label": "NVDA",
-      "price": 177.17,
-      "priceDisplay": "177.17",
-      "changePercent": -0.78,
-      "changeDisplay": "0.8%",
+      "price": 172.7,
+      "priceDisplay": "172.70",
+      "changePercent": -3.28,
+      "changeDisplay": "3.3%",
       "trend": "down",
       "source": "stooq"
     },
