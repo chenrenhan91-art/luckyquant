@@ -1,5 +1,5 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-03-23T03:38:28.782749Z",
+  "updatedAt": "2026-03-23T14:06:50.856403Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
@@ -14,38 +14,38 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "AAPL",
-      "price": 247.99,
-      "priceDisplay": "247.99",
-      "changePercent": -0.39,
-      "changeDisplay": "0.4%",
-      "trend": "down",
+      "price": 252.73,
+      "priceDisplay": "252.73",
+      "changePercent": 1.91,
+      "changeDisplay": "1.9%",
+      "trend": "up",
       "source": "stooq"
     },
     {
       "label": "沪深300",
-      "price": 4456.6938,
-      "priceDisplay": "4,456.69",
-      "changePercent": -2.42,
-      "changeDisplay": "2.4%",
+      "price": 4417.9971,
+      "priceDisplay": "4,418.00",
+      "changePercent": -3.26,
+      "changeDisplay": "3.3%",
       "trend": "down",
       "source": "sina"
     },
     {
       "label": "黄金/USD",
-      "price": 4350.46,
-      "priceDisplay": "4,350.46",
-      "changePercent": -3.19,
-      "changeDisplay": "3.2%",
+      "price": 4458.88,
+      "priceDisplay": "4,458.88",
+      "changePercent": -0.78,
+      "changeDisplay": "0.8%",
       "trend": "down",
       "source": "stooq"
     },
     {
       "label": "NVDA",
-      "price": 172.7,
-      "priceDisplay": "172.70",
-      "changePercent": -3.28,
-      "changeDisplay": "3.3%",
-      "trend": "down",
+      "price": 177.14,
+      "priceDisplay": "177.14",
+      "changePercent": 2.57,
+      "changeDisplay": "2.6%",
+      "trend": "up",
       "source": "stooq"
     },
     {
