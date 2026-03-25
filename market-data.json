@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-24T14:12:25.942889Z",
+  "updatedAt": "2026-03-25T03:32:49.227533Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
@@ -14,37 +14,37 @@
     },
     {
       "label": "AAPL",
-      "price": 251.83,
-      "priceDisplay": "251.83",
-      "changePercent": 0.14,
+      "price": 251.64,
+      "priceDisplay": "251.64",
+      "changePercent": 0.06,
       "changeDisplay": "0.1%",
       "trend": "up",
       "source": "stooq"
     },
     {
       "label": "沪深300",
-      "price": 4474.7224,
-      "priceDisplay": "4,474.72",
-      "changePercent": 1.28,
-      "changeDisplay": "1.3%",
+      "price": 4518.187,
+      "priceDisplay": "4,518.19",
+      "changePercent": 0.97,
+      "changeDisplay": "1.0%",
       "trend": "up",
       "source": "sina"
     },
     {
       "label": "黄金/USD",
-      "price": 4395.16,
-      "priceDisplay": "4,395.16",
-      "changePercent": -0.49,
-      "changeDisplay": "0.5%",
-      "trend": "down",
+      "price": 4573.77,
+      "priceDisplay": "4,573.77",
+      "changePercent": 2.29,
+      "changeDisplay": "2.3%",
+      "trend": "up",
       "source": "stooq"
     },
     {
       "label": "NVDA",
-      "price": 175.105,
-      "priceDisplay": "175.10",
-      "changePercent": -0.3,
-      "changeDisplay": "0.3%",
+      "price": 175.2,
+      "priceDisplay": "175.20",
+      "changePercent": -0.25,
+      "changeDisplay": "0.2%",
       "trend": "down",
       "source": "stooq"
     },
@@ -60,10 +60,10 @@
     },
     {
       "label": "IF主力",
-      "price": 4380.0,
-      "priceDisplay": "4,380.0",
-      "changePercent": -0.34,
-      "changeDisplay": "0.3%",
+      "price": 4420.8,
+      "priceDisplay": "4,420.8",
+      "changePercent": -0.99,
+      "changeDisplay": "1.0%",
       "trend": "down",
       "source": "sina"
     }
