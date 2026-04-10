@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-10T03:55:07.005533Z",
+  "updatedAt": "2026-04-10T14:09:36.412432Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
@@ -24,10 +24,10 @@
     },
     {
       "label": "沪深300",
-      "price": 4620.1415,
-      "priceDisplay": "4,620.14",
-      "changePercent": 1.18,
-      "changeDisplay": "1.2%",
+      "price": 4636.5655,
+      "priceDisplay": "4,636.57",
+      "changePercent": 1.54,
+      "changeDisplay": "1.5%",
       "trend": "up",
       "source": "sina"
     },
@@ -65,8 +65,8 @@
       "label": "IF主力",
       "price": 4525.0,
       "priceDisplay": "4,525.0",
-      "changePercent": -1.2,
-      "changeDisplay": "1.2%",
+      "changePercent": -1.45,
+      "changeDisplay": "1.4%",
       "trend": "down",
       "source": "sina"
     }
