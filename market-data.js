@@ -1,5 +1,5 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-05-11T04:53:16.383726Z",
+  "updatedAt": "2026-05-11T15:51:31.271913Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
@@ -24,10 +24,10 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "沪深300",
-      "price": 4940.4064,
-      "priceDisplay": "4,940.41",
-      "changePercent": 1.41,
-      "changeDisplay": "1.4%",
+      "price": 4951.8366,
+      "priceDisplay": "4,951.84",
+      "changePercent": 1.64,
+      "changeDisplay": "1.6%",
       "trend": "up",
       "source": "sina"
     },
@@ -65,8 +65,8 @@ window.__MARKET_TICKER_DATA__ = {
       "label": "IF主力",
       "price": 4860.0,
       "priceDisplay": "4,860.0",
-      "changePercent": -0.96,
-      "changeDisplay": "1.0%",
+      "changePercent": -1.45,
+      "changeDisplay": "1.4%",
       "trend": "down",
       "source": "sina"
     }
