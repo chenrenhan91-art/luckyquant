@@ -1,5 +1,5 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-05-18T05:00:24.176182Z",
+  "updatedAt": "2026-05-18T16:16:34.322329Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
@@ -24,10 +24,10 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "沪深300",
-      "price": 4832.7664,
-      "priceDisplay": "4,832.77",
-      "changePercent": -0.55,
-      "changeDisplay": "0.6%",
+      "price": 4833.5237,
+      "priceDisplay": "4,833.52",
+      "changePercent": -0.54,
+      "changeDisplay": "0.5%",
       "trend": "down",
       "source": "sina"
     },
