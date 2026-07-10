@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-10T04:42:02.269092Z",
+  "updatedAt": "2026-07-10T15:24:48.938541Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
@@ -24,11 +24,11 @@
     },
     {
       "label": "沪深300",
-      "price": 4900.1961,
-      "priceDisplay": "4,900.20",
-      "changePercent": 0.49,
-      "changeDisplay": "0.5%",
-      "trend": "up",
+      "price": 4780.7867,
+      "priceDisplay": "4,780.79",
+      "changePercent": -1.96,
+      "changeDisplay": "2.0%",
+      "trend": "down",
       "source": "sina"
     },
     {
