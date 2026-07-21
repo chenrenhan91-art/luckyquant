@@ -1,0 +1,3029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quant Skill Builder · 量化交易系统 Skill 生成器</title>
+  <style>
+    :root {
+      --bg: #090b0f; --surface: #111620; --surface-2: #171d2a; --border: #243044;
+      --text: #e8edf5; --muted: #7d8aa5; --accent: #22c997; --accent-dim: #1a9470;
+      --warn: #f0a030; --danger: #ef5f5f;
+      --mono: "SF Mono", "JetBrains Mono", monospace;
+      --sans: "PingFang SC", "Helvetica Neue", system-ui, sans-serif;
+      --radius: 10px; --shadow: 0 8px 32px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100dvh; line-height: 1.55; }
+    .app { max-width: 1120px; margin: 0 auto; padding: 24px 20px 80px; }
+    header { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .back-home { font-size: .82rem; color: var(--muted); white-space: nowrap; padding-top: 4px; }
+    .back-home:hover { color: var(--accent); }
+    .brand h1 { font-size: 1.35rem; font-weight: 650; letter-spacing: -.02em; }
+    .brand p { color: var(--muted); font-size: .88rem; margin-top: 4px; }
+    .badge { font-family: var(--mono); font-size: .72rem; padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--accent); background: rgba(34,201,151,.08); }
+    .path-banner { display: none; padding: 10px 14px; margin-bottom: 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2); font-size: .84rem; color: var(--muted); }
+    .path-banner strong { color: var(--accent); }
+    .path-banner.visible { display: block; }
+    .steps { display: none; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+    .steps.visible { display: flex; }
+    .step-pill { font-size: .78rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: .2s; user-select: none; }
+    .step-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(34,201,151,.1); }
+    .step-pill.done { color: var(--text); border-color: var(--accent-dim); }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); display: none; }
+    .panel.active { display: block; }
+    .panel h2 { font-size: 1.15rem; margin-bottom: 6px; }
+    .panel .hint { color: var(--muted); font-size: .88rem; margin-bottom: 22px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+    .card-select, .exp-card, .template-card {
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
+      cursor: pointer; transition: .18s; background: var(--surface-2);
+    }
+    .card-select:hover, .exp-card:hover, .template-card:hover { border-color: #3a4d6a; }
+    .card-select.selected, .exp-card.selected, .template-card.selected {
+      border-color: var(--accent); background: rgba(34,201,151,.07);
+    }
+    .card-select .icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .card-select .title, .exp-card .exp-title { font-weight: 600; font-size: .95rem; }
+    .card-select .desc, .exp-card .exp-sub { color: var(--muted); font-size: .78rem; margin-top: 4px; }
+    .exp-card { padding: 22px; }
+    .exp-card .exp-icon { font-size: 2rem; margin-bottom: 10px; }
+    .exp-card ul { margin-top: 12px; padding-left: 18px; font-size: .8rem; color: var(--muted); }
+    .exp-card ul li { margin-bottom: 4px; }
+    .exp-welcome { text-align: center; max-width: 640px; margin: 0 auto 28px; }
+    .exp-welcome h2 { font-size: 1.5rem; margin-bottom: 8px; }
+    .exp-welcome p { color: var(--muted); font-size: .92rem; }
+    .risk-slider-wrap { padding: 24px 8px; }
+    .risk-labels { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+    input[type="range"] { width: 100%; height: 6px; appearance: none; background: linear-gradient(90deg, #2d6a4f, #f0a030, #ef5f5f); border-radius: 999px; outline: none; }
+    input[type="range"]::-webkit-slider-thumb { appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--text); border: 3px solid var(--accent); cursor: grab; }
+    .risk-display { text-align: center; margin-top: 20px; padding: 18px; border-radius: var(--radius); background: var(--surface-2); border: 1px solid var(--border); }
+    .risk-display .score { font-family: var(--mono); font-size: 2.4rem; color: var(--accent); line-height: 1; }
+    .risk-display .label { font-size: 1.1rem; font-weight: 600; margin-top: 6px; }
+    .risk-display .detail { color: var(--muted); font-size: .85rem; margin-top: 8px; max-width: 52ch; margin-inline: auto; }
+    .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { font-size: .82rem; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border); cursor: pointer; background: var(--surface-2); transition: .15s; user-select: none; }
+    .chip.selected { border-color: var(--accent); background: rgba(34,201,151,.12); color: var(--accent); }
+    textarea, input[type="text"], select {
+      width: 100%; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text); font-family: inherit; font-size: .9rem; outline: none;
+    }
+    textarea:focus, input:focus, select:focus { border-color: var(--accent); }
+    textarea { min-height: 100px; resize: vertical; }
+    .indicator-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; max-height: 220px; overflow-y: auto; }
+    .indicator-item { font-size: .78rem; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; background: var(--surface-2); font-family: var(--mono); }
+    .indicator-item.selected { border-color: var(--accent); color: var(--accent); background: rgba(34,201,151,.08); }
+    .check-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .88rem; }
+    .check-row:last-child { border-bottom: none; }
+    .check-row input { width: auto; accent-color: var(--accent); margin-top: 3px; }
+    .preview-box { font-family: var(--mono); font-size: .75rem; background: #060810; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; max-height: 420px; overflow: auto; white-space: pre-wrap; line-height: 1.5; color: #b8c5d9; }
+    .rec-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; background: var(--surface-2); margin-bottom: 10px; }
+    .rec-card .rec-title { font-weight: 600; font-size: .9rem; }
+    .rec-card .rec-reason { color: var(--muted); font-size: .8rem; margin-top: 4px; }
+    .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; gap: 12px; }
+    .nav-bar .step-progress { flex: 1; text-align: center; }
+    .btn { padding: 11px 22px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); cursor: pointer; font-size: .88rem; font-family: inherit; transition: .15s; }
+    .btn:hover { border-color: #3a4d6a; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #041510; font-weight: 600; }
+    .btn-primary:hover { background: var(--accent-dim); }
+    .export-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-top: 16px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: .82rem; color: var(--muted); margin-bottom: 6px; }
+    .questions-list { list-style: none; margin-top: 12px; }
+    .questions-list li { padding: 10px 12px; border-left: 3px solid var(--warn); background: rgba(240,160,48,.06); margin-bottom: 8px; font-size: .86rem; border-radius: 0 8px 8px 0; }
+    .summary-table { width: 100%; border-collapse: collapse; font-size: .84rem; margin-bottom: 20px; }
+    .summary-table td, .summary-table th { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    .summary-table th { color: var(--muted); font-weight: 500; width: 140px; }
+    .tip-box { padding: 12px 14px; border-radius: var(--radius); border: 1px solid rgba(34,201,151,.25); background: rgba(34,201,151,.06); font-size: .84rem; color: #a8d4c4; margin-bottom: 18px; line-height: 1.5; }
+    .tip-box.warn { border-color: rgba(240,160,48,.35); background: rgba(240,160,48,.06); color: #d4b896; }
+    .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .template-card .tpl-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+    .template-card .tpl-title { font-weight: 600; font-size: .9rem; }
+    .template-card .tpl-plain { color: var(--muted); font-size: .78rem; margin-top: 6px; line-height: 1.45; }
+    .diff-badge { font-size: .68rem; padding: 2px 7px; border-radius: 999px; font-family: var(--mono); }
+    .diff-1 { background: rgba(34,201,151,.15); color: var(--accent); }
+    .diff-2 { background: rgba(240,160,48,.15); color: var(--warn); }
+    .diff-3 { background: rgba(239,95,95,.12); color: var(--danger); }
+    .tpl-detail { margin-top: 14px; padding: 14px; border-radius: var(--radius); border: 1px solid var(--border); background: #0a0e14; font-size: .82rem; }
+    .tpl-detail p { color: var(--muted); margin-bottom: 6px; }
+    .preset-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .preset-bar button { font-size: .78rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); color: var(--muted); cursor: pointer; font-family: inherit; }
+    .preset-bar button.active { border-color: var(--accent); color: var(--accent); background: rgba(34,201,151,.1); }
+    .mature-form .field textarea { min-height: 72px; }
+    .advanced-block { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .spec-preview { font-family: var(--mono); font-size: .72rem; background: #060810; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin-top: 12px; max-height: 200px; overflow: auto; white-space: pre-wrap; color: #9eb0c8; }
+    .field-hint { font-size: .75rem; color: var(--muted); margin-top: 4px; }
+    .preset-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; background: var(--surface-2); transition: .18s; }
+    .preset-card:hover { border-color: #3a4d6a; }
+    .preset-card.selected { border-color: var(--accent); background: rgba(34,201,151,.07); }
+    .preset-card.locked { cursor: default; opacity: .95; }
+    .preset-card .preset-title { font-weight: 600; font-size: .92rem; margin-bottom: 4px; }
+    .preset-card .preset-sub { color: var(--muted); font-size: .78rem; margin-bottom: 8px; }
+    .preset-card .preset-plain { font-size: .82rem; color: #a8b4c8; line-height: 1.45; }
+    .export-hero { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; align-items: center; }
+    .btn-lg { padding: 14px 28px; font-size: .95rem; }
+    .export-list { font-size: .82rem; color: var(--muted); margin-top: 14px; line-height: 1.6; list-style: none; padding: 0; }
+    .export-list li { margin-bottom: 4px; }
+    .exposure-advanced-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+    .exp-card.compact { padding: 14px; }
+    .exp-card.compact .exp-icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .exposure-metrics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .exposure-metric { font-family: var(--mono); font-size: .68rem; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+    .section-label { font-size: .82rem; color: var(--muted); font-weight: 600; margin: 20px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .section-label:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+    .risk-preset-grid .preset-card .preset-metrics { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .risk-preset-grid .preset-metric { font-family: var(--mono); font-size: .65rem; padding: 2px 6px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="references.bundle.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <h1>Quant Skill Builder</h1>
+        <p>生成可喂给 Cursor / Codex / Claude 的量化策略 Skill。你只需后续提供 API 接口即可接入交易。</p>
+      </div>
+      <a class="back-home" href="../../index.html">← 返回 LUCKYQUANT</a>
+    </header>
+
+    <div class="path-banner" id="pathBanner"></div>
+    <div class="steps" id="stepNav"></div>
+
+    <!-- Step 0: Experience (always first) -->
+    <section class="panel active" data-panel="experience">
+      <div class="exp-welcome">
+        <h2>你的投资经验是？</h2>
+        <p>选好后，系统将生成一份 Agent 可执行的策略 Skill。你只需在 IDE 中加载 Skill 并提供 API 密钥即可对接交易。</p>
+      </div>
+      <div class="grid-3" id="experienceGrid"></div>
+    </section>
+
+    <section class="panel" data-panel="markets">
+      <h2 id="marketsTitle">选择交易市场</h2>
+      <p class="hint" id="marketsHint"></p>
+      <div class="tip-box" id="tipMarkets"></div>
+      <div class="grid-3" id="marketGrid"></div>
+    </section>
+
+    <section class="panel" data-panel="risk">
+      <h2>交易风险偏好</h2>
+      <p class="hint" id="riskHint"></p>
+      <div class="tip-box" id="tipRisk"></div>
+      <div class="rec-card" id="riskMarketContext" style="margin-bottom:16px"></div>
+      <div id="riskBasicWrap" class="risk-slider-wrap">
+        <div class="risk-labels" id="riskLabels"></div>
+        <input type="range" id="riskSlider" min="1" max="5" step="1" value="2">
+      </div>
+      <div id="riskMatureWrap" style="display:none">
+        <div class="section-label" style="border-top:none;padding-top:0;margin-top:0">1. 风险态度</div>
+        <p class="field-hint" style="margin-bottom:10px">选最接近你真实容忍度的档位，参数会按所选市场自动校正。</p>
+        <div class="grid-3 risk-preset-grid" id="riskPresetGrid"></div>
+        <details class="advanced-block" id="riskFineTune" style="margin-top:16px">
+          <summary style="cursor:pointer;font-size:.88rem;color:var(--muted)">2. 精细风控参数（需自定义时展开）</summary>
+          <div class="grid-2" style="margin-top:14px">
+            <div class="field">
+              <label>组合最大回撤 %</label>
+              <p class="field-hint">从高点到低点最多亏多少</p>
+              <input type="number" id="riskMaxDD" min="3" max="60" step="1" value="18">
+            </div>
+            <div class="field">
+              <label>杠杆上限</label>
+              <p class="field-hint" id="riskLeverageHint">按市场规则限制可选范围</p>
+              <select id="riskLeverage"></select>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>单票/合约上限 %</label>
+              <input type="number" id="riskPosLimit" min="1" max="50" step="1" value="10">
+            </div>
+            <div class="field">
+              <label>单笔止损 %</label>
+              <input type="number" id="riskStopLoss" min="0.5" max="25" step="0.5" value="5">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>单笔风险预算 % NAV</label>
+              <p class="field-hint">该笔交易最多亏掉账户的百分之几</p>
+              <input type="number" id="riskPerTrade" min="0.1" max="5" step="0.1" value="1">
+            </div>
+            <div class="field">
+              <label>单日最大亏损 %</label>
+              <input type="number" id="riskMaxDailyLoss" min="0.5" max="15" step="0.5" value="3">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>仓位分配方式</label>
+              <select id="riskSizingMethod">
+                <option value="equal_weight">等权分配</option>
+                <option value="fixed_pct">固定比例</option>
+                <option value="vol_target">波动率目标</option>
+                <option value="risk_parity">风险平价</option>
+                <option value="kelly_cap">Kelly 上限</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>最大同时持仓数</label>
+              <input type="number" id="riskMaxPositions" min="1" max="200" step="1" value="10">
+            </div>
+          </div>
+          <div class="field">
+            <label>风控补充说明（可选）</label>
+            <input type="text" id="riskNotes" placeholder="例: 连亏3笔降仓50%；重大事件前减半仓">
+          </div>
+        </details>
+      </div>
+      <div class="risk-display" id="riskDisplay"></div>
+    </section>
+
+    <section class="panel" data-panel="strategy-setup">
+      <h2>选择策略方案</h2>
+      <p class="hint">先选策略范式，再选模板。选模板后会自动推荐交易偏性，也可手动改。</p>
+      <div class="tip-box" id="tipAdvanced"></div>
+      <div class="section-label">1. 策略范式（可多选）</div>
+      <div class="chip-group" id="strategyTypes"></div>
+      <div class="section-label">2. 策略模板</div>
+      <div class="field">
+        <select id="templateFilter">
+          <option value="all">全部模板</option>
+          <option value="trend">趋势类</option>
+          <option value="swing">波段类</option>
+          <option value="grid">网格/套利</option>
+          <option value="advanced">因子/ML</option>
+        </select>
+      </div>
+      <div class="template-grid" id="advancedTemplateGrid"></div>
+      <div class="tpl-detail" id="advancedTemplateDetail"></div>
+      <div class="section-label">3. 交易偏性</div>
+      <p class="field-hint" style="margin-bottom:12px">你整体偏多、中性对冲还是偏空？</p>
+      <div class="grid-3 exposure-grid" id="exposureGridInvestor"></div>
+      <div class="tip-box warn" id="tipExposureInvestor" style="margin-top:12px;display:none"></div>
+      <details class="advanced-block" id="advancedIndicators">
+        <summary style="cursor:pointer;font-size:.88rem;color:var(--muted)">可选：微调指标组合</summary>
+        <div class="field" style="margin-top:12px">
+          <select id="indicatorCategory">
+            <option value="all">全部指标</option>
+            <option value="trend">趋势</option>
+            <option value="momentum">动量</option>
+            <option value="volatility">波动率</option>
+            <option value="volume">成交量</option>
+          </select>
+        </div>
+        <div class="indicator-grid" id="indicatorGrid"></div>
+      </details>
+    </section>
+
+    <section class="panel" data-panel="strategy-fixed">
+      <h2>选择入门策略</h2>
+      <p class="hint">以下 3 个是经过验证的固定策略，专为零基础设计。选其中一个即可开始。</p>
+      <div class="tip-box">💡 三个入门模板均<strong>对标宽基指数</strong>（沪深300 / SPY），融合学术动量与 Regime 过滤研究，设计目标是在控制回撤的同时<strong>争取跑赢买入持有</strong>。须完成样本外检验后再实盘。</div>
+      <p class="field-hint" style="margin-bottom:14px">推荐顺序：指数双动量趋势 → 指数 Regime 波段 → 指数智能定投</p>
+      <div class="template-grid" id="fixedTemplateGrid"></div>
+      <div class="tpl-detail" id="fixedTemplateDetail"></div>
+    </section>
+
+    <section class="panel" data-panel="strategy-mature">
+      <h2>描述你的交易体系</h2>
+      <p class="hint">你已有成熟规则。请尽量完整描述，AI 会反问补全细节并翻译成可执行方案。</p>
+      <div class="tip-box warn">💡 请按真实操作习惯填写。AI 不会擅自修改你的核心逻辑，只会帮你形式化和找漏洞。</div>
+      <div style="margin-bottom:20px" id="exposureMatureBlock">
+        <div class="section-label">1. 交易偏性</div>
+        <p class="field-hint" style="margin-bottom:12px">选最接近你体系的经典敞口类型，必要时再微调。</p>
+        <div class="grid-3" id="exposureGridMature"></div>
+        <details class="advanced-block" id="exposureFineTune" style="margin-top:16px">
+          <summary style="cursor:pointer;font-size:.88rem;color:var(--muted)">自定义微调（选「自定义」或需改参数时展开）</summary>
+          <div class="grid-2" style="margin-top:14px">
+            <div class="field">
+              <label>净敞口范围 %</label>
+              <p class="field-hint">正=整体做多，负=整体做空，接近 0=中性</p>
+              <div class="grid-2" style="gap:8px">
+                <input type="number" id="expNetMin" min="-200" max="200" step="5" value="60" placeholder="最小">
+                <input type="number" id="expNetMax" min="-200" max="200" step="5" value="100" placeholder="最大">
+              </div>
+            </div>
+            <div class="field">
+              <label>总仓位规模 %</label>
+              <p class="field-hint">所有持仓合计；对冲策略通常 150%~300%</p>
+              <input type="number" id="expGrossTarget" min="50" max="600" step="10" value="100">
+            </div>
+          </div>
+          <div class="field">
+            <label>对冲方式</label>
+            <select id="expNeutrality">
+              <option value="none">不对冲（跟随大盘涨跌）</option>
+              <option value="dollar_neutral">多空金额对冲（买卖金额相当）</option>
+              <option value="beta_neutral">不赌大盘方向（按 Beta 对冲）</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>还要对冲哪些维度？（可选，不懂可跳过）</label>
+            <div class="chip-group" id="factorHedgeChips"></div>
+          </div>
+          <div class="field">
+            <label>补充说明（可选）</label>
+            <input type="text" id="expNotes" placeholder="例: 130% 多头 + 30% 空头；或只在科技行业内配对">
+          </div>
+        </details>
+        <div class="tip-box warn" id="tipExposureMature" style="margin-top:12px;display:none"></div>
+      </div>
+      <div class="section-label">2. 描述你的体系</div>
+      <div class="mature-form">
+        <div class="field">
+          <label>体系总述（必填）</label>
+          <textarea id="nlOverview" placeholder="例: 我做A股短线，每天收盘后选股，持仓3-5天。核心逻辑是..."></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>入场规则</label>
+            <textarea id="nlEntry" placeholder="什么条件下买入？"></textarea>
+          </div>
+          <div class="field">
+            <label>出场规则</label>
+            <textarea id="nlExit" placeholder="止盈、止损、时间止损？"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>仓位与资金管理</label>
+            <textarea id="nlPosition" placeholder="单票上限、加仓规则、总仓位？"></textarea>
+          </div>
+          <div class="field">
+            <label>风控与执行细节</label>
+            <textarea id="nlRisk" placeholder="最大回撤、禁交易时段、滑点容忍？"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label>快速示例（点击填充）</label>
+          <div class="chip-group" id="matureExamples"></div>
+        </div>
+      </div>
+      <ul class="questions-list" id="matureQuestions"></ul>
+      <details class="advanced-block">
+        <summary style="cursor:pointer;font-size:.88rem;color:var(--muted)">预览 spec / 参考模板（可选）</summary>
+        <div id="matureSpecPreview" class="spec-preview" style="display:none;margin-top:12px"></div>
+        <div class="template-grid" id="matureRefGrid" style="margin-top:12px"></div>
+      </details>
+    </section>
+
+    <section class="panel" data-panel="validation">
+      <h2>过拟合检验</h2>
+      <p class="hint" id="validationHint"></p>
+      <div class="tip-box" id="tipValidation"></div>
+      <div class="grid-3" id="validationPresets"></div>
+      <div class="rec-card" id="validationSummary"></div>
+      <details class="advanced-block" id="validationAdvanced">
+        <summary style="cursor:pointer;font-size:.88rem;color:var(--muted)">调整具体检验项（可选，默认已选好）</summary>
+        <div id="validationChecks" style="margin-top:12px"></div>
+      </details>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="field">
+          <label id="wfoLabel">分段验证次数</label>
+          <select id="wfoSplits">
+            <option value="5">5 段（推荐）</option>
+            <option value="8">8 段（更严格）</option>
+            <option value="10">10 段（最严格）</option>
+          </select>
+          <p class="field-hint">把历史数据分成多段，逐段测试策略是否稳定</p>
+        </div>
+        <div class="field">
+          <label id="dsrLabel">收益可信度要求</label>
+          <select id="dsrThreshold">
+            <option value="0.95">一般（推荐）</option>
+            <option value="0.99">严格</option>
+          </select>
+          <p class="field-hint">越高越严，防止策略只是「碰巧」在历史数据上好看</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="connection">
+      <h2>接入与运行配置</h2>
+      <p class="hint">策略逻辑由 Skill 描述；此处配置你将来要提供的 API/券商渠道。密钥不会写入 Skill，仅生成对接说明。</p>
+      <div class="tip-box" id="tipConnection"></div>
+      <div class="grid-2">
+        <div class="field">
+          <label>目标 IDE / Agent</label>
+          <select id="targetIDE">
+            <option value="cursor">Cursor（@skill 加载）</option>
+            <option value="codex">OpenAI Codex</option>
+            <option value="claude">Claude Code</option>
+            <option value="generic">通用 Agent（SKILL.md）</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>运行阶段</label>
+          <select id="runPhase">
+            <option value="backtest_first">先回测，通过后接 API</option>
+            <option value="paper_ready">回测+检验后直接接模拟盘 API</option>
+            <option value="live_ready">已有 API，准备实盘（仍须过门禁）</option>
+          </select>
+        </div>
+      </div>
+      <div class="section-label" style="border-top:none;padding-top:0;margin-top:8px">交易节奏</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>频率类型</label>
+          <select id="frequencyCategory">
+            <option value="daily">日线 / 波段</option>
+            <option value="intraday">日内</option>
+            <option value="tick">Tick / 高频</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>具体周期</label>
+          <select id="timeframe"></select>
+          <p class="field-hint" id="frequencyHint"></p>
+        </div>
+      </div>
+      <div class="field">
+        <label>开发阶段</label>
+        <select id="tradingMode">
+          <option value="paper_then_live" selected>回测 → 模拟盘 → 实盘</option>
+          <option value="backtest_only">仅回测研究</option>
+        </select>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>券商 / 交易所接口</label>
+          <select id="brokerGateway"></select>
+        </div>
+        <div class="field">
+          <label>行情数据源</label>
+          <select id="dataProvider"></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>API 备注（可选，如已有账号类型、测试网/主网）</label>
+        <input type="text" id="apiNotes" placeholder="例: 已有 Binance 测试网 key；或 CTP 仿真账号">
+      </div>
+      <div class="rec-card" id="connectionPreview"></div>
+    </section>
+
+    <section class="panel" data-panel="project">
+      <h2>项目与部署</h2>
+      <p class="hint">命名项目并选择 Skill 存放位置。</p>
+      <div class="grid-2">
+        <div class="field"><label>项目名称</label><input type="text" id="projectName" value="my-quant-system"></div>
+        <div class="field"><label>Skill 名称</label><input type="text" id="skillName" value="my-quant-system"></div>
+      </div>
+      <div class="field">
+        <label>Skill 存放位置</label>
+        <select id="deployTarget">
+          <option value="both">个人 + 项目</option>
+          <option value="personal">~/.cursor/skills/</option>
+          <option value="project">.agents/skills/</option>
+        </select>
+      </div>
+      <div id="frameworkRec"></div>
+    </section>
+
+    <section class="panel" data-panel="export">
+      <h2>导出你的量化系统</h2>
+      <p class="hint">一键获取运行所需的全部内容。解压后先读 README.md，再将 AGENT_PROMPT.txt 粘贴到 Agent 对话。</p>
+      <table class="summary-table" id="summaryTable"></table>
+      <ul class="export-list" id="exportManifest"></ul>
+      <div class="export-hero">
+        <button class="btn btn-primary btn-lg" id="exportZip">一键下载完整系统包 (.zip)</button>
+        <button class="btn" id="copyPrompt">复制 Agent 启动 Prompt</button>
+      </div>
+      <details class="advanced-block" style="margin-top:20px">
+        <summary style="cursor:pointer;font-size:.88rem;color:var(--muted)">预览 / 单独下载某个文件</summary>
+        <p style="font-size:.82rem;color:var(--muted);margin:12px 0 6px">strategy-spec.yaml 预览</p>
+        <div id="specPreviewWrap" class="spec-preview" style="display:none"></div>
+        <div class="preview-box" id="preview" style="margin-top:12px;max-height:280px"></div>
+        <div class="export-grid">
+          <button class="btn" id="exportSkill">SKILL.md</button>
+          <button class="btn" id="exportSpec">strategy-spec.yaml</button>
+          <button class="btn" id="exportScaffold">脚手架文件</button>
+        </div>
+      </details>
+    </section>
+
+    <div class="nav-bar">
+      <button class="btn" id="prevBtn" disabled>上一步</button>
+      <div class="step-progress" id="stepProgress"></div>
+      <button class="btn btn-primary" id="nextBtn">开始配置</button>
+    </div>
+  </div>
+
+  <script>
+    const EXPERIENCE_LEVELS = [
+      { id: 'zero', icon: '🌱', title: '完全零基础', sub: '没做过投资，或只买过基金',
+        gets: ['3 个指数增强模板', 'Agent 白话教学', '一键导出完整包'],
+        desc: '选一个对标指数的固定策略，跟着 Agent 做回测和学习。' },
+      { id: 'investor', icon: '📊', title: '有投资经验，无交易体系', sub: '自己炒过股/币，靠感觉操作',
+        gets: ['12+ 策略模板', '三档交易偏性', '标准过拟合检验'],
+        desc: '选模板 + 偏性，生成完整策略 spec。' },
+      { id: 'mature', icon: '🎯', title: '成熟投资经验与交易体系', sub: '有明确买卖规则和风控',
+        gets: ['6 档经典敞口', 'NL → 结构化 spec', '全面过拟合检验'],
+        desc: '描述现有体系，Agent 翻译后你确认再接 API。' },
+    ];
+
+    const FLOW = {
+      zero:     { panels: ['experience','markets','risk','strategy-fixed','validation','connection','project','export'],
+                  labels: ['你的经验','交易市场','风险偏好','选定策略','过拟合检验','接入配置','项目配置','导出'] },
+      investor: { panels: ['experience','markets','risk','strategy-setup','validation','connection','project','export'],
+                  labels: ['你的经验','交易市场','风险偏好','策略方案','过拟合检验','接入配置','项目配置','导出'] },
+      mature:   { panels: ['experience','markets','risk','strategy-mature','validation','connection','project','export'],
+                  labels: ['你的经验','交易市场','风险偏好','你的体系','过拟合检验','接入配置','项目配置','导出'] },
+    };
+
+    const BROKERS_BY_MARKET = {
+      ashare: [
+        { id: 'vnpy_xtp', label: 'VnPy + 中泰 XTP（A股）' },
+        { id: 'vnpy_tora', label: 'VnPy + 华鑫 Tora' },
+        { id: 'qmt', label: 'QMT / miniQMT' },
+        { id: 'tbd', label: '暂未确定，Agent 预留 adapter' },
+      ],
+      us: [
+        { id: 'alpaca', label: 'Alpaca API' },
+        { id: 'ibkr', label: 'Interactive Brokers' },
+        { id: 'yfinance_paper', label: 'yfinance 数据 + 模拟撮合' },
+        { id: 'tbd', label: '暂未确定' },
+      ],
+      hk: [
+        { id: 'futu', label: '富途 OpenAPI' },
+        { id: 'vnpy', label: 'VnPy 港股 gateway' },
+        { id: 'tbd', label: '暂未确定' },
+      ],
+      crypto: [
+        { id: 'binance', label: 'Binance / ccxt' },
+        { id: 'okx', label: 'OKX / ccxt' },
+        { id: 'freqtrade', label: 'Freqtrade 内置交易所' },
+        { id: 'tbd', label: '暂未确定' },
+      ],
+      futures: [
+        { id: 'vnpy_ctp', label: 'VnPy + CTP（国内期货）' },
+        { id: 'tbd', label: '暂未确定' },
+      ],
+      options: [
+        { id: 'vnpy', label: 'VnPy 期权模块' },
+        { id: 'ibkr', label: 'IBKR 期权' },
+        { id: 'tbd', label: '暂未确定' },
+      ],
+    };
+
+    const DATA_BY_MARKET = {
+      ashare: [{ id: 'akshare', label: 'AKShare（免费）' }, { id: 'tushare', label: 'TuShare Pro' }],
+      us: [{ id: 'yfinance', label: 'yfinance' }, { id: 'alpaca_data', label: 'Alpaca Data API' }],
+      hk: [{ id: 'akshare', label: 'AKShare' }, { id: 'futu', label: '富途行情' }],
+      crypto: [{ id: 'ccxt', label: 'ccxt 交易所 API' }, { id: 'exchange_ws', label: '交易所 WebSocket' }],
+      futures: [{ id: 'akshare', label: 'AKShare' }, { id: 'ctp', label: 'CTP 行情' }],
+      options: [{ id: 'exchange', label: '交易所官方 API' }],
+    };
+
+    const MARKET_RULES = {
+      ashare: { t_plus: 1, limit_pct: 0.10, stamp_duty: 0.0005, min_lot: 100 },
+      us: { t_plus: 0, limit_pct: null, stamp_duty: 0, min_lot: 1 },
+      hk: { t_plus: 0, limit_pct: null, stamp_duty: 0.001, min_lot: 1 },
+      crypto: { t_plus: 0, limit_pct: null, hours: '24/7', funding: true },
+      futures: { t_plus: 0, margin: true, limit_pct: null },
+      options: { t_plus: 0, greeks: true },
+    };
+
+    const MARKETS = [
+      { id: 'ashare', icon: '🇨🇳', title: 'A股', desc: '沪深/创业板/科创板' },
+      { id: 'us', icon: '🇺🇸', title: '美股', desc: 'NYSE/NASDAQ/ETF' },
+      { id: 'hk', icon: '🇭🇰', title: '港股', desc: '港交所' },
+      { id: 'crypto', icon: '₿', title: '加密', desc: 'CEX 现货/合约' },
+      { id: 'futures', icon: '📈', title: '期货', desc: '商品/金融期货' },
+      { id: 'options', icon: '⚡', title: '期权', desc: 'ETF/指数期权' },
+    ];
+
+    const RISK_BASE_SCORES = {
+      1: { label: '保守', maxDrawdownPct: 8, leverageX: 1, posLimitPct: 5, stopLossPct: 2, riskPerTradePct: 0.5, maxDailyLossPct: 1.5, maxPositions: 5, sizingMethod: 'fixed_pct', detail: '优先保本，低波动标的，慢节奏。' },
+      2: { label: '稳健', maxDrawdownPct: 12, leverageX: 1, posLimitPct: 8, stopLossPct: 3, riskPerTradePct: 0.8, maxDailyLossPct: 2.5, maxPositions: 8, sizingMethod: 'equal_weight', detail: '适度趋势跟随，回撤可控。' },
+      3: { label: '均衡', maxDrawdownPct: 18, leverageX: 1.5, posLimitPct: 10, stopLossPct: 5, riskPerTradePct: 1, maxDailyLossPct: 3.5, maxPositions: 10, sizingMethod: 'equal_weight', detail: '趋势+动量，接受适度波动。' },
+      4: { label: '进取', maxDrawdownPct: 25, leverageX: 2, posLimitPct: 15, stopLossPct: 7, riskPerTradePct: 1.5, maxDailyLossPct: 5, maxPositions: 15, sizingMethod: 'vol_target', detail: '集中持仓，较短周期，需严格止损。' },
+      5: { label: '激进', maxDrawdownPct: 35, leverageX: 3, posLimitPct: 20, stopLossPct: 10, riskPerTradePct: 2, maxDailyLossPct: 7, maxPositions: 20, sizingMethod: 'vol_target', detail: '高杠杆或高集中，必须过全检与模拟盘。' },
+    };
+
+    const RISK_SIZING_METHODS = {
+      fixed_pct: '固定比例', equal_weight: '等权分配', vol_target: '波动率目标',
+      risk_parity: '风险平价', kelly_cap: 'Kelly 上限',
+    };
+
+    const MARKET_RISK_CONTEXT = {
+      ashare: {
+        title: 'A股', maxLeverageCap: 1, posLimitCap: 20,
+        leverageOptions: [1],
+        constraints: ['T+1：当日买入次日才能卖', '涨跌停 ±10%（科创/创业板 ±20%）', '卖出印花税 0.05%'],
+        tip: '散户通常无法加杠杆，系统默认锁定 1x。短线需注意涨跌停无法成交。',
+      },
+      us: {
+        title: '美股', maxLeverageCap: 4, posLimitCap: 25,
+        leverageOptions: [1, 1.5, 2, 4],
+        constraints: ['T+0 可当日回转', '无涨跌停（有熔断）', 'Margin 受 Reg T 约束'],
+        tip: '支持 margin 与杠杆 ETF；日内频繁交易可能触发 PDT 规则（账户 ≥$25k 可豁免）。',
+      },
+      hk: {
+        title: '港股', maxLeverageCap: 2, posLimitCap: 20,
+        leverageOptions: [1, 1.5, 2],
+        constraints: ['T+0', '无涨跌停', '印花税 0.1%'],
+        tip: '部分小盘股流动性差，建议降低单票上限与杠杆。',
+      },
+      crypto: {
+        title: '加密', maxLeverageCap: 10, posLimitCap: 30,
+        leverageOptions: [1, 2, 3, 5, 10],
+        constraints: ['7×24 交易', '永续合约 Funding rate', '交易所强平线'],
+        tip: '合约杠杆可达极高，回测必须写入强平与 funding 成本。',
+      },
+      futures: {
+        title: '期货', maxLeverageCap: 20, posLimitCap: 40,
+        leverageOptions: [1, 2, 3, 5, 10, 20],
+        constraints: ['保证金交易', '逐日盯市', '强平与交割规则'],
+        tip: '仓位以保证金计；名义杠杆 ≠ 账户风险，需单独设止损。',
+      },
+      options: {
+        title: '期权', maxLeverageCap: 5, posLimitCap: 15,
+        leverageOptions: [1, 2, 3, 5],
+        constraints: ['权利金最大损失', 'Greeks 暴露', '到期/行权规则'],
+        tip: '不宜套用现货杠杆逻辑；以权利金占比与 Delta 敞口控风险。',
+      },
+    };
+
+    const FREQUENCY_RISK_ADJ = {
+      daily: { dailyLossMult: 1, stopMult: 1, riskPerTradeMult: 1 },
+      intraday: { dailyLossMult: 0.65, stopMult: 0.75, riskPerTradeMult: 0.85, note: '日内策略：单日亏损预算已自动收紧。' },
+      tick: { dailyLossMult: 0.45, stopMult: 0.55, riskPerTradeMult: 0.6, note: '高频策略：单笔与单日风险预算已大幅收紧。' },
+    };
+
+    const EXPOSURE_RISK_NOTES = {
+      long: null,
+      neutral: '中性策略：Gross 较高但 Net 接近 0，请按多空合计设总风险而非单边。',
+      short: '偏空策略：需额外考虑融券/借币成本与 squeeze 风险。',
+      market_neutral: '市场中性：按配对/对冲腿合计控制 Gross 与保证金占用。',
+      short_biased: '偏空：建议降低杠杆上限并提高止损纪律。',
+      long_extension: '130/30：空头腿占用保证金，总风险按 Gross 160% 估算。',
+    };
+
+    function getEffectiveMarketCaps() {
+      const ids = [...state.markets].length ? [...state.markets] : ['ashare'];
+      const ctxs = ids.map(id => MARKET_RISK_CONTEXT[id] || MARKET_RISK_CONTEXT.ashare);
+      const levOpts = [...new Set(ctxs.flatMap(c => c.leverageOptions))].sort((a, b) => a - b);
+      return {
+        markets: ids,
+        contexts: ctxs,
+        maxLeverageCap: Math.min(...ctxs.map(c => c.maxLeverageCap)),
+        posLimitCap: Math.min(...ctxs.map(c => c.posLimitCap)),
+        leverageOptions: levOpts.filter(l => l <= Math.min(...ctxs.map(c => c.maxLeverageCap))),
+      };
+    }
+
+    function readRiskCustomFromDOM() {
+      return {
+        maxDrawdownPct: +document.getElementById('riskMaxDD')?.value || 18,
+        leverageX: +document.getElementById('riskLeverage')?.value || 1,
+        posLimitPct: +document.getElementById('riskPosLimit')?.value || 10,
+        stopLossPct: +document.getElementById('riskStopLoss')?.value || 5,
+        riskPerTradePct: +document.getElementById('riskPerTrade')?.value || 1,
+        maxDailyLossPct: +document.getElementById('riskMaxDailyLoss')?.value || 3,
+        sizingMethod: document.getElementById('riskSizingMethod')?.value || 'equal_weight',
+        maxPositions: +document.getElementById('riskMaxPositions')?.value || 10,
+        notes: document.getElementById('riskNotes')?.value?.trim() || '',
+      };
+    }
+
+    function applyRiskToFineTune(profile) {
+      const caps = getEffectiveMarketCaps();
+      const levOpts = caps.leverageOptions;
+      const lev = levOpts.includes(profile.leverageX) ? profile.leverageX : levOpts[levOpts.length - 1];
+      document.getElementById('riskMaxDD').value = profile.maxDrawdownPct;
+      renderRiskLeverageOptions(lev);
+      document.getElementById('riskPosLimit').value = Math.min(profile.posLimitPct, caps.posLimitCap);
+      document.getElementById('riskStopLoss').value = profile.stopLossPct;
+      document.getElementById('riskPerTrade').value = profile.riskPerTradePct;
+      document.getElementById('riskMaxDailyLoss').value = profile.maxDailyLossPct;
+      document.getElementById('riskSizingMethod').value = profile.sizingMethod || 'equal_weight';
+      document.getElementById('riskMaxPositions').value = profile.maxPositions;
+      document.getElementById('riskNotes').value = profile.notes || '';
+    }
+
+    function renderRiskLeverageOptions(selected) {
+      const caps = getEffectiveMarketCaps();
+      const el = document.getElementById('riskLeverage');
+      if (!el) return;
+      el.innerHTML = caps.leverageOptions.map(l =>
+        `<option value="${l}" ${+selected === l ? 'selected' : ''}>${l}x</option>`
+      ).join('');
+      const hint = document.getElementById('riskLeverageHint');
+      if (hint) hint.textContent = `当前市场最高 ${caps.maxLeverageCap}x · 多市场取最严限制`;
+    }
+
+    function buildRiskProfile(opts = {}) {
+      const score = opts.risk ?? state.risk;
+      const exp = opts.experience ?? state.experience;
+      const base = { ...RISK_BASE_SCORES[score] || RISK_BASE_SCORES[2] };
+      const caps = getEffectiveMarketCaps();
+      const freqCat = opts.frequencyCategory ?? state.frequencyCategory ?? 'daily';
+      const freqAdj = FREQUENCY_RISK_ADJ[freqCat] || FREQUENCY_RISK_ADJ.daily;
+
+      let profile = {
+        score,
+        label: base.label,
+        maxDrawdownPct: base.maxDrawdownPct,
+        leverageX: Math.min(base.leverageX, caps.maxLeverageCap),
+        posLimitPct: Math.min(base.posLimitPct, caps.posLimitCap),
+        stopLossPct: +(base.stopLossPct * freqAdj.stopMult).toFixed(1),
+        riskPerTradePct: +(base.riskPerTradePct * freqAdj.riskPerTradeMult).toFixed(2),
+        maxDailyLossPct: +(base.maxDailyLossPct * freqAdj.dailyLossMult).toFixed(1),
+        maxPositions: base.maxPositions,
+        sizingMethod: base.sizingMethod,
+        detail: base.detail,
+        notes: '',
+        tier: exp === 'mature' ? 'advanced' : 'basic',
+        preset: score,
+      };
+
+      const useCustom = opts.useCustom !== undefined
+        ? opts.useCustom
+        : (exp === 'mature' && state.riskManual);
+
+      if (exp === 'mature' && useCustom) {
+        const c = opts.riskCustom || readRiskCustomFromDOM();
+        profile = {
+          ...profile,
+          maxDrawdownPct: c.maxDrawdownPct,
+          leverageX: Math.min(c.leverageX, caps.maxLeverageCap),
+          posLimitPct: Math.min(c.posLimitPct, caps.posLimitCap),
+          stopLossPct: c.stopLossPct,
+          riskPerTradePct: c.riskPerTradePct,
+          maxDailyLossPct: c.maxDailyLossPct,
+          maxPositions: c.maxPositions,
+          sizingMethod: c.sizingMethod,
+          notes: c.notes,
+          preset: 'custom',
+          label: c.notes ? '自定义' : base.label,
+        };
+      }
+
+      const exposureKey = exp === 'mature' ? state.exposurePreset : state.marketExposure;
+      const exposureNote = EXPOSURE_RISK_NOTES[exposureKey] || null;
+
+      profile.markets = caps.markets.map(id => MARKET_RISK_CONTEXT[id]?.title || id);
+      profile.market_constraints = [...new Set(caps.contexts.flatMap(c => c.constraints))];
+      profile.frequency_category = freqCat;
+      profile.frequency_note = freqAdj.note || null;
+      profile.exposure_note = exposureNote;
+      profile.maxDD = profile.maxDrawdownPct + '%';
+      profile.leverage = profile.leverageX + 'x';
+      profile.posLimit = profile.posLimitPct + '%';
+      profile.stopLoss = profile.stopLossPct + '%';
+      profile.riskPerTrade = profile.riskPerTradePct + '%';
+      profile.maxDailyLoss = profile.maxDailyLossPct + '%';
+      profile.sizingMethodLabel = RISK_SIZING_METHODS[profile.sizingMethod] || profile.sizingMethod;
+      return profile;
+    }
+
+    function buildRiskSpecBlock(r) {
+      return {
+        score: r.score, label: r.label, tier: r.tier, preset: r.preset,
+        max_drawdown: r.maxDD, max_drawdown_pct: r.maxDrawdownPct,
+        leverage: r.leverage, leverage_x: r.leverageX,
+        stop_loss: r.stopLoss, stop_loss_pct: r.stopLossPct,
+        position_limit: r.posLimit, position_limit_pct: r.posLimitPct,
+        risk_per_trade: r.riskPerTrade, risk_per_trade_pct: r.riskPerTradePct,
+        max_daily_loss: r.maxDailyLoss, max_daily_loss_pct: r.maxDailyLossPct,
+        sizing_method: r.sizingMethod, sizing_method_label: r.sizingMethodLabel,
+        max_positions: r.maxPositions,
+        markets: r.markets, market_constraints: r.market_constraints,
+        frequency_category: r.frequency_category, frequency_note: r.frequency_note,
+        exposure_note: r.exposure_note, notes: r.notes || null,
+      };
+    }
+
+    // legacy alias
+    const RISK_PROFILES = Object.fromEntries(
+      Object.entries(RISK_BASE_SCORES).map(([k, v]) => [k, {
+        label: v.label, maxDD: v.maxDrawdownPct + '%', leverage: v.leverageX + 'x',
+        posLimit: v.posLimitPct + '%', stopLoss: v.stopLossPct + '%', detail: v.detail,
+      }])
+    );
+
+    const STRATEGY_TYPES = [
+      { id: 'technical', label: '技术指标', plain: '用均线/MACD/RSI 等产生买卖信号' },
+      { id: 'factor', label: '多因子选股', plain: '给股票打分，定期选最优' },
+      { id: 'ml', label: '机器学习', plain: '用历史数据训练预测模型' },
+      { id: 'stat_arb', label: '统计套利', plain: '配对交易、价差回归' },
+      { id: 'event', label: '事件驱动', plain: '财报、公告、新闻触发' },
+    ];
+
+    const INDICATORS = {
+      trend: ['sma','ema','macd','adx','supertrend'],
+      momentum: ['rsi','stoch','cci','mfi'],
+      volatility: ['bollinger','atr','donchian','keltner'],
+      volume: ['obv','vwap','cmf'],
+    };
+
+    const BENCHMARK_BY_MARKET = {
+      ashare: { symbol: '000300.SH', name: '沪深300', etf: '510300.SH', etf_alt: '159915.SZ' },
+      us: { symbol: 'SPY', name: 'S&P 500', etf: 'SPY', etf_alt: 'VOO' },
+      hk: { symbol: 'HSI', name: '恒生指数', etf: '2800.HK', etf_alt: '3033.HK' },
+      crypto: { symbol: 'BTC-USD', name: 'BTC', etf: 'BTC/USDT', etf_alt: null },
+      futures: { symbol: 'IF.CFX', name: '沪深300期货', etf: null, etf_alt: null },
+      options: { symbol: 'SPY', name: 'SPY期权标的', etf: 'SPY', etf_alt: null },
+    };
+
+    const STRATEGY_TEMPLATES = [
+      { id: 'dual_ma', tier: 'fixed', name: '指数双动量趋势', category: 'beginner', diff: 1,
+        indicators: ['ema','sma','atr'], strategies: ['technical'], risk: [2,3],
+        plain: '结合绝对动量+趋势过滤，强势持有指数ETF，弱势转现金/短债。',
+        logic: '12月收益>0 且 EMA50>EMA200 → 满仓指数ETF | 否则持短债/货币 | 月度再平衡',
+        framework: 'Backtrader', learning: '基于 Antonacci 双动量与 Faber 200日均线研究；目标：跑赢指数且降低熊市回撤',
+        research: ['Antonacci Dual Momentum', 'Faber TAA 200-day MA', 'Jegadeesh-Titman 12-1 momentum'],
+        spec: {
+          signal_type: 'dual_momentum_trend', timeframe: '1d',
+          universe: '单指数ETF：A股 510300/159915 · 美股 SPY/VOO',
+          benchmark: { ashare: '000300.SH', us: 'SPY', hk: 'HSI' },
+          performance_goal: 'excess_return_vs_benchmark_with_lower_drawdown',
+          entry: [
+            '绝对动量：过去 252 交易日总收益 > 0',
+            '趋势确认：Close > SMA(200) 且 EMA(50) > EMA(200)',
+            '满足则 100% 持有指数 ETF（510300/SPY）',
+          ],
+          exit: [
+            '绝对动量转负：252 日收益 < 0 或 Close < SMA(200)',
+            '或 EMA(50) 下穿 EMA(200)',
+            '转为 100% 短债/货币 ETF（511880/SHV）避险',
+          ],
+          position: { method: 'regime_switch', risk_on: '100% index_etf', risk_off: '100% bond_cash_etf', max_positions: 1 },
+          params: { ema_fast: 50, ema_slow: 200, abs_mom_lookback: 252, rebalance_day: 'monthly_first_trading_day', signal_lag: 1 },
+          costs: { commission: 0.0003, slippage: 0.001 },
+          rebalance: 'monthly',
+          backtest_requirements: [
+            '基准：指数 ETF 买入持有',
+            '信号 shift(1) 防未来函数',
+            '样本须含 2008/2015/2022 等熊市',
+            '报告超额收益 Alpha 与最大回撤对比',
+          ],
+        } },
+      { id: 'rsi_bounce', tier: 'fixed', name: '指数 Regime 波段', category: 'beginner', diff: 1,
+        indicators: ['rsi','sma','ema'], strategies: ['technical'], risk: [1,2],
+        plain: '仅在长期趋势向上时做 RSI 超卖反弹，避免熊市接飞刀。',
+        logic: 'Close>SMA200 且 RSI<35 拐头 → 买 | RSI>65 或破 SMA200 → 卖',
+        framework: 'Backtrader', learning: 'Regime 过滤均值回归；震荡/牛市争取超额，熊市空仓',
+        research: ['Connors RSI short-term', 'Regime filter SMA200', 'Index mean reversion'],
+        spec: {
+          signal_type: 'regime_filtered_mean_reversion', timeframe: '1d',
+          universe: '宽基指数 ETF 单标的（510300 / SPY）',
+          benchmark: { ashare: '000300.SH', us: 'SPY' },
+          performance_goal: 'beat_benchmark_in_sideways_bull_avoid_bear_drawdown',
+          entry: [
+            'Regime：Close > SMA(200)（长期趋势非熊市）',
+            'RSI(14) < 35 且 RSI 较前一日上升（超卖拐头）',
+            '可选：成交量 > 20 日均量（确认有效反弹）',
+          ],
+          exit: ['RSI(14) > 65', '或 Close < SMA(200) 清仓', '或固定止损 -6%'],
+          position: { method: 'fixed_pct', max_single: '95%', max_positions: 1 },
+          params: { rsi_period: 14, rsi_oversold: 35, rsi_overbought: 65, sma_regime: 200, stop_loss_pct: 0.06 },
+          costs: { commission: 0.0003, slippage: 0.001 },
+          rebalance: 'on_signal',
+          backtest_requirements: ['对比指数买入持有', '分牛/熊/震荡子样本报告超额收益'],
+        } },
+      { id: 'dca', tier: 'fixed', name: '指数智能定投', category: 'beginner', diff: 1,
+        indicators: ['sma','rsi'], strategies: ['technical'], risk: [1,2],
+        plain: '在指数 ETF 上定投，低估加码、高估减码，争取跑赢普通定额定投。',
+        logic: '每月固定日买入 | 价<SMA200 加1.5倍 | 价>SMA200×1.15 减半 | 长期对标指数',
+        framework: 'Backtrader', learning: 'Valuation-aware DCA；不保证每段都赢指数，但长期有望提升风险调整收益',
+        research: ['Dollar-cost averaging', 'SMA valuation tilt', 'Index ETF long-horizon'],
+        spec: {
+          signal_type: 'smart_dca', timeframe: '1d',
+          universe: '1 个宽基指数 ETF（510300 / SPY）',
+          benchmark: { ashare: '000300.SH', us: 'SPY' },
+          performance_goal: 'beat_naive_dca_and_match_or_exceed_benchmark_long_run',
+          entry: [
+            '每月第一个交易日执行定投',
+            '基准金额 = 用户设定（如每月 5000）',
+            'Close < SMA(200)：金额 × 1.5（低估区加码）',
+            'Close > SMA(200) × 1.15：金额 × 0.5（高估区减速）',
+            '其余：基准金额',
+          ],
+          exit: ['长期持有为主', '累计收益 ≥ 25% 可分批止盈 30%', '或 Close < SMA(200) 且 RSI<30 暂停卖出仅停止加码'],
+          position: { method: 'fixed_amount_tilt', base_amount: '用户设定', max_total: '100%' },
+          params: { period: 'monthly', sma_tilt: 200, underweight_mult: 1.5, overweight_mult: 0.5, overvalued_pct: 0.15, take_profit_pct: 0.25 },
+          costs: { commission: 0.0003, slippage: 0.0005 },
+          rebalance: 'calendar',
+          backtest_requirements: ['对比普通定投与指数买入持有', '至少 5 年样本'],
+        } },
+      { id: 'cta_trend', tier: 'advanced', name: 'CTA 趋势跟踪', category: 'trend', diff: 2,
+        indicators: ['donchian','atr','adx'], strategies: ['technical'], risk: [3,4],
+        plain: '突破 N 日新高追入，ATR 追踪止损。',
+        logic: 'Donchian 突破 + ADX>25 → 多 | ATR 追踪止损',
+        framework: 'VnPy', learning: '经典期货 CTA 范式',
+        spec: {
+          signal_type: 'breakout', timeframe: '1d', universe: '主力期货合约或趋势型品种',
+          entry: ['Close > Donchian(20) 上轨', 'ADX(14) > 25'],
+          exit: ['ATR(14) 追踪止损 mult=3', '或 Close < Donchian(10) 下轨'],
+          position: { method: 'volatility_target', risk_per_trade: '1%', max_positions: 3 },
+          params: { donchian_entry: 20, donchian_exit: 10, adx_threshold: 25, atr_mult: 3 },
+          costs: { commission: 0.0001, slippage: 0.002 }, rebalance: 'on_signal' } },
+      { id: 'macd_cross', tier: 'advanced', name: 'MACD 金叉死叉', category: 'swing', diff: 2,
+        indicators: ['macd','rsi'], strategies: ['technical'], risk: [2,3],
+        plain: 'MACD 金叉买，死叉卖。',
+        logic: 'MACD 金叉 + RSI<70 → 买 | 死叉或 RSI>75 → 卖',
+        framework: 'Backtrader', learning: '波段操作经典组合',
+        spec: {
+          signal_type: 'crossover', timeframe: '1d', universe: '用户自选股票池 20-50 只',
+          entry: ['MACD 线上穿信号线', 'RSI(14) < 70'],
+          exit: ['MACD 死叉', '或 RSI(14) > 75'],
+          position: { method: 'equal_weight', max_positions: 8, max_single: '10%' },
+          params: { macd_fast: 12, macd_slow: 26, macd_signal: 9, rsi_period: 14 },
+          costs: { commission: 0.0003, slippage: 0.001 }, rebalance: 'on_signal' } },
+      { id: 'bollinger_mr', tier: 'advanced', name: '布林带均值回归', category: 'swing', diff: 2,
+        indicators: ['bollinger','rsi','atr'], strategies: ['technical'], risk: [2,3],
+        plain: '触下轨买、触上轨卖，赌回归。',
+        logic: '触下轨 + RSI<35 → 买 | 触上轨 → 卖', warn: '强趋势中失效',
+        framework: 'Backtrader', learning: '适合震荡市',
+        spec: {
+          signal_type: 'mean_reversion', timeframe: '1d', universe: '震荡型 ETF/指数成分',
+          entry: ['Close <= BB(20,2) 下轨', 'RSI(14) < 35'],
+          exit: ['Close >= BB 上轨', '或 中轨止盈'],
+          position: { method: 'equal_weight', max_positions: 6, max_single: '10%' },
+          params: { bb_period: 20, bb_std: 2, rsi_oversold: 35 },
+          costs: { commission: 0.0003, slippage: 0.001 }, rebalance: 'on_signal' } },
+      { id: 'grid', tier: 'advanced', name: '网格交易', category: 'grid', diff: 2,
+        indicators: ['bollinger','atr'], strategies: ['technical'], risk: [2,3],
+        plain: '区间内低买高卖，反复赚差价。',
+        logic: '每跌 2% 加一格，每涨 2% 减一格 | 总仓位上限 50%',
+        warn: '单边下跌会套牢，先模拟盘', framework: 'Freqtrade',
+        spec: {
+          signal_type: 'grid', timeframe: '15m', universe: '单品种（如 BTC/USDT）',
+          entry: ['价格每下跌 grid_step% 买入一格', '最多 grid_count 格'],
+          exit: ['价格每上涨 grid_step% 卖出一格', '或 跌破 MA200 全部清仓'],
+          position: { method: 'grid', max_total: '50%', grid_step_pct: 0.02, grid_count: 10 },
+          params: { grid_step: 0.02, ma_filter: 200 },
+          costs: { commission: 0.001, slippage: 0.001 }, rebalance: 'continuous' } },
+      { id: 'pairs', tier: 'advanced', name: '配对交易', category: 'grid', diff: 3,
+        indicators: [], strategies: ['stat_arb'], risk: [2,3],
+        plain: '相关股票价差偏离时对冲交易。',
+        logic: 'z-score>2 做空价差 | z→0 平仓', framework: 'VectorBT',
+        spec: {
+          signal_type: 'pairs', timeframe: '1d', universe: '协整配对（同行业 2 只）',
+          entry: ['spread z-score > 2 做空价差', 'z-score < -2 做多价差'],
+          exit: ['z-score 回归至 |z| < 0.5', '或 协整破裂止损'],
+          position: { method: 'dollar_neutral', leg_ratio: 'beta_hedge' },
+          params: { z_entry: 2, z_exit: 0.5, lookback: 60, coint_pvalue: 0.05 },
+          costs: { commission: 0.0003, slippage: 0.001 }, rebalance: 'on_signal' } },
+      { id: 'factor_rotation', tier: 'advanced', name: '指数增强多因子', category: 'advanced', diff: 3,
+        indicators: [], strategies: ['factor'], risk: [2,3],
+        plain: '在指数成分内用价值+质量+12月动量打分，月度选Top组合。',
+        logic: '沪深300/SP500成分 · EP+ROE+12-1动量 · Top30等权 · 月度调仓',
+        framework: 'Qlib', learning: 'Jegadeesh-Titman 动量 + 价值质量；目标跑赢宽基指数',
+        research: ['Jegadeesh-Titman 12-1 momentum', 'Fama-French factors', 'Index enhancement'],
+        spec: {
+          signal_type: 'factor', timeframe: '1d',
+          universe: '指数成分股（CSI300 / SP500），剔除 ST/停牌/上市<120天',
+          benchmark: { ashare: '000300.SH', us: 'SPY' },
+          performance_goal: 'excess_return_vs_index_after_costs',
+          entry: ['每月最后一个交易日调仓', '综合因子 Top 30：12-1月动量(40%)+EP(30%)+ROE(30%)', '仅选流动性前 80% 分位'],
+          exit: ['月度调仓', '剔除 ST/停牌/流动性不足', '单因子 z-score 极端时降权'],
+          position: { method: 'equal_weight', max_positions: 30, max_single: '5%' },
+          params: { factors: ['momentum_12_1','EP','ROE'], weights: [0.4,0.3,0.3], rebalance: 'monthly', signal_lag: 1 },
+          costs: { commission: 0.0003, slippage: 0.002 },
+          rebalance: 'monthly',
+          backtest_requirements: ['对比指数 ETF', 'shift(1) 因子信号', 'CPCV+DSR 必检'],
+        } },
+      { id: 'ml_signal', tier: 'advanced', name: 'ML 预测信号', category: 'advanced', diff: 3,
+        indicators: [], strategies: ['ml'], risk: [3,4],
+        plain: 'LightGBM/LSTM 预测涨跌概率。',
+        logic: 'Alpha158 特征 → 模型 → CPCV 验证 → TopK 选股',
+        warn: '必须 CPCV+DSR', framework: 'Qlib',
+        spec: {
+          signal_type: 'ml', timeframe: '1d', universe: 'Qlib cn_data 或自定义',
+          entry: ['模型预测 score Top K', '仅 score > threshold'],
+          exit: ['每日/每周调仓', 'score 跌出 Top K'],
+          position: { method: 'score_weighted', max_positions: 50 },
+          params: { model: 'LightGBM', features: 'Alpha158', topk: 50, train_window: 252 },
+          costs: { commission: 0.0003, slippage: 0.002 }, rebalance: 'daily' } },
+      { id: 'dual_thrust', tier: 'advanced', name: 'Dual Thrust 日内', category: 'trend', diff: 3,
+        indicators: ['atr','donchian'], strategies: ['technical'], risk: [4,5],
+        plain: '根据振幅画通道，突破追单。',
+        logic: '突破上下轨 → 开仓 | 收盘平仓', framework: 'VnPy',
+        spec: {
+          signal_type: 'intraday_breakout', timeframe: '5m', universe: '单期货/.crypto 主力',
+          entry: ['突破 DualThrust 上轨做多', '突破下轨做空'],
+          exit: ['当日收盘前平仓', '或 ATR 止损'],
+          position: { method: 'fixed_lots', max_risk_per_day: '2%' },
+          params: { lookback_days: 4, k1: 0.5, k2: 0.5 },
+          costs: { commission: 0.0001, slippage: 0.003 }, rebalance: 'intraday' } },
+    ];
+
+    const VALIDATION_ITEMS = [
+      { id: 'wfo', label: '分段验证', desc: '换不同时间段反复测试' },
+      { id: 'cpcv', label: '多路径验证', desc: '多种数据切法交叉检验' },
+      { id: 'dsr', label: '收益可信度', desc: '排除试了很多次才碰巧好看' },
+      { id: 'pbo', label: '运气检测', desc: '超过 50% 更像巧合' },
+      { id: 'psr', label: '收益显著性', desc: '确认不是随机波动' },
+      { id: 'mc', label: '随机对照', desc: '和乱买对比看是否真有效' },
+      { id: 'regime', label: '牛熊都测', desc: '上涨下跌震荡都要能活' },
+      { id: 'param', label: '参数稳健', desc: '参数改一点结果不能差太多' },
+      { id: 'oos_decay', label: '新数据表现', desc: '没参与调参的数据上不能掉链子' },
+    ];
+
+    const VALIDATION_PRESET_META = {
+      beginner: {
+        title: '基础检验',
+        sub: '4 项核心检查 · 零基础默认',
+        plain: '换时间段测、查收益可信度、排除运气、牛熊都试',
+        items: ['分段验证', '收益可信度', '运气检测', '牛熊都测'],
+      },
+      standard: {
+        title: '标准检验',
+        sub: '7 项 · 大多数用户推荐',
+        plain: '基础项 + 多路径验证、显著性、参数稳健',
+        items: ['分段验证', '多路径验证', '收益可信度', '运气检测', '收益显著性', '牛熊都测', '参数稳健'],
+      },
+      pro: {
+        title: '全面检验',
+        sub: '全部 9 项 · 成熟策略必做',
+        plain: '标准项 + 随机对照 + 新数据表现',
+        items: VALIDATION_ITEMS.map(v => v.label),
+      },
+    };
+
+    const VALIDATION_PRESETS = {
+      beginner: ['wfo','dsr','pbo','regime'],
+      standard: ['wfo','cpcv','dsr','pbo','psr','regime','param'],
+      pro: VALIDATION_ITEMS.map(v => v.id),
+    };
+
+    // 基础三档（投资者）：Net/Gross 参考 CFA Long-Short 定义
+    const MARKET_EXPOSURE_OPTIONS = [
+      { id: 'long', icon: '📈', label: '偏多', sub: '整体做多',
+        plain: '净多头：大盘涨你也涨。只买不卖或几乎不做空。',
+        metrics: ['整体做多', '适合趋势/选股'],
+        spec: {
+          direction: 'long_biased', net_exposure_pct: [60, 100], gross_exposure_pct: [90, 110],
+          allow_short: false, beta_target: [0.3, 1.0], neutrality: null,
+          construction: ['long-only', 'long-heavy'],
+        },
+        examples: '双均线、因子选股、定投、CTA 做多' },
+      { id: 'neutral', icon: '⚖️', label: '中性', sub: '多空对冲',
+        plain: '多空对冲，不赌大盘方向。靠价差赚钱。',
+        metrics: ['多空对冲', '适合配对/套利'],
+        spec: {
+          direction: 'market_neutral', net_exposure_pct: [-10, 10], gross_exposure_pct: [150, 250],
+          allow_short: true, beta_target: [0, 0.2], neutrality: 'dollar_neutral',
+          construction: ['equal long-short notional', 'pairs / stat arb'],
+        },
+        examples: '配对交易、统计套利、多空因子' },
+      { id: 'short', icon: '📉', label: '偏空', sub: '整体做空',
+        plain: '净空头：大盘跌你可能赚。需融券或期货。',
+        metrics: ['整体做空', '需特殊工具'],
+        spec: {
+          direction: 'short_biased', net_exposure_pct: [-100, -40], gross_exposure_pct: [80, 150],
+          allow_short: true, beta_target: [-1.0, -0.3], neutrality: null,
+          construction: ['short-only', 'inverse overlay'],
+        },
+        examples: '做空弱动量、反向 ETF、期货空头' },
+    ];
+
+    // 成熟用户：6 档经典敞口（含自定义）
+    const EXPOSURE_CLASSIC_PRESETS = [
+      { id: 'long_only', group: 'long', icon: '📈', label: '纯多头', sub: '只做多，不做空',
+        metrics: ['Net ~100%'],
+        plain: '100% 买入持有或择时。最常用，门槛最低。',
+        spec: { direction: 'long_only', net_exposure_pct: [95, 100], gross_exposure_pct: [95, 105], allow_short: false, beta_target: [0.8, 1.2], neutrality: 'none', leverage_cap: 1.0 } },
+      { id: 'long_biased', group: 'long', icon: '📊', label: '偏多', sub: '以做多为主',
+        metrics: ['Net +50~90%'],
+        plain: '主要做多，可少量对冲。趋势、选股类策略常见。',
+        spec: { direction: 'long_biased', net_exposure_pct: [50, 90], gross_exposure_pct: [80, 120], allow_short: true, beta_target: [0.4, 0.9], neutrality: 'none', leverage_cap: 1.2 } },
+      { id: 'market_neutral', group: 'neutral', icon: '⚖️', label: '市场中性', sub: '多空对冲',
+        metrics: ['Net ±10%', 'Gross ~200%'],
+        plain: '多空对冲，不赌大盘方向。配对、统计套利。',
+        spec: { direction: 'market_neutral', net_exposure_pct: [-10, 10], gross_exposure_pct: [180, 220], allow_short: true, beta_target: [0, 0.2], neutrality: 'dollar_neutral', leverage_cap: 2.2 } },
+      { id: 'long_extension', group: 'long', icon: '🚀', label: '130/30 增强', sub: '放大多头 + 少量空头',
+        metrics: ['130% 多 + 30% 空'],
+        plain: '放大多头暴露同时用空头对冲。增强型主动策略。',
+        spec: { direction: 'long_extension', net_exposure_pct: [95, 105], gross_exposure_pct: [155, 165], allow_short: true, beta_target: [0.9, 1.1], neutrality: 'none', long_leg_pct: 130, short_leg_pct: 30, leverage_cap: 1.65 } },
+      { id: 'short_biased', group: 'short', icon: '📉', label: '偏空', sub: '以做空为主',
+        metrics: ['Net -40~-100%'],
+        plain: '净空头，收益与大盘负相关。需融券/期货。',
+        spec: { direction: 'short_biased', net_exposure_pct: [-100, -40], gross_exposure_pct: [80, 150], allow_short: true, beta_target: [-1.0, -0.3], neutrality: 'none', leverage_cap: 1.5 } },
+      { id: 'custom', group: 'custom', icon: '⚙️', label: '自定义', sub: '手动设定',
+        metrics: ['展开微调'],
+        plain: '自行设定净敞口、总仓位与对冲方式。',
+        spec: null },
+    ];
+
+    const FACTOR_HEDGE_OPTIONS = [
+      { id: 'sector', label: '行业板块', plain: '避免押注单一行业' },
+      { id: 'style', label: '价值/动量', plain: '避免风格因子漂移' },
+      { id: 'size', label: '大/小盘', plain: '避免规模因子暴露' },
+      { id: 'market', label: '大盘涨跌', plain: '剥离系统性市场风险' },
+    ];
+
+    const TEMPLATE_EXPOSURE_DEFAULT = {
+      dual_ma: 'long', rsi_bounce: 'long', dca: 'long',
+      cta_trend: 'long', macd_cross: 'long', bollinger_mr: 'long',
+      grid: 'long', pairs: 'neutral', factor_rotation: 'long',
+      ml_signal: 'long', dual_thrust: 'long',
+    };
+    const TEMPLATE_EXPOSURE_PRESET = {
+      pairs: 'market_neutral', factor_rotation: 'long_biased', ml_signal: 'long_biased',
+    };
+
+    const EXPOSURE_MARKET_NOTES = {
+      ashare: {
+        long: 'A股默认做多，最成熟、门槛最低。',
+        neutral: 'A股融券券源有限；美元中性回测可行，实盘需确认融券。',
+        short: 'A股做空依赖融券/股指期货，实盘门槛高。',
+        long_extension: 'A股 130/30 需融券做空 30% 腿，实盘券源是瓶颈。',
+        market_neutral: 'A股融券有限；中性策略回测可行，实盘需确认券源与对冲工具。',
+      },
+      us: {
+        long: '美股 long-only 最常用，ETF/个股均可。',
+        neutral: '美股 long-short 成熟，适合 dollar-neutral 或 beta-neutral 构造。',
+        short: '美股融券较便利，偏空策略需关注 borrow fee 与 squeeze 风险。',
+      },
+      hk: {
+        long: '港股以做多为主。',
+        neutral: '港股可融券品种有限，中性策略需确认标的。',
+        short: '做空需确认券商融券名单与费率。',
+      },
+      crypto: {
+        long: '现货以做多为主；合约可双向但偏多更常见。',
+        neutral: '永续合约对冲可实现 delta-neutral，注意 funding rate。',
+        short: '合约/杠杆做空成熟，注意强平与资金费率。',
+      },
+      futures: {
+        long: '期货可双向，偏多即净多头寸。',
+        neutral: '跨品种/跨期对冲可实现中性，注意保证金。',
+        short: 'CTA 空头趋势在商品/金融期货中常见。',
+      },
+      options: {
+        long: '偏多可用 call / 正 delta 组合。',
+        neutral: '中性可用 straddle、delta-neutral 期权组合。',
+        short: '偏空可用 put / 负 delta 或 protective 结构。',
+      },
+    };
+
+    const FRAMEWORK_MAP = {
+      ashare: { fw: 'VnPy / Qlib / Backtrader', data: 'AKShare, TuShare' },
+      us: { fw: 'Backtrader / VectorBT', data: 'yfinance, Alpaca' },
+      hk: { fw: 'VnPy / AKShare', data: 'AKShare' },
+      crypto: { fw: 'Freqtrade / ccxt', data: 'ccxt' },
+      futures: { fw: 'VnPy CTA', data: 'CTP, AKShare' },
+      options: { fw: 'VnPy / 自定义', data: '交易所 API' },
+    };
+
+    const MATURE_EXAMPLES = [
+      { label: 'A股短线龙头', text: 'A股短线，每天收盘选股，持仓3-5天。\n入场: 首板或二板，成交额>5亿，非ST。\n出场: 断板卖出或-7%止损。\n仓位: 单票20%，最多3只。' },
+      { label: '美股 ETF 轮动', text: '美股 ETF 轮动，月度调仓。\n入场: 动量 Top3 (SPY/QQQ/TLT/IWM)。\n出场: 月度再平衡。\n仓位: 等权，最大回撤15%清仓。' },
+      { label: '加密网格', text: 'BTC/USDT 网格，震荡市。\n入场: 每跌2%加一格，上限10格。\n出场: 每涨2%减一格。\n风控: 总仓位50%，跌破MA200全部清仓。' },
+    ];
+
+    const FREQUENCY_CATEGORIES = [
+      { id: 'daily', label: '日线 / 波段' },
+      { id: 'intraday', label: '日内' },
+      { id: 'tick', label: 'Tick / 高频' },
+    ];
+
+    const FREQUENCY_TIMEFRAMES = {
+      daily: [
+        { value: '1d', label: '1 天（日线）' },
+        { value: '3d', label: '3 天' },
+        { value: '5d', label: '5 天（周波段）' },
+        { value: '7d', label: '7 天（周级）' },
+      ],
+      intraday: [
+        { value: '1m', label: '1 分钟' },
+        { value: '5m', label: '5 分钟' },
+        { value: '15m', label: '15 分钟' },
+        { value: '30m', label: '30 分钟' },
+        { value: '1h', label: '1 小时' },
+        { value: '4h', label: '4 小时' },
+      ],
+      tick: [
+        { value: 'tick', label: 'Tick 逐笔' },
+        { value: '1s', label: '1 秒' },
+      ],
+    };
+
+    const FREQUENCY_CATEGORY_HINTS = {
+      daily: '按所选 K 线周期计算信号，适合大多数选股与趋势策略。',
+      intraday: '需分钟级行情；注意交易成本与滑点对短周期的影响。',
+      tick: '需逐笔/秒级行情与低延迟撮合，实现门槛较高。',
+    };
+
+    function parseTimeframe(tf) {
+      if (!tf) return { category: 'daily', timeframe: '1d' };
+      if (tf === 'tick' || tf === '1s') return { category: 'tick', timeframe: tf };
+      if (/^(1m|5m|15m|30m|1h|4h)$/.test(tf)) return { category: 'intraday', timeframe: tf };
+      if (tf === '1w' || tf === '7d') return { category: 'daily', timeframe: '7d' };
+      const daily = FREQUENCY_TIMEFRAMES.daily.find(o => o.value === tf);
+      if (daily) return { category: 'daily', timeframe: tf };
+      return { category: 'daily', timeframe: '1d' };
+    }
+
+    function getFrequencyDisplayLabel(category, timeframe) {
+      const cat = FREQUENCY_CATEGORIES.find(c => c.id === category)?.label || category;
+      const tf = (FREQUENCY_TIMEFRAMES[category] || []).find(o => o.value === timeframe)?.label || timeframe;
+      return `${cat} · ${tf}`;
+    }
+
+    function applyFrequencyFromTimeframe(tf, manual) {
+      const parsed = parseTimeframe(tf);
+      state.frequencyCategory = parsed.category;
+      state.timeframe = parsed.timeframe;
+      if (manual !== undefined) state.frequencyManual = manual;
+      renderFrequencyOptions();
+    }
+
+    function renderFrequencyOptions() {
+      const catEl = document.getElementById('frequencyCategory');
+      const tfEl = document.getElementById('timeframe');
+      if (!catEl || !tfEl) return;
+      catEl.value = state.frequencyCategory;
+      const options = FREQUENCY_TIMEFRAMES[state.frequencyCategory] || FREQUENCY_TIMEFRAMES.daily;
+      if (!options.find(o => o.value === state.timeframe)) state.timeframe = options[0].value;
+      tfEl.innerHTML = options.map(o =>
+        `<option value="${o.value}" ${state.timeframe === o.value ? 'selected' : ''}>${o.label}</option>`
+      ).join('');
+      const hint = document.getElementById('frequencyHint');
+      if (hint) hint.textContent = FREQUENCY_CATEGORY_HINTS[state.frequencyCategory] || '';
+    }
+
+    const state = {
+      step: 0,
+      experience: null,
+      markets: new Set(['ashare']),
+      risk: 2,
+      strategies: new Set(['technical']),
+      indicators: new Set(['ema','sma','atr']),
+      selectedTemplate: 'dual_ma',
+      validation: new Set(VALIDATION_PRESETS.beginner),
+      validationPreset: 'beginner',
+      broker: 'tbd',
+      dataProvider: 'akshare',
+      targetIDE: 'cursor',
+      runPhase: 'backtest_first',
+      frequencyCategory: 'daily',
+      timeframe: '1d',
+      frequencyManual: false,
+      marketExposure: 'long',
+      exposurePreset: 'long_biased',
+      exposureManual: false,
+      factorHedges: new Set(),
+      riskManual: false,
+    };
+
+    function getExposurePreset(id) { return EXPOSURE_CLASSIC_PRESETS.find(p => p.id === id) || EXPOSURE_CLASSIC_PRESETS[1]; }
+    function getExposureOption(id) { return MARKET_EXPOSURE_OPTIONS.find(o => o.id === id) || MARKET_EXPOSURE_OPTIONS[0]; }
+
+    function betaFromNeutrality(neutrality, netMin, netMax) {
+      if (neutrality === 'beta_neutral') return [0, 0.15];
+      if (neutrality === 'dollar_neutral') return [0, 0.3];
+      if (netMax <= -40) return [-1.0, -0.3];
+      if (netMin >= 50) return [0.3, 1.0];
+      return [0.2, 0.8];
+    }
+
+    function readExposureCustomFromDOM() {
+      const netMin = +document.getElementById('expNetMin')?.value || 60;
+      const netMax = +document.getElementById('expNetMax')?.value || 100;
+      const neutrality = document.getElementById('expNeutrality')?.value || 'none';
+      const beta = betaFromNeutrality(neutrality, netMin, netMax);
+      return {
+        netMin, netMax,
+        grossTarget: +document.getElementById('expGrossTarget')?.value || 100,
+        neutrality,
+        betaMin: beta[0], betaMax: beta[1],
+        factorHedges: [...state.factorHedges],
+        notes: document.getElementById('expNotes')?.value?.trim() || '',
+      };
+    }
+
+    function applyPresetToFineTune(presetId) {
+      const p = getExposurePreset(presetId);
+      if (!p.spec) return;
+      const s = p.spec;
+      document.getElementById('expNetMin').value = s.net_exposure_pct[0];
+      document.getElementById('expNetMax').value = s.net_exposure_pct[1];
+      document.getElementById('expGrossTarget').value = Math.round((s.gross_exposure_pct[0] + s.gross_exposure_pct[1]) / 2);
+      document.getElementById('expNeutrality').value = s.neutrality === 'none' ? 'none' : (s.neutrality || 'none');
+      state.factorHedges = new Set(s.factor_hedges || []);
+      renderFactorHedges();
+    }
+
+    function buildExposureBlock(cfg) {
+      if (cfg.experience !== 'mature') {
+        const basic = getExposureOption(cfg.marketExposure || 'long');
+        const mktId = [...state.markets][0] || 'ashare';
+        return {
+          tier: 'basic', preset: cfg.marketExposure, label: basic.label,
+          ...basic.spec,
+          net_exposure_pct: basic.spec.net_exposure_pct,
+          gross_exposure_pct: basic.spec.gross_exposure_pct,
+          market_note: (EXPOSURE_MARKET_NOTES[mktId] || {})[cfg.marketExposure] || '',
+        };
+      }
+      const custom = cfg.exposureCustom || readExposureCustomFromDOM();
+      const preset = getExposurePreset(cfg.exposurePreset || state.exposurePreset);
+      const mktId = [...state.markets][0] || 'ashare';
+      const noteKey = preset.id === 'custom' ? preset.group : preset.id;
+      const presetSpec = preset.spec || {};
+      return {
+        tier: 'advanced',
+        preset: preset.id,
+        preset_label: preset.label,
+        label: preset.id === 'custom' ? `自定义 (Net ${custom.netMin}~${custom.netMax}%)` : preset.label,
+        direction: presetSpec.direction || 'custom',
+        net_exposure_pct: [custom.netMin, custom.netMax],
+        gross_exposure_pct: [Math.max(50, custom.grossTarget - 20), custom.grossTarget + 20],
+        gross_target_pct: custom.grossTarget,
+        allow_short: custom.netMin < 90 || presetSpec.allow_short,
+        beta_target: [custom.betaMin, custom.betaMax],
+        neutrality: custom.neutrality === 'none' ? null : custom.neutrality,
+        long_leg_pct: presetSpec.long_leg_pct ?? null,
+        short_leg_pct: presetSpec.short_leg_pct ?? null,
+        leverage_cap: presetSpec.leverage_cap ?? null,
+        factor_hedges: custom.factorHedges,
+        factor_hedges_plain: custom.factorHedges.map(id => FACTOR_HEDGE_OPTIONS.find(f => f.id === id)?.label).filter(Boolean),
+        notes: custom.notes,
+        market_note: (EXPOSURE_MARKET_NOTES[mktId] || {})[noteKey] || (EXPOSURE_MARKET_NOTES[mktId] || {})[preset.group] || '',
+      };
+    }
+
+    function getExposureDisplayLabel(cfg) {
+      if (cfg.experience === 'mature') {
+        const block = buildExposureBlock(cfg);
+        return block.preset === 'custom' ? `自定义 (Net ${block.net_exposure_pct[0]}~${block.net_exposure_pct[1]}%)` : block.label;
+      }
+      return getExposureOption(cfg.marketExposure || 'long').label;
+    }
+
+    function getExposureSpec(id) {
+      const basic = getExposureOption(id);
+      return { ...basic.spec, label: basic.label };
+    }
+
+    function getFlow() { return FLOW[state.experience] || FLOW.zero; }
+    function getPanelId(step) { return getFlow().panels[step]; }
+    function getExp() { return EXPERIENCE_LEVELS.find(e => e.id === state.experience); }
+
+    function init() {
+      renderExperienceGrid();
+      renderMarkets();
+      renderRisk();
+      renderStrategyTypes();
+      renderIndicators();
+      renderFactorHedges();
+      renderFrequencyOptions();
+      bindEvents();
+      goStep(0);
+    }
+
+    function renderExperienceGrid() {
+      document.getElementById('experienceGrid').innerHTML = EXPERIENCE_LEVELS.map(e => `
+        <div class="exp-card ${state.experience === e.id ? 'selected' : ''}" data-exp="${e.id}">
+          <div class="exp-icon">${e.icon}</div>
+          <div class="exp-title">${e.title}</div>
+          <div class="exp-sub">${e.sub}</div>
+          <p style="font-size:.82rem;margin-top:10px;color:#a8b4c8">${e.desc}</p>
+          <ul>${e.gets.map(g => `<li>${g}</li>`).join('')}</ul>
+        </div>
+      `).join('');
+    }
+
+    function applyExperience(id) {
+      state.experience = id;
+      renderExperienceGrid();
+      const banner = document.getElementById('pathBanner');
+      const exp = getExp();
+      banner.innerHTML = `当前路径: <strong>${exp.title}</strong> · ${exp.desc}`;
+      banner.classList.add('visible');
+      document.getElementById('stepNav').classList.add('visible');
+
+      if (id === 'zero') {
+        state.markets = new Set(['ashare']);
+        state.risk = 2;
+        state.selectedTemplate = 'dual_ma';
+        state.validation = new Set(VALIDATION_PRESETS.beginner);
+        state.validationPreset = 'beginner';
+        state.frequencyManual = false;
+        state.riskManual = false;
+        document.getElementById('riskSlider').max = 3;
+        applyFrequencyFromTimeframe(getTemplate('dual_ma')?.spec?.timeframe || '1d', false);
+        applyRiskScore(2);
+      } else if (id === 'investor') {
+        state.risk = 3;
+        state.selectedTemplate = 'cta_trend';
+        state.marketExposure = 'long';
+        state.exposureManual = false;
+        state.validation = new Set(VALIDATION_PRESETS.standard);
+        state.validationPreset = 'standard';
+        state.frequencyManual = false;
+        state.riskManual = false;
+        document.getElementById('riskSlider').max = 5;
+        applyFrequencyFromTimeframe(getTemplate('cta_trend')?.spec?.timeframe || '1d', false);
+        applyRiskScore(3);
+      } else {
+        state.risk = 3;
+        state.marketExposure = 'long';
+        state.exposurePreset = 'long_biased';
+        state.exposureManual = false;
+        state.validation = new Set(VALIDATION_PRESETS.pro);
+        state.validationPreset = 'pro';
+        state.frequencyManual = false;
+        state.riskManual = false;
+        document.getElementById('riskSlider').max = 5;
+        applyFrequencyFromTimeframe('1d', false);
+        applyRiskScore(3);
+      }
+      document.getElementById('riskSlider').value = state.risk;
+      updateContextualCopy();
+      renderMarkets();
+      renderRiskPanel();
+      renderMarketExposure();
+      if (id === 'mature') applyPresetToFineTune('long_biased');
+      renderValidation();
+      renderValidationPresets();
+      updateNavButtons();
+    }
+
+    function updateContextualCopy() {
+      const id = state.experience;
+      document.getElementById('marketsTitle').textContent = id === 'zero' ? '选择交易市场' : '选择交易市场（可多选）';
+      document.getElementById('marketsHint').textContent = id === 'zero'
+        ? '零基础建议先只做 A股 或 美股 其中一个，跑通后再扩展。'
+        : '系统将按市场推荐框架与数据源。';
+      document.getElementById('riskHint').textContent = id === 'zero'
+        ? '建议 1-2 分。数值会按所选市场自动校正（如 A股锁定 1x 杠杆）。'
+        : id === 'mature' ? '先选风险档位，再按需微调。所有参数会写入 spec 供 Agent 严格执行。'
+        : '拖动设定 1-5 分；下方预览已按所选市场与交易频率校正。';
+      document.getElementById('validationHint').textContent = id === 'zero'
+        ? '已为你选好「基础检验」，无需操作。目的是确认策略不是只对历史数据「死记硬背」。'
+        : id === 'mature' ? '成熟策略建议选「全面检验」，确保规则经得起样本外验证。'
+        : '推荐「标准检验」。想更快上手可选「基础检验」。';
+      document.getElementById('tipMarkets').textContent = id === 'zero'
+        ? '💡 A股用 AKShare 免费数据；美股用 yfinance。先选一个市场学透。'
+        : '💡 不同市场对应不同框架，见最后一步的推荐。';
+      document.getElementById('tipRisk').textContent = id === 'zero'
+        ? '💡 最大回撤 = 从最高点最多亏多少。A股会自动限制杠杆为 1x。'
+        : id === 'mature'
+        ? '💡 成熟用户可设单笔风险预算、单日亏损上限、仓位分配方式等专业参数。'
+        : '💡 选多个市场时，杠杆与仓位上限取最严规则。日内/高频会自动收紧单日风险。';
+      document.getElementById('tipAdvanced').textContent = '💡 不确定就选「双均线」或「CTA 趋势」。选模板后会自动推荐交易偏性。';
+      document.getElementById('tipValidation').textContent = id === 'zero'
+        ? '💡 白话：过拟合 = 策略只是背住了历史答案。检验 = 换一套题再考一遍。'
+        : '💡 检验全部通过后才能接模拟盘/实盘 API。未通过应回到策略设计。';
+      document.getElementById('wfoLabel').textContent = '分段验证次数';
+      document.getElementById('dsrLabel').textContent = '收益可信度要求';
+      const labels = document.getElementById('riskLabels');
+      const max = id === 'zero' ? 3 : 5;
+      labels.innerHTML = Array.from({length: max}, (_, i) =>
+        `<span>${i+1}${i===0?'·保守':''}${i===2&&max>=3?'·均衡':''}${i===4?'·激进':''}</span>`
+      ).join('');
+    }
+
+    function renderStepNav() {
+      const flow = getFlow();
+      document.getElementById('stepNav').innerHTML = flow.labels.map((s, i) =>
+        `<span class="step-pill ${i === state.step ? 'active' : ''} ${i < state.step ? 'done' : ''}" data-go="${i}">${i+1}. ${s}</span>`
+      ).join('');
+    }
+
+    function renderMarkets() {
+      const single = state.experience === 'zero';
+      document.getElementById('marketGrid').innerHTML = MARKETS.map(m => `
+        <label class="card-select ${state.markets.has(m.id) ? 'selected' : ''}" data-market="${m.id}">
+          <div class="icon">${m.icon}</div>
+          <div class="title">${m.title}</div>
+          <div class="desc">${m.desc}${single && (m.id==='ashare'||m.id==='us') ? ' · 推荐' : ''}</div>
+        </label>
+      `).join('');
+      const mkt = [...state.markets][0] || 'ashare';
+      const brokers = BROKERS_BY_MARKET[mkt] || BROKERS_BY_MARKET.ashare;
+      const datas = DATA_BY_MARKET[mkt] || DATA_BY_MARKET.ashare;
+      if (!brokers.find(b => b.id === state.broker)) state.broker = brokers[0].id;
+      if (!datas.find(d => d.id === state.dataProvider)) state.dataProvider = datas[0].id;
+      if (getPanelId(state.step) === 'connection') renderConnectionOptions();
+      if (getPanelId(state.step) === 'risk' || state.experience) renderRiskPanel();
+      if (state.experience === 'investor' || state.experience === 'mature') updateExposureTip();
+    }
+
+    function renderFactorHedges() {
+      const el = document.getElementById('factorHedgeChips');
+      if (!el) return;
+      el.innerHTML = FACTOR_HEDGE_OPTIONS.map(f =>
+        `<span class="chip ${state.factorHedges.has(f.id) ? 'selected' : ''}" data-factor="${f.id}" title="${f.plain}">${f.label}</span>`
+      ).join('');
+    }
+
+    function renderMarketExposure() {
+      if (state.experience === 'zero') return;
+
+      if (state.experience === 'investor') {
+        document.getElementById('exposureGridInvestor').innerHTML = MARKET_EXPOSURE_OPTIONS.map(o => `
+          <div class="exp-card ${state.marketExposure === o.id ? 'selected' : ''}" data-exposure="${o.id}">
+            <div class="exp-icon">${o.icon}</div>
+            <div class="exp-title">${o.label}</div>
+            <div class="exp-sub">${o.sub}</div>
+            <div class="exposure-metrics">${(o.metrics || []).map(m => `<span class="exposure-metric">${m}</span>`).join('')}</div>
+            <p style="font-size:.78rem;color:#a8b4c8;margin-top:8px;line-height:1.45">${o.plain}</p>
+            <p style="font-size:.72rem;color:var(--muted);margin-top:6px">例: ${o.examples}</p>
+          </div>
+        `).join('');
+      }
+
+      if (state.experience === 'mature') {
+        document.getElementById('exposureGridMature').innerHTML = EXPOSURE_CLASSIC_PRESETS.map(p => `
+          <div class="exp-card compact ${state.exposurePreset === p.id ? 'selected' : ''}" data-adv-exposure="${p.id}">
+            <div class="exp-icon">${p.icon}</div>
+            <div class="exp-title">${p.label}</div>
+            <div class="exp-sub">${p.sub}</div>
+            <p style="font-size:.75rem;color:#a8b4c8;margin-top:6px;line-height:1.4">${p.plain}</p>
+          </div>
+        `).join('');
+        document.getElementById('exposureFineTune').open = state.exposurePreset === 'custom';
+      }
+      updateExposureTip();
+    }
+
+    function applyAdvancedExposurePreset(id) {
+      state.exposurePreset = id;
+      state.exposureManual = true;
+      if (id !== 'custom') applyPresetToFineTune(id);
+      document.getElementById('exposureFineTune').open = id === 'custom';
+      renderMarketExposure();
+      renderRiskPanel();
+    }
+
+    function updateExposureTip() {
+      const mkt = [...state.markets][0] || 'ashare';
+      const notes = EXPOSURE_MARKET_NOTES[mkt] || EXPOSURE_MARKET_NOTES.ashare;
+
+      if (state.experience === 'investor') {
+        const exp = getExposureOption(state.marketExposure);
+        const tpl = getTemplate(state.selectedTemplate);
+        const tplDef = tpl ? TEMPLATE_EXPOSURE_DEFAULT[tpl.id] : null;
+        let mismatch = tplDef && tplDef !== state.marketExposure
+          ? `所选模板「${tpl.name}」通常适合「${getExposureOption(tplDef).label}」。` : '';
+        const text = [notes[state.marketExposure], mismatch].filter(Boolean).join(' ');
+        const el = document.getElementById('tipExposureInvestor');
+        if (el) { el.style.display = text ? 'block' : 'none'; el.textContent = text ? '💡 ' + text : ''; }
+        return;
+      }
+
+      if (state.experience === 'mature') {
+        const preset = getExposurePreset(state.exposurePreset);
+        const noteKey = preset.id === 'custom' ? preset.group : preset.id;
+        const note = notes[noteKey] || notes[preset.group] || '';
+        const el = document.getElementById('tipExposureMature');
+        if (el) { el.style.display = note ? 'block' : 'none'; el.textContent = note ? '💡 ' + note : ''; }
+      }
+    }
+
+    function applyMarketExposure(id) {
+      state.marketExposure = id;
+      state.exposureManual = true;
+      renderMarketExposure();
+      renderRiskPanel();
+    }
+
+    function applyRiskScore(score) {
+      state.risk = score;
+      state.riskManual = false;
+      const profile = buildRiskProfile({ risk: score });
+      if (state.experience === 'mature') applyRiskToFineTune(profile);
+      renderRiskPanel();
+    }
+
+    function renderRiskPanel() {
+      const exp = state.experience;
+      const basicWrap = document.getElementById('riskBasicWrap');
+      const matureWrap = document.getElementById('riskMatureWrap');
+      if (basicWrap) basicWrap.style.display = exp === 'mature' ? 'none' : 'block';
+      if (matureWrap) matureWrap.style.display = exp === 'mature' ? 'block' : 'none';
+
+      const slider = document.getElementById('riskSlider');
+      const max = exp === 'zero' ? 3 : 5;
+      if (slider) {
+        slider.max = max;
+        if (state.risk > max) state.risk = max;
+        slider.value = state.risk;
+      }
+
+      const caps = getEffectiveMarketCaps();
+      const ctxEl = document.getElementById('riskMarketContext');
+      if (ctxEl) {
+        const titles = caps.contexts.map(c => c.title).join('、');
+        const tips = caps.contexts.map(c => c.tip).filter((t, i, a) => a.indexOf(t) === i);
+        ctxEl.innerHTML = `
+          <div class="rec-title">市场风控约束 · ${titles}</div>
+          <div class="rec-reason">${caps.contexts.flatMap(c => c.constraints).slice(0, 4).join(' · ')}<br>
+          ${tips[0] || ''}</div>`;
+      }
+
+      if (exp === 'mature') {
+        renderRiskLeverageOptions(buildRiskProfile().leverageX);
+        document.getElementById('riskPresetGrid').innerHTML = Object.entries(RISK_BASE_SCORES).map(([score, b]) => {
+          const p = buildRiskProfile({ risk: +score, useCustom: false });
+          const selected = !state.riskManual && state.risk === +score;
+          return `<div class="preset-card ${selected ? 'selected' : ''}" data-risk-score="${score}">
+            <div class="preset-title">${score}. ${b.label}</div>
+            <div class="preset-sub">回撤 ${p.maxDD} · 杠杆 ${p.leverage}</div>
+            <div class="preset-metrics">
+              <span class="preset-metric">单票 ${p.posLimit}</span>
+              <span class="preset-metric">止损 ${p.stopLoss}</span>
+              <span class="preset-metric">单笔 ${p.riskPerTrade}</span>
+            </div>
+          </div>`;
+        }).join('') + `<div class="preset-card ${state.riskManual ? 'selected' : ''}" data-risk-score="custom">
+          <div class="preset-title">自定义</div>
+          <div class="preset-sub">展开下方精细参数</div>
+          <div class="preset-plain">手动设定回撤、杠杆、仓位分配等</div>
+        </div>`;
+        document.getElementById('riskFineTune').open = state.riskManual;
+      }
+
+      const profile = buildRiskProfile();
+      const extra = [
+        profile.frequency_note,
+        profile.exposure_note,
+        profile.sizingMethodLabel ? `仓位: ${profile.sizingMethodLabel}` : null,
+        profile.maxPositions ? `最多 ${profile.maxPositions} 个持仓` : null,
+        profile.riskPerTrade ? `单笔风险 ${profile.riskPerTrade}` : null,
+        profile.maxDailyLoss ? `单日上限 ${profile.maxDailyLoss}` : null,
+      ].filter(Boolean);
+
+      document.getElementById('riskDisplay').innerHTML = `
+        <div class="score">${profile.preset === 'custom' ? '⚙' : profile.score}</div>
+        <div class="label">${profile.preset === 'custom' ? '自定义风控' : profile.label}${profile.markets.length ? ' · ' + profile.markets.join('+') : ''}</div>
+        <div class="detail">${profile.detail || ''}<br>
+        最大回撤 ${profile.maxDD} · 杠杆 ${profile.leverage} · 单票 ${profile.posLimit} · 止损 ${profile.stopLoss}
+        ${extra.length ? '<br>' + extra.join(' · ') : ''}</div>`;
+    }
+
+    function renderRisk() { renderRiskPanel(); }
+
+    function renderStrategyTypes() {
+      document.getElementById('strategyTypes').innerHTML = STRATEGY_TYPES.map(s => `
+        <span class="chip ${state.strategies.has(s.id) ? 'selected' : ''}" data-strategy="${s.id}" title="${s.plain}">${s.label}</span>
+      `).join('');
+    }
+
+    function getTemplate(id) { return STRATEGY_TEMPLATES.find(t => t.id === id); }
+
+    function renderTemplateCard(t) {
+      return `<div class="template-card ${state.selectedTemplate === t.id ? 'selected' : ''}" data-tpl="${t.id}">
+        <div class="tpl-head">
+          <span class="tpl-title">${t.name}</span>
+          <span class="diff-badge diff-${t.diff}">${'★'.repeat(t.diff)}${'☆'.repeat(3-t.diff)}</span>
+        </div>
+        <div class="tpl-plain">${t.plain}</div>
+      </div>`;
+    }
+
+    function renderTemplateDetail(elId, t) {
+      const el = document.getElementById(elId);
+      if (!t) { el.innerHTML = ''; return; }
+      el.innerHTML = `<h4 style="margin-bottom:8px">${t.name}</h4>
+        <p><strong>规则:</strong> ${t.logic}</p>
+        <p><strong>周期:</strong> ${t.spec?.timeframe || '-'} · <strong>标的:</strong> ${t.spec?.universe || '-'}</p>
+        <p><strong>入场:</strong> ${(t.spec?.entry || []).join('；')}</p>
+        <p><strong>出场:</strong> ${(t.spec?.exit || []).join('；')}</p>
+        <p><strong>框架:</strong> ${t.framework} · <strong>指标:</strong> ${t.indicators.length ? t.indicators.join(', ').toUpperCase() : '规则型'}</p>
+        ${t.warn ? `<p style="color:var(--warn)"><strong>注意:</strong> ${t.warn}</p>` : ''}`;
+    }
+
+    function renderFixedTemplates() {
+      const list = STRATEGY_TEMPLATES.filter(t => t.tier === 'fixed');
+      document.getElementById('fixedTemplateGrid').innerHTML = list.map(renderTemplateCard).join('');
+      renderTemplateDetail('fixedTemplateDetail', getTemplate(state.selectedTemplate));
+    }
+
+    function renderAdvancedTemplates() {
+      const filter = document.getElementById('templateFilter')?.value || 'all';
+      let list = STRATEGY_TEMPLATES.filter(t => t.tier === 'advanced');
+      if (filter !== 'all') list = list.filter(t => t.category === filter || (filter==='advanced' && t.category==='advanced'));
+      document.getElementById('advancedTemplateGrid').innerHTML = list.map(renderTemplateCard).join('');
+      renderTemplateDetail('advancedTemplateDetail', getTemplate(state.selectedTemplate));
+    }
+
+    function renderMatureRef() {
+      document.getElementById('matureRefGrid').innerHTML = STRATEGY_TEMPLATES.slice(0,6).map(t =>
+        `<div class="template-card" data-ref="${t.id}"><div class="tpl-title">${t.name}</div><div class="tpl-plain">${t.plain}</div></div>`
+      ).join('');
+    }
+
+    function applyTemplate(id) {
+      const t = getTemplate(id);
+      if (!t) return;
+      state.selectedTemplate = id;
+      if (t.indicators.length) state.indicators = new Set(t.indicators);
+      t.strategies.forEach(s => state.strategies.add(s));
+      if (state.experience === 'zero') state.risk = Math.min(t.risk[0], 3);
+      else if (!state.riskManual && t.risk?.length) {
+        state.risk = t.risk[Math.min(1, t.risk.length - 1)] || t.risk[0];
+      }
+      if ((state.experience === 'investor') && !state.exposureManual) {
+        state.marketExposure = TEMPLATE_EXPOSURE_DEFAULT[id] || 'long';
+      }
+      if (state.experience === 'mature' && !state.exposureManual && TEMPLATE_EXPOSURE_PRESET[id]) {
+        state.exposurePreset = TEMPLATE_EXPOSURE_PRESET[id];
+        applyPresetToFineTune(state.exposurePreset);
+      }
+      if (!state.frequencyManual && t.spec?.timeframe) {
+        applyFrequencyFromTimeframe(t.spec.timeframe, false);
+      }
+      document.getElementById('riskSlider').value = state.risk;
+      if (state.experience === 'mature' && !state.riskManual) applyRiskToFineTune(buildRiskProfile());
+      renderRisk();
+      renderMarketExposure();
+      renderFixedTemplates();
+      renderAdvancedTemplates();
+      renderIndicators();
+    }
+
+    function renderIndicators() {
+      const cat = document.getElementById('indicatorCategory')?.value || 'all';
+      const list = cat === 'all' ? Object.values(INDICATORS).flat() : INDICATORS[cat] || [];
+      const el = document.getElementById('indicatorGrid');
+      if (!el) return;
+      el.innerHTML = list.map(id =>
+        `<span class="indicator-item ${state.indicators.has(id) ? 'selected' : ''}" data-ind="${id}">${id.toUpperCase()}</span>`
+      ).join('');
+    }
+
+    function renderValidationPresets() {
+      const el = document.getElementById('validationPresets');
+      if (state.experience === 'zero') {
+        const m = VALIDATION_PRESET_META.beginner;
+        el.innerHTML = `<div class="preset-card selected locked">
+          <div class="preset-title">${m.title}</div>
+          <div class="preset-sub">${m.sub}</div>
+          <div class="preset-plain">${m.plain}</div>
+        </div>`;
+        renderValidationSummary();
+        return;
+      }
+      const ids = state.experience === 'mature'
+        ? ['pro', 'standard']
+        : ['standard', 'beginner'];
+      el.innerHTML = ids.map(id => {
+        const m = VALIDATION_PRESET_META[id];
+        return `<div class="preset-card ${state.validationPreset === id ? 'selected' : ''}" data-preset="${id}">
+          <div class="preset-title">${m.title}</div>
+          <div class="preset-sub">${m.sub}</div>
+          <div class="preset-plain">${m.plain}</div>
+        </div>`;
+      }).join('');
+      renderValidationSummary();
+    }
+
+    function renderValidationSummary() {
+      const m = VALIDATION_PRESET_META[state.validationPreset] || VALIDATION_PRESET_META.beginner;
+      const wfo = document.getElementById('wfoSplits')?.selectedOptions[0]?.text || '5 段';
+      const dsr = document.getElementById('dsrThreshold')?.selectedOptions[0]?.text || '一般';
+      document.getElementById('validationSummary').innerHTML = `
+        <div class="rec-title">当前方案：${m.title}</div>
+        <div class="rec-reason">包含：${m.items.join('、')}<br>
+        分段 ${wfo} · 可信度 ${dsr} · 通过后才可以接交易 API</div>`;
+    }
+
+    function renderValidation() {
+      const locked = state.experience === 'zero';
+      document.getElementById('validationAdvanced').open = !locked && state.validationPreset === 'pro';
+      document.getElementById('validationChecks').innerHTML = VALIDATION_ITEMS.map(v => `
+        <label class="check-row">
+          <input type="checkbox" data-val="${v.id}" ${state.validation.has(v.id) ? 'checked' : ''} ${locked ? 'disabled' : ''}>
+          <span><strong>${v.label}</strong> — ${v.desc}</span>
+        </label>
+      `).join('');
+    }
+
+    function setValidationPreset(preset) {
+      state.validationPreset = preset;
+      state.validation = new Set(VALIDATION_PRESETS[preset]);
+      renderValidation();
+      renderValidationPresets();
+    }
+
+    function getMatureStructured() {
+      return {
+        overview: document.getElementById('nlOverview')?.value.trim() || '',
+        entry: document.getElementById('nlEntry')?.value.trim() || '',
+        exit: document.getElementById('nlExit')?.value.trim() || '',
+        position: document.getElementById('nlPosition')?.value.trim() || '',
+        risk_execution: document.getElementById('nlRisk')?.value.trim() || '',
+      };
+    }
+
+    function getMatureDescription() {
+      const parts = [
+        ['体系总述', getMatureStructured().overview],
+        ['入场规则', getMatureStructured().entry],
+        ['出场规则', getMatureStructured().exit],
+        ['仓位管理', getMatureStructured().position],
+        ['风控执行', getMatureStructured().risk_execution],
+      ].filter(([, v]) => v.trim());
+      return parts.map(([k, v]) => `### ${k}\n${v.trim()}`).join('\n\n');
+    }
+
+    function updateMatureSpecPreview() {
+      if (state.experience !== 'mature') return;
+      const wrap = document.getElementById('matureSpecPreview');
+      const m = getMatureStructured();
+      const filled = Object.values(m).filter(Boolean).length;
+      if (filled < 2) { wrap.style.display = 'none'; return; }
+      wrap.style.display = 'block';
+      wrap.textContent = buildConfig().strategySpecYaml;
+    }
+
+    function generateMatureQuestions() {
+      const qs = [];
+      const o = document.getElementById('nlOverview').value.trim();
+      const e = document.getElementById('nlEntry').value.trim();
+      const x = document.getElementById('nlExit').value.trim();
+      const p = document.getElementById('nlPosition').value.trim();
+      const r = document.getElementById('nlRisk').value.trim();
+      if (!o) qs.push('请描述你的交易体系总述（市场、频率、风格）');
+      if (!e) qs.push('入场规则的具体量化条件？（指标阈值、形态、时间）');
+      if (!x) qs.push('出场规则：止盈%、止损%、时间止损、移动止损？');
+      if (!p) qs.push('单票/总仓位上限？加仓减仓规则？');
+      if (!r) qs.push('最大回撤容忍、禁交易时段、交易成本假设？');
+      if (o && !o.match(/A股|美股|港股|加密|期货/)) qs.push('具体交易市场和品种范围？');
+      if (e && !e.match(/分钟|小时|日线|Tick|weekly|monthly/i)) qs.push('信号产生的 K 线周期？');
+      if (state.exposurePreset === 'market_neutral' || state.exposurePreset === 'custom') {
+        qs.push('对冲方式：多空金额相当，还是不赌大盘方向？');
+      }
+      if (state.exposurePreset === 'long_extension') qs.push('130/30 空头腿如何融券/对冲？');
+      if (state.factorHedges.size) qs.push('已选对冲维度，具体容忍度多少？');
+      if (state.exposurePreset === 'short_biased') qs.push('做空工具与融券成本假设？');
+      if (state.riskManual) qs.push('自定义风控规则是否与 NL 描述一致？连亏/事件减仓逻辑？');
+      qs.push('历史回测区间？是否需要复权/除权？');
+      qs.push('当前体系的最大痛点或已知漏洞？');
+      return qs.length ? qs : ['描述已较完整，AI 将输出结构化 spec 供你确认。'];
+    }
+
+    function updateFrameworkRec() {
+      const recs = [...state.markets].map(m => {
+        const info = FRAMEWORK_MAP[m] || FRAMEWORK_MAP.ashare;
+        const mkt = MARKETS.find(x => x.id === m);
+        const tpl = getTemplate(state.selectedTemplate);
+        const fw = state.experience === 'zero' ? (tpl?.framework || 'Backtrader') : info.fw;
+        return `<div class="rec-card"><div class="rec-title">${mkt?.title}: ${fw}</div><div class="rec-reason">数据: ${info.data}</div></div>`;
+      }).join('');
+      document.getElementById('frameworkRec').innerHTML = recs ? `<h3 style="font-size:.95rem;margin-bottom:10px">框架推荐</h3>${recs}` : '';
+    }
+
+    function renderConnectionOptions() {
+      const mkt = [...state.markets][0] || 'ashare';
+      const brokers = BROKERS_BY_MARKET[mkt] || BROKERS_BY_MARKET.ashare;
+      const datas = DATA_BY_MARKET[mkt] || DATA_BY_MARKET.ashare;
+      document.getElementById('brokerGateway').innerHTML = brokers.map(b =>
+        `<option value="${b.id}" ${state.broker === b.id ? 'selected' : ''}>${b.label}</option>`
+      ).join('');
+      if (!brokers.find(b => b.id === state.broker)) state.broker = brokers[0].id;
+      document.getElementById('dataProvider').innerHTML = datas.map(d =>
+        `<option value="${d.id}" ${state.dataProvider === d.id ? 'selected' : ''}>${d.label}</option>`
+      ).join('');
+      if (!datas.find(d => d.id === state.dataProvider)) state.dataProvider = datas[0].id;
+      const exp = state.experience;
+      document.getElementById('tipConnection').textContent = exp === 'zero'
+        ? '💡 零基础先回测即可，API 可后填。Agent 会生成 .env.example 告诉你需要哪些密钥。'
+        : '💡 Skill 不含密钥。周期与频率会写入 spec，Agent 按此选用数据粒度与回测引擎。';
+      renderFrequencyOptions();
+      updateConnectionPreview();
+    }
+
+    function updateConnectionPreview() {
+      const mkt = MARKETS.find(x => x.id === [...state.markets][0])?.title || 'A股';
+      const broker = document.getElementById('brokerGateway')?.selectedOptions[0]?.text || '-';
+      const data = document.getElementById('dataProvider')?.selectedOptions[0]?.text || '-';
+      const ide = document.getElementById('targetIDE')?.selectedOptions[0]?.text || '-';
+      const freq = getFrequencyDisplayLabel(state.frequencyCategory, state.timeframe);
+      const mode = document.getElementById('tradingMode')?.selectedOptions[0]?.text || '';
+      document.getElementById('connectionPreview').innerHTML = `
+        <div class="rec-title">Agent 对接摘要</div>
+        <div class="rec-reason">市场 ${mkt} · 频率 ${freq} · ${mode}<br>
+        券商 ${broker} · 数据 ${data}<br>
+        IDE ${ide} · 阶段 ${document.getElementById('runPhase')?.selectedOptions[0]?.text || ''}<br>
+        用户需提供: API Key / 账号 → 写入 .env（不进入 Skill）</div>`;
+    }
+
+    function yamlQuote(s) { return JSON.stringify(String(s)); }
+
+    function buildAllMarketRules(marketIds) {
+      return marketIds.map(id => ({
+        id,
+        title: MARKETS.find(m => m.id === id)?.title || id,
+        rules: MARKET_RULES[id] || {},
+        framework: FRAMEWORK_MAP[id]?.fw || '',
+        data_sources: FRAMEWORK_MAP[id]?.data || '',
+        risk_constraints: MARKET_RISK_CONTEXT[id]?.constraints || [],
+      }));
+    }
+
+    function buildAgentContract(cfg) {
+      const mustNot = [
+        'skip validation/audit.py before paper or live',
+        'commit API keys, secrets, or .env to git',
+        'introduce lookahead / future data in signals',
+      ];
+      if (cfg.experience === 'mature') {
+        mustNot.push('change user core trading logic without explicit written approval');
+      }
+      const readOrder = [
+        'strategy-spec.yaml',
+        'SKILL.md',
+        'references/agent-integration.md',
+        'references/overfitting-validation.md',
+        'config/risk.yaml',
+        'config/connection.yaml',
+      ];
+      if (cfg.experience === 'zero') {
+        readOrder.push('references/glossary.md', 'references/beginner-learning-path.md');
+      }
+      return {
+        source_of_truth: 'strategy-spec.yaml',
+        read_order: readOrder,
+        implementation_pipeline: [
+          'scaffold → data pipeline → strategy code → backtest',
+          'validation/audit.py (PASS required before paper)',
+          'brokers adapter → paper → live (user approval)',
+        ],
+        must_not: mustNot,
+        run_phase: cfg.connection?.run_phase,
+        trading_mode: cfg.tradingMode,
+        target_ide: cfg.connection?.target_ide,
+      };
+    }
+
+    function buildAgentQuestions(cfg) {
+      if (cfg.experience === 'mature') {
+        const qs = generateMatureQuestions();
+        return qs.length ? qs : ['描述已较完整，请输出结构化 spec 供用户确认后开始编码'];
+      }
+      const qs = ['确认 strategy-spec.yaml 与所选模板/参数一致后开始编码'];
+      if (cfg.connection?.broker === 'tbd') {
+        qs.push('券商/交易所接口尚未确定 — 请确认选型或保留 adapter 占位');
+      }
+      if (cfg.experience === 'zero') {
+        qs.push('回测区间与初始资金设多少？（建议 ≥2 年');
+        qs.push('是否需要逐步白话解释每个指标与回测报告？');
+      } else {
+        qs.push(`确认交易节奏 ${cfg.frequencyLabel} 与策略模板「${cfg.template?.name}」匹配`);
+        qs.push(`确认 ${cfg.marketExposureLabel} 敞口约束与 ${cfg.riskProfile?.label} 风控参数`);
+        if (cfg.tradingMode === 'backtest_only') qs.push('当前为仅回测模式 — 是否计划后续接模拟盘？');
+      }
+      return qs;
+    }
+
+    function resolveBenchmark(cfg) {
+      const mkt = cfg.marketIds?.[0] || [...state.markets][0] || 'ashare';
+      const tplBench = cfg.template?.spec?.benchmark;
+      const symbol = (tplBench && tplBench[mkt]) || (tplBench && tplBench.ashare) || BENCHMARK_BY_MARKET[mkt]?.symbol || '000300.SH';
+      const meta = BENCHMARK_BY_MARKET[mkt] || BENCHMARK_BY_MARKET.ashare;
+      return { market: mkt, symbol, name: meta.name, etf: meta.etf, compare_mode: 'buy_and_hold' };
+    }
+
+    function formatTemplateStrategySection(cfg) {
+      if (cfg.experience === 'mature') {
+        return '成熟体系：完整规则见 `strategy-spec.yaml` → `strategy.modules` 与用户 NL 描述。Agent 须先结构化为 entry/exit/position 供用户确认。';
+      }
+      const t = cfg.template;
+      if (!t) return '（未选模板）';
+      const s = t.spec || {};
+      const bench = resolveBenchmark(cfg);
+      const research = (t.research || []).join(' · ');
+      return `**模板**: ${t.name} (\`${t.id}\`) · 框架 ${t.framework}
+
+| 维度 | 规则 |
+|------|------|
+| 对标基准 | ${bench.name} (${bench.symbol}) · 对比 ${bench.compare_mode} |
+| 超额目标 | ${s.performance_goal || '风险调整收益优于基准'} |
+| 信号类型 | ${s.signal_type || '-'} |
+| 标的范围 | ${s.universe || '-'} |
+| 入场 | ${(s.entry || []).join('；') || '-'} |
+| 出场 | ${(s.exit || []).join('；') || '-'} |
+| 仓位 | ${JSON.stringify(s.position || {})} |
+| 参数 | ${JSON.stringify(s.params || {})} |
+| 成本 | ${JSON.stringify(s.costs || {})} |
+| 调仓 | ${s.rebalance || '-'} |
+${research ? `\n**研究依据**: ${research}` : ''}
+${(s.backtest_requirements || []).length ? `\n**回测必做**: ${s.backtest_requirements.join('；')}` : ''}
+${t.warn ? `\n⚠️ **注意**: ${t.warn}` : ''}`;
+    }
+
+    function generateConnectionYaml(cfg) {
+      const c = cfg.connection;
+      return `# Auto-generated — 须与 strategy-spec.yaml connection 块一致
+broker: ${c.broker}
+broker_label: ${yamlQuote(c.broker_label)}
+data_provider: ${c.data_provider}
+data_label: ${yamlQuote(c.data_label)}
+target_ide: ${c.target_ide}
+run_phase: ${c.run_phase}
+trading_mode: ${cfg.tradingMode}
+frequency_category: ${cfg.frequencyCategory}
+timeframe: ${yamlQuote(cfg.timeframe)}
+frequency_label: ${yamlQuote(cfg.frequencyLabel)}
+markets: ${yamlQuote(cfg.markets)}
+api_notes: ${yamlQuote(c.api_notes || '')}
+env_template: config/.env.example
+`;
+    }
+
+    function generateMarketsYaml(cfg) {
+      const lines = ['# Auto-generated market rules — Agent 回测/实盘必须建模', 'markets:'];
+      (cfg.marketIds || []).forEach(id => {
+        const m = MARKETS.find(x => x.id === id);
+        const rules = MARKET_RULES[id] || {};
+        lines.push(`  ${id}:`);
+        lines.push(`    title: ${yamlQuote(m?.title || id)}`);
+        lines.push(`    framework: ${yamlQuote(FRAMEWORK_MAP[id]?.fw || '')}`);
+        lines.push(`    data_sources: ${yamlQuote(FRAMEWORK_MAP[id]?.data || '')}`);
+        Object.entries(rules).forEach(([k, v]) => {
+          lines.push(`    ${k}: ${typeof v === 'string' ? yamlQuote(v) : v}`);
+        });
+      });
+      return lines.join('\n') + '\n';
+    }
+
+    function generateBacktestYaml(cfg) {
+      const tpl = cfg.template;
+      const costs = tpl?.spec?.costs || { commission: 0.0003, slippage: 0.001 };
+      const bench = resolveBenchmark(cfg);
+      return `# Auto-generated backtest config
+timeframe: ${yamlQuote(cfg.timeframe)}
+frequency_category: ${cfg.frequencyCategory}
+initial_capital: 1000000
+commission: ${costs.commission ?? 0.0003}
+slippage: ${costs.slippage ?? 0.001}
+benchmark:
+  symbol: ${yamlQuote(bench.symbol)}
+  name: ${yamlQuote(bench.name)}
+  etf: ${yamlQuote(bench.etf || '')}
+  compare_mode: ${yamlQuote(bench.compare_mode)}
+performance_goal: ${yamlQuote(tpl?.spec?.performance_goal || 'excess_return_vs_benchmark')}
+wfo_splits: ${cfg.wfoSplits}
+dsr_min: ${cfg.dsrThreshold}
+report_metrics: [total_return, cagr, sharpe, max_drawdown, alpha_vs_benchmark, win_rate]
+`;
+    }
+
+    function generateEnvExample(cfg) {
+      const broker = cfg.connection?.broker || 'tbd';
+      const lines = [
+        '# 用户填写 API 密钥 — 切勿提交 .env 到 git',
+        `BROKER=${broker}`,
+        `DATA_PROVIDER=${cfg.connection?.data_provider || 'akshare'}`,
+        `TRADING_MODE=${cfg.tradingMode === 'backtest_only' ? 'backtest' : 'paper'}`,
+        `TARGET_IDE=${cfg.connection?.target_ide || 'cursor'}`,
+        `TIMEFRAME=${cfg.timeframe}`,
+        '',
+      ];
+      const hints = {
+        vnpy_xtp: ['# VnPy XTP', '# XTP_USER=', '# XTP_PASSWORD='],
+        vnpy_ctp: ['# VnPy CTP', '# CTP_USER=', '# CTP_PASSWORD=', '# CTP_BROKER='],
+        binance: ['# Binance / ccxt', '# BINANCE_API_KEY=', '# BINANCE_API_SECRET='],
+        alpaca: ['# Alpaca', '# ALPACA_API_KEY=', '# ALPACA_SECRET_KEY=', '# ALPACA_BASE_URL=https://paper-api.alpaca.markets'],
+        akshare: ['# AKShare 免费 — 通常无需 key', '# TUSHARE_TOKEN=  # 若用 TuShare Pro'],
+      };
+      (hints[broker] || ['# API_KEY=', '# API_SECRET=']).forEach(l => lines.push(l));
+      return lines.join('\n') + '\n';
+    }
+
+    function generateAuditPy(cfg) {
+      return `"""过拟合检验门禁 — ${VALIDATION_PRESET_META[cfg.validationPreset]?.title || '基础检验'}
+
+Agent: 回测完成后调用 run_audit(results)。未 PASS 禁止 paper/live。
+Spec 真相源: strategy-spec.yaml → validation 块
+"""
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any
+
+SPEC_PATH = Path(__file__).resolve().parents[1] / "strategy-spec.yaml"
+
+THRESHOLDS = {
+    "dsr_min": ${cfg.dsrThreshold},
+    "pbo_max": 0.50,
+    "wfo_splits": ${cfg.wfoSplits},
+    "oos_decay_min": 0.5,
+}
+
+CHECKS = ${JSON.stringify([...cfg.validationIds], null, 4)}
+
+RISK = ${JSON.stringify(buildRiskSpecBlock(cfg.riskProfile), null, 4)}
+
+EXPOSURE = ${JSON.stringify(buildExposureBlock(cfg), null, 2)}
+
+
+def run_audit(backtest_results: dict[str, Any]) -> dict[str, Any]:
+    """Evaluate backtest_results against THRESHOLDS and CHECKS.
+
+    backtest_results example keys:
+      sharpe_is, sharpe_oos, max_drawdown, dsr, pbo, wfo_hit_rate, oos_decay
+    """
+    reasons: list[str] = []
+    verdict = "PASS"
+
+    if backtest_results.get("dsr", 0) < THRESHOLDS["dsr_min"]:
+        reasons.append(f"DSR {backtest_results.get('dsr')} < {THRESHOLDS['dsr_min']}")
+        verdict = "FAIL"
+    if backtest_results.get("pbo", 1) > THRESHOLDS["pbo_max"]:
+        reasons.append(f"PBO {backtest_results.get('pbo')} > {THRESHOLDS['pbo_max']}")
+        verdict = "FAIL"
+    if backtest_results.get("oos_decay", 1) < THRESHOLDS["oos_decay_min"]:
+        reasons.append("OOS decay below minimum")
+        if verdict == "PASS":
+            verdict = "WARN"
+
+    return {"verdict": verdict, "reasons": reasons, "thresholds": THRESHOLDS, "checks": CHECKS}
+
+
+if __name__ == "__main__":
+    print("Run backtest first, then: run_audit(results)")
+    print("Checks:", CHECKS)
+`;
+    }
+
+    function generateStrategyStub(cfg) {
+      const name = cfg.template?.name || 'CustomStrategy';
+      return `"""${name} — implement strategy-spec.yaml
+
+Experience: ${cfg.experienceLabel}
+Framework: ${cfg.framework}
+Template: ${cfg.template?.id || 'user_defined'}
+
+Agent checklist:
+1. Load strategy-spec.yaml (source of truth)
+2. Implement entry/exit/position exactly as spec.strategy
+3. Apply spec.risk and spec.exposure constraints in position sizing
+4. Model spec.markets_detail rules (T+1, limits, costs)
+5. Run backtest then validation/audit.py
+"""
+# TODO: Agent implements strategy class/functions here
+`;
+    }
+
+    function buildStrategySpec(cfg) {
+      const marketIds = cfg.marketIds || [...state.markets];
+      const primaryId = marketIds[0] || 'ashare';
+      const rules = MARKET_RULES[primaryId] || {};
+      const r = cfg.riskProfile;
+      const tpl = cfg.template;
+      const exposureBlock = buildExposureBlock(cfg);
+      const validationBlock = {
+        preset: cfg.validationPreset,
+        preset_label: VALIDATION_PRESET_META[cfg.validationPreset]?.title || '',
+        items: cfg.validationIds || [...state.validation],
+        item_labels: (cfg.validationIds || [...state.validation])
+          .map(id => VALIDATION_ITEMS.find(v => v.id === id)?.label).filter(Boolean),
+        dsr_min: +cfg.dsrThreshold,
+        pbo_max: 0.5,
+        wfo_splits: +cfg.wfoSplits,
+        oos_decay_min: 0.5,
+      };
+
+      const common = {
+        meta: {
+          name: cfg.projectName,
+          skill_name: cfg.skillName,
+          experience: cfg.experience,
+          experience_label: cfg.experienceLabel,
+          version: '1.0',
+          generator: 'Quant Skill Builder',
+        },
+        agent_contract: buildAgentContract(cfg),
+        markets: marketIds,
+        markets_detail: buildAllMarketRules(marketIds),
+        market_rules: rules,
+        exposure: exposureBlock,
+        risk: buildRiskSpecBlock(r),
+        validation: validationBlock,
+        connection: cfg.connection,
+        execution: {
+          timeframe: cfg.timeframe,
+          frequency_category: cfg.frequencyCategory,
+          frequency_label: cfg.frequencyLabel,
+          trading_mode: cfg.tradingMode,
+        },
+        implementation: {
+          framework: cfg.framework,
+          data_sources: cfg.dataSources,
+          indicators: cfg.indicators ? cfg.indicators.split(', ').filter(Boolean) : [],
+          strategy_paradigms: cfg.strategies || '',
+        },
+        pending_clarifications: cfg.questions || [],
+      };
+
+      if (cfg.experience === 'mature') {
+        return {
+          ...common,
+          strategy: {
+            type: 'user_defined',
+            source: 'natural_language',
+            modules: getMatureStructured(),
+            description: cfg.matureDesc,
+            agent_task: '将 modules 结构化为可执行 entry/exit/position 规则，用户确认后编码，不可修改核心逻辑',
+          },
+        };
+      }
+
+      const spec = tpl?.spec || {};
+      const benchmark = resolveBenchmark(cfg);
+      return {
+        ...common,
+        meta: { ...common.meta, template_id: tpl?.id, template_name: tpl?.name },
+        strategy: {
+          type: spec.signal_type || 'custom',
+          template_id: tpl?.id,
+          template_name: tpl?.name,
+          universe: spec.universe,
+          benchmark,
+          performance_goal: spec.performance_goal || null,
+          research_basis: tpl?.research || [],
+          backtest_requirements: spec.backtest_requirements || [],
+          entry: spec.entry || [],
+          exit: spec.exit || [],
+          position: { ...(spec.position || {}), max_single: r.posLimit },
+          params: spec.params || {},
+          costs: spec.costs || {},
+          rebalance: spec.rebalance,
+          warn: tpl?.warn || null,
+        },
+      };
+    }
+
+    function buildStrategySpecYaml(cfg) {
+      const obj = buildStrategySpec(cfg);
+      const lines = ['# Auto-generated by Quant Skill Builder - Agent 必须遵循此 spec', ''];
+      function dump(o, indent) {
+        const sp = '  '.repeat(indent);
+        for (const [k, v] of Object.entries(o)) {
+          if (v === null || v === undefined) continue;
+          if (Array.isArray(v)) {
+            lines.push(`${sp}${k}:`);
+            v.forEach(item => lines.push(typeof item === 'object' ? `${sp}  - ${JSON.stringify(item)}` : `${sp}  - ${yamlQuote(item)}`));
+          } else if (typeof v === 'object') {
+            lines.push(`${sp}${k}:`);
+            dump(v, indent + 1);
+          } else {
+            lines.push(`${sp}${k}: ${typeof v === 'string' ? yamlQuote(v) : v}`);
+          }
+        }
+      }
+      dump(obj, 0);
+      return lines.join('\n');
+    }
+
+    function buildConfig() {
+      const exp = getExp();
+      const tpl = state.experience !== 'mature' ? getTemplate(state.selectedTemplate) : null;
+      const markets = [...state.markets].map(id => MARKETS.find(m => m.id === id)?.title).join('、');
+      const primaryMarket = [...state.markets][0] || 'ashare';
+      const fwInfo = FRAMEWORK_MAP[primaryMarket];
+      const matureDesc = state.experience === 'mature' ? getMatureDescription() : '';
+
+      const frequencyCategory = document.getElementById('frequencyCategory')?.value || state.frequencyCategory;
+      const timeframe = document.getElementById('timeframe')?.value || state.timeframe;
+
+      const riskProfile = buildRiskProfile({
+        experience: state.experience,
+        risk: state.risk,
+        frequencyCategory,
+        useCustom: state.experience === 'mature' && state.riskManual,
+        riskCustom: state.experience === 'mature' && state.riskManual ? readRiskCustomFromDOM() : null,
+      });
+
+      const connection = {
+        target_ide: document.getElementById('targetIDE')?.value || 'cursor',
+        run_phase: document.getElementById('runPhase')?.value || 'backtest_first',
+        broker: document.getElementById('brokerGateway')?.value || state.broker,
+        broker_label: document.getElementById('brokerGateway')?.selectedOptions[0]?.text || '',
+        data_provider: document.getElementById('dataProvider')?.value || state.dataProvider,
+        data_label: document.getElementById('dataProvider')?.selectedOptions[0]?.text || '',
+        api_notes: document.getElementById('apiNotes')?.value || '',
+        frequency_category: frequencyCategory,
+        timeframe,
+        trading_mode: document.getElementById('tradingMode')?.value || 'paper_then_live',
+        env_template: 'config/.env.example',
+        user_provides: ['API keys', 'broker account (if live)', 'confirm paper/live mode'],
+      };
+
+      const cfg = {
+        experience: state.experience,
+        experienceLabel: exp?.title,
+        projectName: document.getElementById('projectName').value.trim() || 'my-quant-system',
+        skillName: document.getElementById('skillName').value.trim() || 'my-quant-system',
+        marketIds: [...state.markets],
+        markets, risk: state.risk, riskProfile,
+        strategies: [...state.strategies].map(id => STRATEGY_TYPES.find(s => s.id === id)?.label).join('、'),
+        indicators: [...state.indicators].join(', '),
+        validation: [...state.validation].map(id => VALIDATION_ITEMS.find(v => v.id === id)?.label).join('、'),
+        validationIds: [...state.validation],
+        validationPreset: state.validationPreset,
+        frequencyCategory: frequencyCategory,
+        timeframe,
+        tradingMode: document.getElementById('tradingMode')?.value || 'paper_then_live',
+        wfoSplits: document.getElementById('wfoSplits').value,
+        dsrThreshold: document.getElementById('dsrThreshold').value,
+        deployTarget: document.getElementById('deployTarget').value,
+        template: tpl,
+        matureDesc,
+        marketExposure: state.experience === 'zero' ? 'long' : state.marketExposure,
+        exposurePreset: state.experience === 'mature' ? state.exposurePreset : state.marketExposure,
+        exposureCustom: state.experience === 'mature' ? readExposureCustomFromDOM() : null,
+        framework: state.experience === 'zero' ? (tpl?.framework || 'Backtrader') : fwInfo.fw,
+        dataSources: fwInfo.data,
+        connection,
+      };
+      cfg.frequencyLabel = getFrequencyDisplayLabel(cfg.frequencyCategory, cfg.timeframe);
+      cfg.marketExposureLabel = getExposureDisplayLabel(cfg);
+      cfg.questions = buildAgentQuestions(cfg);
+      cfg.strategySpec = buildStrategySpec(cfg);
+      cfg.strategySpecYaml = buildStrategySpecYaml(cfg);
+      return cfg;
+    }
+
+    function generateSkillMD(cfg) {
+      const r = cfg.riskProfile;
+      const conn = cfg.connection;
+      const ideGuide = {
+        cursor: '用户在 Cursor 中 @' + cfg.skillName + ' 加载本 Skill',
+        codex: '将本 Skill 放入项目 .agents/skills/ 或 project instructions',
+        claude: '放入 .claude/skills/ 或通过 CLAUDE.md 引用',
+        generic: '将 SKILL.md 作为 system/context 提供给 Agent',
+      }[conn.target_ide] || '';
+
+      const expBlock = {
+        zero: `## Agent 指令（零基础）\n\n- 读取 strategy-spec.yaml 作为唯一策略真相源\n- 用 glossary.md 白话与用户沟通\n- 阶段: 回测 → 检验 PASS → 用户填 API → 模拟盘\n- 不可替换用户选定的固定策略模板\n- 每步解释含义`,
+        investor: `## Agent 指令（投资者）\n\n- 按 strategy-spec.yaml 实现完整规则\n- 多空性: ${cfg.marketExposureLabel}，严格遵守 exposure 净敞口约束\n- 风控: ${cfg.riskProfile.label}（${cfg.riskProfile.maxDD} 回撤 · ${cfg.riskProfile.leverage} 杠杆）\n- 帮用户理解策略逻辑与适用场景\n- 回测+过拟合检验通过后再实现 broker adapter\n- 框架: ${cfg.framework}`,
+        mature: `## Agent 指令（成熟体系）\n\n- **不可修改用户核心逻辑**\n- 敞口: ${cfg.marketExposureLabel}（preset: ${cfg.exposurePreset}）\n- 风控: ${cfg.riskProfile.label}，严格按 risk 块执行回撤/杠杆/止损/单日上限\n- 严格实现 exposure 块：Net/Gross/Beta/中性类型/因子对冲\n- 将 NL 描述结构化为 spec，用户确认后编码\n- 专业全检 + OOS 衰减比\n- 对接 ${conn.broker_label}`,
+      }[cfg.experience];
+
+      const specYamlBlock = '```yaml\n' + cfg.strategySpecYaml + '\n```';
+      const valMeta = VALIDATION_PRESET_META[cfg.validationPreset] || {};
+      const valChecks = (cfg.validationIds || []).map(id => VALIDATION_ITEMS.find(v => v.id === id)?.label).filter(Boolean).join('、');
+
+      return `---
+name: ${cfg.skillName}
+description: >-
+  ${cfg.experienceLabel}量化交易系统 Agent Skill。市场:${cfg.markets}；模板:${cfg.template?.name || '自定义'}；周期:${cfg.frequencyLabel}；风险:${r.label}。Feed to Cursor/Codex/Claude; user provides API keys only. Use when implementing, backtesting, validating, or connecting this trading system.
+disable-model-invocation: true
+---
+
+# ${cfg.projectName}
+
+> 经验: ${cfg.experienceLabel} | 市场: ${cfg.markets} | 周期: ${cfg.frequencyLabel} | 风险: ${r.label} (${cfg.risk}/5) | IDE: ${conn.target_ide}
+
+## 产品目标
+
+用户通过本 Skill 让 Agent 实现完整量化系统。**用户只需提供 API/券商密钥**；Agent 负责脚手架、策略、回测、过拟合检验与对接。
+
+## Agent 读取顺序（必须）
+
+1. **\`strategy-spec.yaml\`** — 唯一策略真相源（与本文冲突时以 YAML 为准）
+2. \`references/agent-integration.md\` — IDE 集成与交付清单
+3. \`references/overfitting-validation.md\` — 检验门禁
+4. \`config/risk.yaml\` + \`config/connection.yaml\` + \`config/markets.yaml\`
+${cfg.experience === 'zero' ? '5. `references/glossary.md` + `references/beginner-learning-path.md`（零基础白话）' : ''}
+
+${ideGuide}
+
+${expBlock}
+
+## 策略规则摘要
+
+${formatTemplateStrategySection(cfg)}
+
+## 策略规格（机器可读）
+
+完整 spec 已写入同目录 \`strategy-spec.yaml\`。**禁止**实现与 spec 不一致的逻辑。
+
+${specYamlBlock}
+
+## 风险偏好
+
+| 项 | 值 |
+|----|-----|
+| 档位 | ${r.label} (${cfg.risk}/5${r.preset === 'custom' ? ' · 自定义' : ''}) |
+| 最大回撤 | ${r.maxDD} |
+| 杠杆上限 | ${r.leverage} |
+| 单票/合约上限 | ${r.posLimit} |
+| 默认止损 | ${r.stopLoss} |
+| 单笔风险预算 | ${r.riskPerTrade} |
+| 单日最大亏损 | ${r.maxDailyLoss} |
+| 仓位分配 | ${r.sizingMethodLabel} |
+| 最大持仓数 | ${r.maxPositions} |
+| 适用市场 | ${r.markets.join('、')} |
+${r.frequency_note ? `| 频率校正 | ${r.frequency_note} |\\n` : ''}${r.exposure_note ? `| 敞口提示 | ${r.exposure_note} |\\n` : ''}${r.notes ? `| 补充说明 | ${r.notes} |\\n` : ''}
+Agent 须按 \`strategy-spec.yaml\` 中 \`risk\` 块执行仓位与止损，并遵守 \`market_constraints\`。
+
+## 策略多空性 / 敞口构造
+
+| 项 | 设定 |
+|----|------|
+| 方案 | ${cfg.marketExposureLabel} |
+| 净敞口 Net | ${(() => { const e = buildExposureBlock(cfg); return e.net_exposure_pct.join('% ~ ') + '%'; })()} |
+| 总敞口 Gross | ${(() => { const e = buildExposureBlock(cfg); return (e.gross_target_pct ? e.gross_target_pct + '% (目标)' : e.gross_exposure_pct.join('% ~ ') + '%'); })()} |
+| 允许做空 | ${buildExposureBlock(cfg).allow_short ? '是' : '否'} |
+| Beta 目标 | ${buildExposureBlock(cfg).beta_target.join(' ~ ')} |
+${(() => { const e = buildExposureBlock(cfg); return e.neutrality ? `| 中性类型 | ${e.neutrality} |\\n` : ''; })()}${(() => { const e = buildExposureBlock(cfg); return e.long_leg_pct != null ? `| 多/空腿 | ${e.long_leg_pct}% / ${e.short_leg_pct}% |\\n` : ''; })()}${(() => { const e = buildExposureBlock(cfg); return e.factor_hedges?.length ? `| 因子对冲 | ${e.factor_hedges.join(', ')} |\\n` : ''; })()}
+
+Agent 须按 \`strategy-spec.yaml\` 中 \`exposure\` 块约束仓位。Net=(Long−Short)/NAV，Gross=(|Long|+|Short|)/NAV。
+
+## 交易节奏
+
+| 项 | 设定 |
+|----|------|
+| 频率 | ${cfg.frequencyLabel} |
+| K 线周期 | \`${cfg.timeframe}\` |
+| 开发阶段 | ${cfg.tradingMode === 'backtest_only' ? '仅回测研究' : '回测 → 模拟盘 → 实盘'} |
+
+Agent 须按 \`timeframe\` 选用数据粒度、回测 bar 大小与调度频率。
+
+## 接入配置（用户后续提供 API）
+
+| 项 | 设定 |
+|----|------|
+| 券商/交易所 | ${conn.broker_label} |
+| 行情数据 | ${conn.data_label} |
+| 运行阶段 | ${conn.run_phase} |
+| 备注 | ${conn.api_notes || '无'} |
+
+Agent 任务:
+1. 生成 \`config/connection.yaml\` 与 \`config/.env.example\`
+2. 实现 \`brokers/${conn.broker}/adapter.py\` 骨架
+3. **禁止**将密钥写入 Skill 或提交 git
+
+## 技术栈
+
+| 组件 | 选型 |
+|------|------|
+| 框架 | ${cfg.framework} |
+| 数据 | ${cfg.dataSources} |
+| 验证 | oos-lab, ml4t-diagnostic |
+
+## 过拟合检验门禁
+
+- 方案: **${valMeta.title || cfg.validation}**（${valChecks}）
+- DSR ≥ ${cfg.dsrThreshold} · PBO < 0.50 · WFO ${cfg.wfoSplits} 段 · OOS decay ≥ 0.5
+- 运行 \`validation/audit.py\` → **PASS** 后才可 paper；**FAIL** 须回到策略设计
+- 详见 references/overfitting-validation.md
+
+## 实现顺序（Agent 必须按序）
+
+1. 读取 strategy-spec.yaml + references/agent-integration.md
+2. 按 spec 搭建项目（config/ strategies/ data/ backtest/ validation/ brokers/）
+3. 实现 \`data/fetchers/\` — 对接 ${cfg.dataSources}，建模 markets_detail 交易规则
+4. 实现 \`strategies/main.py\` — 严格遵循 spec.strategy
+5. 回测 — 使用 config/backtest.yaml 成本与 timeframe
+6. 运行 validation/audit.py — 未 PASS 禁止下一步
+7. 实现 brokers/${conn.broker}/adapter.py，等待用户 .env
+8. paper 联调 → 用户确认 → live
+
+## 需用户确认
+
+${cfg.questions.map((q,i) => `${i+1}. ${q}`).join('\n')}
+
+## 参考
+
+- strategy-spec.yaml（同目录，真相源）
+- references/agent-integration.md
+- references/experience-paths.md
+- references/overfitting-validation.md
+${cfg.experience === 'zero' ? '- references/glossary.md\n- references/beginner-learning-path.md\n' : ''}${cfg.template ? '- references/strategy-templates.md\n' : ''}- references/indicator-catalog.md
+`;
+    }
+
+    function generateAIPrompt(cfg) {
+      const base = `# Quant System Bootstrap Prompt
+请按以下顺序读取并执行：
+1. strategy-spec.yaml（唯一真相源）
+2. SKILL.md
+3. references/agent-integration.md
+4. references/overfitting-validation.md
+
+项目: ${cfg.projectName} | Skill: ${cfg.skillName} | IDE: ${cfg.connection.target_ide}
+市场: ${cfg.markets} | 周期: ${cfg.frequencyLabel} | 检验: ${VALIDATION_PRESET_META[cfg.validationPreset]?.title}
+
+`;
+      if (cfg.experience === 'mature') {
+        return base + `## 用户画像：成熟交易者（已有完整体系）
+
+请执行：
+1. 将 strategy-spec.yaml → strategy.modules / description 结构化为可执行 entry/exit/position
+2. 敞口: ${cfg.marketExposureLabel} (${cfg.exposurePreset}) — 严格遵守 exposure 块
+3. 风控: ${cfg.riskProfile.label} — 严格遵守 risk 块（回撤/杠杆/单日上限/仓位分配）
+4. 与我确认结构化 spec 后再编码 — **不可修改我的核心逻辑**
+5. 实现回测 + validation/audit.py（${cfg.validation}）→ PASS 后再对接 ${cfg.connection.broker_label}
+6. 我会提供 .env API 密钥
+
+## 用户原始描述
+${cfg.matureDesc}
+`;
+      }
+      if (cfg.experience === 'zero') {
+        return base + `## 用户画像：完全零基础
+
+请执行：
+1. 严格按 strategy-spec.yaml 实现模板「${cfg.template.name}」— 不可替换策略
+2. 用 glossary.md 白话解释每一步
+3. 建模 markets_detail 规则（T+1、涨跌停、成本）
+4. 跑通回测 → validation/audit.py PASS
+5. 说明 .env 需要哪些密钥（仅回测可先跳过 broker）
+
+框架: ${cfg.framework} | 数据: ${cfg.dataSources}
+`;
+      }
+      return base + `## 用户画像：有投资经验，无系统规则
+
+请执行：
+1. 按 strategy-spec.yaml 实现「${cfg.template.name}」完整逻辑
+2. 多空性: ${cfg.marketExposureLabel} — 严格遵守 exposure 块
+3. 风控: ${cfg.riskProfile.label}（回撤 ${cfg.riskProfile.maxDD} · 杠杆 ${cfg.riskProfile.leverage}）
+4. 交易节奏: ${cfg.frequencyLabel}（timeframe=${cfg.timeframe}）
+5. 回测 + validation/audit.py（${cfg.validation}）→ PASS
+6. 实现 ${cfg.connection.broker_label} adapter 骨架 — 我提供 API 后接模拟盘
+
+市场: ${cfg.markets} | 框架: ${cfg.framework}
+`;
+    }
+
+    function generateDeployGuide(cfg) {
+      const skill = cfg.skillName;
+      const pathMap = {
+        both: `- Cursor 个人: \`~/.cursor/skills/${skill}/\`\n- 项目内: \`.agents/skills/${skill}/\``,
+        personal: `- Cursor 个人: \`~/.cursor/skills/${skill}/\``,
+        project: `- 项目内: \`.agents/skills/${skill}/\``,
+      };
+      const paths = pathMap[cfg.deployTarget] || pathMap.both;
+      return `# 部署指南 · ${cfg.projectName}
+
+## 1. 解压后目录结构
+
+\`\`\`
+${cfg.projectName}/
+├── SKILL.md                 # Agent 主 Skill
+├── strategy-spec.yaml       # 策略规格（Agent 必须遵循 — 唯一真相源）
+├── AGENT_PROMPT.txt         # 复制到 IDE 对话启动 Agent
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── config/
+│   ├── connection.yaml      # 券商/IDE/周期
+│   ├── markets.yaml         # 各市场交易规则
+│   ├── risk.yaml            # 风控参数
+│   ├── backtest.yaml        # 回测默认参数
+│   └── .env.example         # 用户填 API
+├── strategies/              # 策略代码（Agent 实现）
+├── data/fetchers/           # 数据管道（Agent 实现）
+├── backtest/                # 回测引擎（Agent 实现）
+├── validation/              # 过拟合检验脚本
+├── brokers/                 # 券商对接（Agent 实现）
+└── references/              # 参考文档
+\`\`\`
+
+## 2. 安装 Skill 到 IDE
+
+${paths}
+
+将本目录中的 \`SKILL.md\` 和 \`references/\` 放入上述路径。
+
+目标 IDE: **${cfg.connection.target_ide}**
+
+## 3. 启动 Agent
+
+1. 打开 IDE，@ 加载 Skill「${skill}」
+2. 粘贴 \`AGENT_PROMPT.txt\` 内容
+3. Agent 会按 spec 实现回测与检验
+
+## 4. 接入交易 API
+
+1. 复制 \`config/.env.example\` → \`config/.env\`
+2. 填入 API Key（**不要提交 git**）
+3. 检验 PASS 后，Agent 帮你接 ${cfg.connection.broker_label}
+
+## 5. 运行阶段
+
+当前设定: **${cfg.connection.run_phase}**
+`;
+    }
+
+    function generateScaffold(cfg) {
+      const spec = cfg.strategySpecYaml;
+      const skill = generateSkillMD(cfg);
+      const fw = cfg.framework || 'Backtrader';
+      const reqs = ['numpy>=1.24', 'pandas>=2.0', 'pyyaml>=6.0'];
+      if (fw.includes('Backtrader')) reqs.push('backtrader');
+      if (fw.includes('VnPy')) reqs.push('vnpy>=4.0');
+      if (fw.includes('Qlib')) reqs.push('pyqlib');
+      if (fw.includes('Freqtrade')) reqs.push('freqtrade');
+      if (cfg.markets.includes('A股') || cfg.markets.includes('期货')) reqs.push('akshare>=1.14');
+      if (cfg.markets.includes('美股')) reqs.push('yfinance');
+      if (cfg.markets.includes('加密')) reqs.push('ccxt');
+      reqs.push('oos-lab');
+      const valTitle = VALIDATION_PRESET_META[cfg.validationPreset]?.title || cfg.validation;
+      return {
+        'SKILL.md': skill,
+        'strategy-spec.yaml': spec,
+        'AGENT_PROMPT.txt': generateAIPrompt(cfg),
+        'DEPLOY.md': generateDeployGuide(cfg),
+        '.gitignore': `.env\nconfig/.env\n__pycache__/\n*.pyc\n.venv/\n.DS_Store\n`,
+        'README.md': `# ${cfg.projectName}
+
+> ${cfg.experienceLabel} · ${cfg.template?.name || '自定义策略'} · ${cfg.markets} · ${cfg.frequencyLabel}
+
+## 快速开始（用户）
+
+1. 阅读 \`DEPLOY.md\`，将 Skill 安装到 IDE（${cfg.connection.target_ide}）
+2. 复制 \`AGENT_PROMPT.txt\` 到 Agent 对话启动
+3. \`python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt\`
+4. 复制 \`config/.env.example\` → \`config/.env\`（API 密钥，仅 paper/live 需要）
+5. Agent 按 spec 实现 → 回测 → \`python validation/audit.py\` → 接 API
+
+## 核心文件（Agent 必须读）
+
+| 文件 | 作用 |
+|------|------|
+| **strategy-spec.yaml** | 策略规格 — **唯一真相源** |
+| SKILL.md | Agent 主契约与读取顺序 |
+| AGENT_PROMPT.txt | 一键启动 Prompt |
+| config/risk.yaml | 风控参数 |
+| config/connection.yaml | 券商/IDE/周期 |
+| config/markets.yaml | 各市场交易规则 |
+| config/backtest.yaml | 回测默认参数 |
+| validation/audit.py | 过拟合检验门禁 |
+| references/agent-integration.md | IDE 集成指南 |
+
+检验方案: ${valTitle} · DSR≥${cfg.dsrThreshold} · WFO ${cfg.wfoSplits} 段
+`,
+        'config/connection.yaml': generateConnectionYaml(cfg),
+        'config/markets.yaml': generateMarketsYaml(cfg),
+        'config/backtest.yaml': generateBacktestYaml(cfg),
+        'config/.env.example': generateEnvExample(cfg),
+        'config/risk.yaml': `# Auto-generated — 须与 strategy-spec.yaml risk 块一致
+score: ${cfg.risk}
+label: ${yamlQuote(cfg.riskProfile.label)}
+preset: ${yamlQuote(String(cfg.riskProfile.preset))}
+max_drawdown: ${yamlQuote(cfg.riskProfile.maxDD)}
+leverage: ${yamlQuote(cfg.riskProfile.leverage)}
+position_limit: ${yamlQuote(cfg.riskProfile.posLimit)}
+stop_loss: ${yamlQuote(cfg.riskProfile.stopLoss)}
+risk_per_trade: ${yamlQuote(cfg.riskProfile.riskPerTrade)}
+max_daily_loss: ${yamlQuote(cfg.riskProfile.maxDailyLoss)}
+sizing_method: ${yamlQuote(cfg.riskProfile.sizingMethod)}
+max_positions: ${cfg.riskProfile.maxPositions}
+markets: ${yamlQuote(cfg.riskProfile.markets.join(', '))}
+${cfg.riskProfile.notes ? `notes: ${yamlQuote(cfg.riskProfile.notes)}\n` : ''}`,
+        'requirements.txt': reqs.join('\n') + '\n',
+        'brokers/README.md': `# ${cfg.connection.broker_label} 对接
+
+Agent 在 \`brokers/${cfg.connection.broker}/adapter.py\` 实现下单/查持仓/行情接口。
+规格见 strategy-spec.yaml → connection 块。
+详见 references/agent-integration.md
+`,
+        'data/fetchers/README.md': `# 数据管道
+
+对接: ${cfg.dataSources}
+周期: ${cfg.timeframe} (${cfg.frequencyLabel})
+Agent 实现 fetchers 并处理 markets.yaml 中的交易规则（复权、T+1、涨跌停等）。
+`,
+        'backtest/engine.py': `"""Backtest engine wrapper — Agent implements using ${fw}"""\n# Load config/backtest.yaml + strategy-spec.yaml\n# TODO: Agent implements\n`,
+        'strategies/main.py': generateStrategyStub(cfg),
+        'validation/audit.py': generateAuditPy(cfg),
+      };
+    }
+
+    function buildFullPackage(cfg) {
+      const files = { ...generateScaffold(cfg) };
+      const refs = window.REFERENCE_BUNDLE || {};
+      for (const [path, content] of Object.entries(refs)) {
+        files[path] = content;
+      }
+      if (cfg.experience === 'zero' && refs['references/beginner-learning-path.md']) {
+        // already included
+      }
+      files['MANIFEST.txt'] = Object.keys(files).sort().join('\n') + '\n';
+      return files;
+    }
+
+    async function downloadZip(filename, files) {
+      if (typeof JSZip === 'undefined') {
+        alert('ZIP 库加载失败，请检查网络后刷新页面重试');
+        return;
+      }
+      const zip = new JSZip();
+      const folder = zip.folder(filename.replace(/\.zip$/i, ''));
+      for (const [path, content] of Object.entries(files)) {
+        folder.file(path, content);
+      }
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function updatePreview() {
+      const cfg = buildConfig();
+      document.getElementById('summaryTable').innerHTML = `
+        <tr><th>经验</th><td>${cfg.experienceLabel}</td></tr>
+        <tr><th>策略</th><td>${cfg.template?.name || '自定义体系'}</td></tr>
+        <tr><th>市场</th><td>${cfg.markets}</td></tr>
+        <tr><th>多空性</th><td>${cfg.marketExposureLabel}</td></tr>
+        <tr><th>检验</th><td>${VALIDATION_PRESET_META[cfg.validationPreset]?.title || cfg.validation}</td></tr>
+        <tr><th>频率</th><td>${cfg.frequencyLabel}</td></tr>
+        <tr><th>接入</th><td>${cfg.connection.broker_label}</td></tr>
+        <tr><th>IDE</th><td>${cfg.connection.target_ide}</td></tr>
+        <tr><th>风险</th><td>${cfg.riskProfile.label} · 回撤 ${cfg.riskProfile.maxDD} · 杠杆 ${cfg.riskProfile.leverage}</td></tr>`;
+      const pkg = buildFullPackage(cfg);
+      document.getElementById('exportManifest').innerHTML = [
+        'strategy-spec.yaml — 策略真相源',
+        'SKILL.md — Agent 契约',
+        'AGENT_PROMPT.txt — 启动 Prompt',
+        'config/risk.yaml · connection.yaml · markets.yaml · backtest.yaml',
+        'validation/audit.py — 检验门禁',
+        'references/ — 集成与检验文档',
+      ].map(f => `<li>${f}</li>`).join('')
+        + `<li>…共 ${Object.keys(pkg).length} 个文件（见 MANIFEST.txt）</li>`;
+      document.getElementById('preview').textContent = generateSkillMD(cfg);
+      const wrap = document.getElementById('specPreviewWrap');
+      wrap.style.display = 'block';
+      wrap.textContent = cfg.strategySpecYaml;
+    }
+
+    function downloadFile(name, content) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([content], { type: 'text/plain' }));
+      a.download = name;
+      a.click();
+    }
+
+    function bindEvents() {
+      document.getElementById('experienceGrid').addEventListener('click', e => {
+        const card = e.target.closest('[data-exp]');
+        if (card) applyExperience(card.dataset.exp);
+      });
+
+      document.getElementById('marketGrid').addEventListener('click', e => {
+        const card = e.target.closest('[data-market]');
+        if (!card) return;
+        const id = card.dataset.market;
+        if (state.experience === 'zero') state.markets = new Set([id]);
+        else { state.markets.has(id) ? state.markets.delete(id) : state.markets.add(id); if (!state.markets.size) state.markets.add('ashare'); }
+        renderMarkets();
+      });
+
+      document.getElementById('riskSlider').addEventListener('input', e => applyRiskScore(+e.target.value));
+
+      document.getElementById('riskPresetGrid')?.addEventListener('click', e => {
+        const card = e.target.closest('[data-risk-score]');
+        if (!card) return;
+        if (card.dataset.riskScore === 'custom') {
+          state.riskManual = true;
+          document.getElementById('riskFineTune').open = true;
+          renderRiskPanel();
+          return;
+        }
+        applyRiskScore(+card.dataset.riskScore);
+      });
+
+      ['riskMaxDD','riskLeverage','riskPosLimit','riskStopLoss','riskPerTrade','riskMaxDailyLoss','riskSizingMethod','riskMaxPositions','riskNotes'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => {
+          state.riskManual = true;
+          document.getElementById('riskFineTune').open = true;
+          renderRiskPanel();
+        });
+        document.getElementById(id)?.addEventListener('change', () => {
+          state.riskManual = true;
+          renderRiskPanel();
+        });
+      });
+
+      document.getElementById('strategyTypes')?.addEventListener('click', e => {
+        const chip = e.target.closest('[data-strategy]');
+        if (!chip) return;
+        const id = chip.dataset.strategy;
+        state.strategies.has(id) ? state.strategies.delete(id) : state.strategies.add(id);
+        if (!state.strategies.size) state.strategies.add('technical');
+        renderStrategyTypes();
+      });
+
+      ['fixedTemplateGrid','advancedTemplateGrid'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', e => {
+          const c = e.target.closest('[data-tpl]');
+          if (c) applyTemplate(c.dataset.tpl);
+        });
+      });
+
+      ['exposureGridInvestor', 'exposureGridMature'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', e => {
+          const basic = e.target.closest('[data-exposure]');
+          if (basic) applyMarketExposure(basic.dataset.exposure);
+          const adv = e.target.closest('[data-adv-exposure]');
+          if (adv) applyAdvancedExposurePreset(adv.dataset.advExposure);
+        });
+      });
+
+      document.getElementById('factorHedgeChips')?.addEventListener('click', e => {
+        const chip = e.target.closest('[data-factor]');
+        if (!chip) return;
+        const id = chip.dataset.factor;
+        state.factorHedges.has(id) ? state.factorHedges.delete(id) : state.factorHedges.add(id);
+        if (state.experience === 'mature') {
+          state.exposurePreset = 'custom';
+          document.querySelectorAll('[data-adv-exposure]').forEach(c =>
+            c.classList.toggle('selected', c.dataset.advExposure === 'custom'));
+        }
+        renderFactorHedges();
+      });
+
+      ['expNetMin','expNetMax','expGrossTarget','expNeutrality','expNotes'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => {
+          if (state.experience === 'mature') {
+            state.exposurePreset = 'custom';
+            document.querySelectorAll('[data-adv-exposure]').forEach(c => c.classList.toggle('selected', c.dataset.advExposure === 'custom'));
+          }
+        });
+        document.getElementById(id)?.addEventListener('change', () => {
+          if (state.experience === 'mature') state.exposurePreset = 'custom';
+        });
+      });
+
+      document.getElementById('templateFilter')?.addEventListener('change', renderAdvancedTemplates);
+      document.getElementById('indicatorCategory')?.addEventListener('change', renderIndicators);
+      document.getElementById('indicatorGrid')?.addEventListener('click', e => {
+        const item = e.target.closest('[data-ind]');
+        if (!item) return;
+        const id = item.dataset.ind;
+        state.indicators.has(id) ? state.indicators.delete(id) : state.indicators.add(id);
+        renderIndicators();
+      });
+
+      document.getElementById('validationPresets')?.addEventListener('click', e => {
+        const card = e.target.closest('[data-preset]');
+        if (card && state.experience !== 'zero') setValidationPreset(card.dataset.preset);
+      });
+
+      document.getElementById('validationChecks').addEventListener('change', e => {
+        if (!e.target.dataset.val || state.experience === 'zero') return;
+        e.target.checked ? state.validation.add(e.target.dataset.val) : state.validation.delete(e.target.dataset.val);
+        renderValidationSummary();
+      });
+
+      ['wfoSplits', 'dsrThreshold'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', renderValidationSummary);
+      });
+
+      ['nlOverview','nlEntry','nlExit','nlPosition','nlRisk'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => {
+          document.getElementById('matureQuestions').innerHTML = generateMatureQuestions().map(q => `<li>${q}</li>`).join('');
+          updateMatureSpecPreview();
+        });
+      });
+
+      document.getElementById('matureExamples').innerHTML = MATURE_EXAMPLES.map(ex =>
+        `<span class="chip" data-mature="${encodeURIComponent(ex.text)}">${ex.label}</span>`
+      ).join('');
+      document.getElementById('matureExamples').addEventListener('click', e => {
+        const chip = e.target.closest('[data-mature]');
+        if (!chip) return;
+        const text = decodeURIComponent(chip.dataset.mature);
+        const lines = text.split('\n');
+        document.getElementById('nlOverview').value = lines[0] || text;
+        document.getElementById('nlEntry').value = lines.find(l => l.includes('入场'))?.replace('入场:','').trim() || '';
+        document.getElementById('nlExit').value = lines.find(l => l.includes('出场'))?.replace('出场:','').trim() || '';
+        document.getElementById('nlPosition').value = lines.find(l => l.includes('仓位'))?.replace('仓位:','').trim() || '';
+        document.getElementById('nlRisk').value = lines.find(l => l.includes('风控'))?.replace('风控:','').trim() || '';
+        document.getElementById('matureQuestions').innerHTML = generateMatureQuestions().map(q => `<li>${q}</li>`).join('');
+        updateMatureSpecPreview();
+      });
+
+      document.getElementById('frequencyCategory')?.addEventListener('change', e => {
+        state.frequencyCategory = e.target.value;
+        const opts = FREQUENCY_TIMEFRAMES[state.frequencyCategory] || FREQUENCY_TIMEFRAMES.daily;
+        state.timeframe = opts[0].value;
+        state.frequencyManual = true;
+        renderFrequencyOptions();
+        updateConnectionPreview();
+      });
+      document.getElementById('timeframe')?.addEventListener('change', e => {
+        state.timeframe = e.target.value;
+        state.frequencyManual = true;
+        updateConnectionPreview();
+      });
+
+      ['brokerGateway','dataProvider','targetIDE','runPhase','tradingMode'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', () => {
+          state.broker = document.getElementById('brokerGateway')?.value || state.broker;
+          state.dataProvider = document.getElementById('dataProvider')?.value || state.dataProvider;
+          state.targetIDE = document.getElementById('targetIDE')?.value || state.targetIDE;
+          state.runPhase = document.getElementById('runPhase')?.value || state.runPhase;
+          updateConnectionPreview();
+        });
+      });
+      document.getElementById('apiNotes')?.addEventListener('input', updateConnectionPreview);
+
+      document.getElementById('stepNav').addEventListener('click', e => {
+        const pill = e.target.closest('[data-go]');
+        if (pill && state.experience) goStep(+pill.dataset.go);
+      });
+
+      document.getElementById('prevBtn').addEventListener('click', () => goStep(state.step - 1));
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        if (!state.experience && state.step === 0) return;
+        if (state.step === getFlow().panels.length - 1) return;
+        goStep(state.step + 1);
+      });
+
+      document.getElementById('exportSkill').addEventListener('click', () => downloadFile('SKILL.md', generateSkillMD(buildConfig())));
+      document.getElementById('exportSpec').addEventListener('click', () => {
+        const cfg = buildConfig();
+        downloadFile('strategy-spec.yaml', cfg.strategySpecYaml);
+      });
+      document.getElementById('exportScaffold').addEventListener('click', () => {
+        const s = generateScaffold(buildConfig());
+        downloadFile('scaffold.txt', Object.entries(s).map(([k,v]) => `=== ${k} ===\n${v}`).join('\n\n'));
+      });
+      document.getElementById('exportZip').addEventListener('click', async () => {
+        const btn = document.getElementById('exportZip');
+        const cfg = buildConfig();
+        btn.disabled = true;
+        btn.textContent = '打包中…';
+        try {
+          const files = buildFullPackage(cfg);
+          if (typeof JSZip === 'undefined') {
+            const bundle = Object.entries(files).map(([k, v]) => `=== ${k} ===\n${v}`).join('\n\n');
+            downloadFile(`${cfg.projectName}-full-pack.txt`, bundle);
+            alert('ZIP 库未加载，已改为下载 .txt 完整包（内容相同）');
+            return;
+          }
+          await downloadZip(`${cfg.projectName}.zip`, files);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '一键下载完整系统包 (.zip)';
+        }
+      });
+      document.getElementById('copyPrompt').addEventListener('click', () => {
+        navigator.clipboard.writeText(generateAIPrompt(buildConfig()));
+        alert('Agent 启动 Prompt 已复制');
+      });
+    }
+
+    function updateNavButtons() {
+      const flow = getFlow();
+      const n = state.step;
+      const progress = document.getElementById('stepProgress');
+      if (state.experience && n > 0) {
+        progress.textContent = `第 ${n + 1} / ${flow.panels.length} 步 · ${flow.labels[n]}`;
+      } else {
+        progress.textContent = '';
+      }
+      document.getElementById('prevBtn').disabled = n === 0;
+      document.getElementById('nextBtn').textContent = n === 0 && !state.experience ? '请先选择经验'
+        : n === flow.panels.length - 1 ? '完成' : '下一步';
+      document.getElementById('nextBtn').disabled = n === 0 && !state.experience;
+    }
+
+    function goStep(n) {
+      const flow = getFlow();
+      if (n < 0 || n >= flow.panels.length) return;
+      if (n > 0 && !state.experience) return;
+
+      state.step = n;
+      const panelId = getPanelId(n);
+
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === panelId));
+      renderStepNav();
+      updateNavButtons();
+
+      if (panelId === 'risk') renderRiskPanel();
+      if (panelId === 'strategy-fixed') renderFixedTemplates();
+      if (panelId === 'strategy-setup') {
+        renderStrategyTypes();
+        renderAdvancedTemplates();
+        renderMarketExposure();
+        renderIndicators();
+      }
+      if (panelId === 'strategy-mature') {
+        renderMarketExposure();
+        renderFactorHedges();
+        renderMatureRef();
+        document.getElementById('matureQuestions').innerHTML = generateMatureQuestions().map(q => `<li>${q}</li>`).join('');
+        updateMatureSpecPreview();
+      }
+      if (panelId === 'validation') { renderValidationPresets(); renderValidation(); renderValidationSummary(); }
+      if (panelId === 'connection') renderConnectionOptions();
+      if (panelId === 'project') updateFrameworkRec();
+      if (panelId === 'export') updatePreview();
+    }
+
+    init();
+  </script>
+</body>
+</html>
