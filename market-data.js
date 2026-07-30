@@ -1,22 +1,22 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-07-30T14:47:09.276977Z",
+  "updatedAt": "2026-07-30T16:32:18.468290Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 64759.28,
-      "priceDisplay": "64,759.28",
-      "changePercent": 1.02,
-      "changeDisplay": "1.0%",
+      "price": 64846.0,
+      "priceDisplay": "64,846.00",
+      "changePercent": 1.37,
+      "changeDisplay": "1.4%",
       "trend": "up",
       "source": "binance"
     },
     {
       "label": "AAPL",
-      "price": 332.045,
-      "priceDisplay": "332.05",
-      "changePercent": 3.23,
-      "changeDisplay": "3.2%",
+      "price": 331.73,
+      "priceDisplay": "331.73",
+      "changePercent": 3.13,
+      "changeDisplay": "3.1%",
       "trend": "up",
       "source": "yahoo"
     },
@@ -31,28 +31,28 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "黄金/USD",
-      "price": 4164.0,
-      "priceDisplay": "4,164.00",
-      "changePercent": 2.2,
-      "changeDisplay": "2.2%",
+      "price": 4174.7,
+      "priceDisplay": "4,174.70",
+      "changePercent": 2.46,
+      "changeDisplay": "2.5%",
       "trend": "up",
       "source": "yahoo"
     },
     {
       "label": "NVDA",
-      "price": 195.34,
-      "priceDisplay": "195.34",
-      "changePercent": -6.43,
-      "changeDisplay": "6.4%",
+      "price": 193.63,
+      "priceDisplay": "193.63",
+      "changePercent": -7.25,
+      "changeDisplay": "7.2%",
       "trend": "down",
       "source": "yahoo"
     },
     {
       "label": "ETH/USDT",
-      "price": 1920.05,
-      "priceDisplay": "1,920.05",
-      "changePercent": 1.31,
-      "changeDisplay": "1.3%",
+      "price": 1921.88,
+      "priceDisplay": "1,921.88",
+      "changePercent": 1.46,
+      "changeDisplay": "1.5%",
       "trend": "up",
       "source": "binance"
     },
@@ -63,8 +63,7 @@ window.__MARKET_TICKER_DATA__ = {
       "changePercent": -0.78,
       "changeDisplay": "0.8%",
       "trend": "down",
-      "source": "sina",
-      "stale": true
+      "source": "sina"
     }
   ]
 };
