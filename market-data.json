@@ -1,22 +1,22 @@
 {
-  "updatedAt": "2026-08-03T13:03:57.178825Z",
+  "updatedAt": "2026-08-03T15:02:05.705852Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 62711.99,
-      "priceDisplay": "62,711.99",
-      "changePercent": -0.69,
-      "changeDisplay": "0.7%",
-      "trend": "down",
+      "price": 63920.12,
+      "priceDisplay": "63,920.12",
+      "changePercent": 1.33,
+      "changeDisplay": "1.3%",
+      "trend": "up",
       "source": "binance"
     },
     {
       "label": "AAPL",
-      "price": 308.91,
-      "priceDisplay": "308.91",
-      "changePercent": -7.24,
-      "changeDisplay": "7.2%",
+      "price": 304.84,
+      "priceDisplay": "304.84",
+      "changePercent": -9.52,
+      "changeDisplay": "9.5%",
       "trend": "down",
       "source": "yahoo"
     },
@@ -31,29 +31,29 @@
     },
     {
       "label": "黄金/USD",
-      "price": 4100.6,
-      "priceDisplay": "4,100.60",
-      "changePercent": 1.63,
-      "changeDisplay": "1.6%",
+      "price": 4090.8,
+      "priceDisplay": "4,090.80",
+      "changePercent": 1.39,
+      "changeDisplay": "1.4%",
       "trend": "up",
       "source": "yahoo"
     },
     {
       "label": "NVDA",
-      "price": 200.75,
-      "priceDisplay": "200.75",
-      "changePercent": -2.94,
-      "changeDisplay": "2.9%",
-      "trend": "down",
+      "price": 206.44,
+      "priceDisplay": "206.44",
+      "changePercent": 5.05,
+      "changeDisplay": "5.0%",
+      "trend": "up",
       "source": "yahoo"
     },
     {
       "label": "ETH/USDT",
-      "price": 1843.69,
-      "priceDisplay": "1,843.69",
-      "changePercent": -0.77,
-      "changeDisplay": "0.8%",
-      "trend": "down",
+      "price": 1872.2,
+      "priceDisplay": "1,872.20",
+      "changePercent": 0.87,
+      "changeDisplay": "0.9%",
+      "trend": "up",
       "source": "binance"
     },
     {
@@ -63,8 +63,7 @@
       "changePercent": -0.26,
       "changeDisplay": "0.3%",
       "trend": "down",
-      "source": "sina",
-      "stale": true
+      "source": "sina"
     }
   ]
 }
