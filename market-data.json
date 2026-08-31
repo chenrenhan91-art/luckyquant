@@ -1,22 +1,22 @@
 {
-  "updatedAt": "2026-08-31T12:14:35.918203Z",
+  "updatedAt": "2026-08-31T14:10:04.829036Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 78422.0,
-      "priceDisplay": "78,422.00",
-      "changePercent": -0.33,
-      "changeDisplay": "0.3%",
+      "price": 77966.01,
+      "priceDisplay": "77,966.01",
+      "changePercent": -1.17,
+      "changeDisplay": "1.2%",
       "trend": "down",
       "source": "binance"
     },
     {
       "label": "AAPL",
-      "price": 319.7,
-      "priceDisplay": "319.70",
-      "changePercent": 3.35,
-      "changeDisplay": "3.4%",
+      "price": 316.369,
+      "priceDisplay": "316.37",
+      "changePercent": 1.94,
+      "changeDisplay": "1.9%",
       "trend": "up",
       "source": "yahoo"
     },
@@ -31,28 +31,28 @@
     },
     {
       "label": "黄金/USD",
-      "price": 4509.3,
-      "priceDisplay": "4,509.30",
-      "changePercent": -1.93,
-      "changeDisplay": "1.9%",
+      "price": 4469.3,
+      "priceDisplay": "4,469.30",
+      "changePercent": -2.8,
+      "changeDisplay": "2.8%",
       "trend": "down",
       "source": "yahoo"
     },
     {
       "label": "NVDA",
-      "price": 217.55,
-      "priceDisplay": "217.55",
-      "changePercent": 1.32,
-      "changeDisplay": "1.3%",
+      "price": 219.49,
+      "priceDisplay": "219.49",
+      "changePercent": 5.28,
+      "changeDisplay": "5.3%",
       "trend": "up",
       "source": "yahoo"
     },
     {
       "label": "ETH/USDT",
-      "price": 2453.77,
-      "priceDisplay": "2,453.77",
-      "changePercent": -0.64,
-      "changeDisplay": "0.6%",
+      "price": 2445.12,
+      "priceDisplay": "2,445.12",
+      "changePercent": -1.22,
+      "changeDisplay": "1.2%",
       "trend": "down",
       "source": "binance"
     },
