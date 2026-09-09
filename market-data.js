@@ -1,14 +1,14 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-09-09T04:10:13.583293Z",
+  "updatedAt": "2026-09-09T06:15:49.688357Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 78786.0,
-      "priceDisplay": "78,786.00",
-      "changePercent": -0.1,
-      "changeDisplay": "0.1%",
-      "trend": "down",
+      "price": 79103.17,
+      "priceDisplay": "79,103.17",
+      "changePercent": 0.6,
+      "changeDisplay": "0.6%",
+      "trend": "up",
       "source": "binance"
     },
     {
@@ -22,19 +22,19 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "沪深300",
-      "price": 4564.4233,
-      "priceDisplay": "4,564.42",
-      "changePercent": 0.12,
-      "changeDisplay": "0.1%",
+      "price": 4570.1055,
+      "priceDisplay": "4,570.11",
+      "changePercent": 0.25,
+      "changeDisplay": "0.2%",
       "trend": "up",
       "source": "sina"
     },
     {
       "label": "黄金/USD",
-      "price": 4418.5,
-      "priceDisplay": "4,418.50",
-      "changePercent": -1.63,
-      "changeDisplay": "1.6%",
+      "price": 4448.3,
+      "priceDisplay": "4,448.30",
+      "changePercent": -0.97,
+      "changeDisplay": "1.0%",
       "trend": "down",
       "source": "yahoo"
     },
@@ -49,10 +49,10 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "ETH/USDT",
-      "price": 2495.67,
-      "priceDisplay": "2,495.67",
-      "changePercent": 0.47,
-      "changeDisplay": "0.5%",
+      "price": 2500.61,
+      "priceDisplay": "2,500.61",
+      "changePercent": 0.96,
+      "changeDisplay": "1.0%",
       "trend": "up",
       "source": "binance"
     },
@@ -60,9 +60,9 @@ window.__MARKET_TICKER_DATA__ = {
       "label": "IF主力",
       "price": 4564.2,
       "priceDisplay": "4,564.2",
-      "changePercent": -0.04,
-      "changeDisplay": "0.0%",
-      "trend": "flat",
+      "changePercent": -0.15,
+      "changeDisplay": "0.1%",
+      "trend": "down",
       "source": "sina"
     }
   ]
