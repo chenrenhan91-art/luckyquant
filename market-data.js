@@ -1,14 +1,14 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-09-28T00:28:07.340867Z",
+  "updatedAt": "2026-09-28T02:20:58.402950Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 84730.01,
-      "priceDisplay": "84,730.01",
-      "changePercent": 0.55,
-      "changeDisplay": "0.6%",
-      "trend": "up",
+      "price": 83659.83,
+      "priceDisplay": "83,659.83",
+      "changePercent": -1.01,
+      "changeDisplay": "1.0%",
+      "trend": "down",
       "source": "binance"
     },
     {
@@ -22,19 +22,19 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "沪深300",
-      "price": 4439.1443,
-      "priceDisplay": "4,439.14",
-      "changePercent": -1.73,
-      "changeDisplay": "1.7%",
+      "price": 4358.5651,
+      "priceDisplay": "4,358.57",
+      "changePercent": -1.82,
+      "changeDisplay": "1.8%",
       "trend": "down",
       "source": "sina"
     },
     {
       "label": "黄金/USD",
-      "price": 4289.0,
-      "priceDisplay": "4,289.00",
-      "changePercent": -2.0,
-      "changeDisplay": "2.0%",
+      "price": 4248.1,
+      "priceDisplay": "4,248.10",
+      "changePercent": -2.93,
+      "changeDisplay": "2.9%",
       "trend": "down",
       "source": "yahoo"
     },
@@ -49,20 +49,20 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "ETH/USDT",
-      "price": 2690.56,
-      "priceDisplay": "2,690.56",
-      "changePercent": -0.02,
-      "changeDisplay": "0.0%",
-      "trend": "flat",
+      "price": 2657.28,
+      "priceDisplay": "2,657.28",
+      "changePercent": -1.7,
+      "changeDisplay": "1.7%",
+      "trend": "down",
       "source": "binance"
     },
     {
       "label": "IF主力",
-      "price": 4439.0,
-      "priceDisplay": "4,439.0",
-      "changePercent": -0.1,
-      "changeDisplay": "0.1%",
-      "trend": "down",
+      "price": 4365.0,
+      "priceDisplay": "4,365.0",
+      "changePercent": -0.04,
+      "changeDisplay": "0.0%",
+      "trend": "flat",
       "source": "sina"
     }
   ]
