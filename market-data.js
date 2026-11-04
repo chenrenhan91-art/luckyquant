@@ -1,14 +1,14 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-11-04T04:06:28.560602Z",
+  "updatedAt": "2026-11-04T06:09:50.896416Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 76635.09,
-      "priceDisplay": "76,635.09",
-      "changePercent": -0.2,
-      "changeDisplay": "0.2%",
-      "trend": "down",
+      "price": 77818.01,
+      "priceDisplay": "77,818.01",
+      "changePercent": 1.7,
+      "changeDisplay": "1.7%",
+      "trend": "up",
       "source": "binance"
     },
     {
@@ -22,20 +22,20 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "沪深300",
-      "price": 4010.3543,
-      "priceDisplay": "4,010.35",
-      "changePercent": 0.04,
-      "changeDisplay": "0.0%",
-      "trend": "flat",
+      "price": 4091.8732,
+      "priceDisplay": "4,091.87",
+      "changePercent": 2.07,
+      "changeDisplay": "2.1%",
+      "trend": "up",
       "source": "sina"
     },
     {
       "label": "黄金/USD",
-      "price": 3946.0,
-      "priceDisplay": "3,946.00",
-      "changePercent": -2.12,
-      "changeDisplay": "2.1%",
-      "trend": "down",
+      "price": 4007.7,
+      "priceDisplay": "4,007.70",
+      "changePercent": 2.79,
+      "changeDisplay": "2.8%",
+      "trend": "up",
       "source": "yahoo"
     },
     {
@@ -49,10 +49,10 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "ETH/USDT",
-      "price": 2255.05,
-      "priceDisplay": "2,255.05",
-      "changePercent": 0.23,
-      "changeDisplay": "0.2%",
+      "price": 2291.52,
+      "priceDisplay": "2,291.52",
+      "changePercent": 2.15,
+      "changeDisplay": "2.1%",
       "trend": "up",
       "source": "binance"
     },
@@ -60,8 +60,8 @@ window.__MARKET_TICKER_DATA__ = {
       "label": "IF主力",
       "price": 3970.0,
       "priceDisplay": "3,970.0",
-      "changePercent": -0.86,
-      "changeDisplay": "0.9%",
+      "changePercent": -2.93,
+      "changeDisplay": "2.9%",
       "trend": "down",
       "source": "sina"
     }
