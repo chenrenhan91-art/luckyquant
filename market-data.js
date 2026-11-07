@@ -1,14 +1,14 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-11-07T02:07:25.071570Z",
+  "updatedAt": "2026-11-07T04:06:09.005677Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 76050.01,
-      "priceDisplay": "76,050.01",
-      "changePercent": -0.02,
-      "changeDisplay": "0.0%",
-      "trend": "flat",
+      "price": 75910.01,
+      "priceDisplay": "75,910.01",
+      "changePercent": 0.19,
+      "changeDisplay": "0.2%",
+      "trend": "up",
       "source": "binance"
     },
     {
@@ -49,10 +49,10 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "ETH/USDT",
-      "price": 2248.02,
-      "priceDisplay": "2,248.02",
-      "changePercent": 0.54,
-      "changeDisplay": "0.5%",
+      "price": 2243.57,
+      "priceDisplay": "2,243.57",
+      "changePercent": 0.55,
+      "changeDisplay": "0.6%",
       "trend": "up",
       "source": "binance"
     },
