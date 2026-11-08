@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-11-08T18:05:55.805237Z",
+  "updatedAt": "2026-11-08T20:04:59.490357Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 75795.51,
-      "priceDisplay": "75,795.51",
-      "changePercent": -0.06,
+      "price": 75912.2,
+      "priceDisplay": "75,912.20",
+      "changePercent": 0.15,
       "changeDisplay": "0.1%",
-      "trend": "down",
+      "trend": "up",
       "source": "binance"
     },
     {
@@ -49,9 +49,9 @@
     },
     {
       "label": "ETH/USDT",
-      "price": 2230.94,
-      "priceDisplay": "2,230.94",
-      "changePercent": -0.24,
+      "price": 2230.46,
+      "priceDisplay": "2,230.46",
+      "changePercent": -0.19,
       "changeDisplay": "0.2%",
       "trend": "down",
       "source": "binance"
