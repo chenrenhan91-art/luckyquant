@@ -1,13 +1,13 @@
 {
-  "updatedAt": "2026-11-16T10:06:37.510061Z",
+  "updatedAt": "2026-11-16T12:12:18.023137Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 64340.05,
-      "priceDisplay": "64,340.05",
-      "changePercent": -1.73,
-      "changeDisplay": "1.7%",
+      "price": 64042.0,
+      "priceDisplay": "64,042.00",
+      "changePercent": -2.0,
+      "changeDisplay": "2.0%",
       "trend": "down",
       "source": "binance"
     },
@@ -31,10 +31,10 @@
     },
     {
       "label": "黄金/USD",
-      "price": 3856.4,
-      "priceDisplay": "3,856.40",
-      "changePercent": -3.6,
-      "changeDisplay": "3.6%",
+      "price": 3877.0,
+      "priceDisplay": "3,877.00",
+      "changePercent": -3.09,
+      "changeDisplay": "3.1%",
       "trend": "down",
       "source": "yahoo"
     },
@@ -49,10 +49,10 @@
     },
     {
       "label": "ETH/USDT",
-      "price": 1797.66,
-      "priceDisplay": "1,797.66",
-      "changePercent": -1.66,
-      "changeDisplay": "1.7%",
+      "price": 1796.33,
+      "priceDisplay": "1,796.33",
+      "changePercent": -1.59,
+      "changeDisplay": "1.6%",
       "trend": "down",
       "source": "binance"
     },
