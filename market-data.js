@@ -1,14 +1,14 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-11-17T04:06:31.255369Z",
+  "updatedAt": "2026-11-17T06:09:59.418157Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 64915.6,
-      "priceDisplay": "64,915.60",
-      "changePercent": -0.07,
-      "changeDisplay": "0.1%",
-      "trend": "down",
+      "price": 64760.64,
+      "priceDisplay": "64,760.64",
+      "changePercent": 0.58,
+      "changeDisplay": "0.6%",
+      "trend": "up",
       "source": "binance"
     },
     {
@@ -22,20 +22,20 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "沪深300",
-      "price": 3981.9107,
-      "priceDisplay": "3,981.91",
-      "changePercent": 0.05,
-      "changeDisplay": "0.1%",
-      "trend": "up",
+      "price": 3961.1505,
+      "priceDisplay": "3,961.15",
+      "changePercent": -0.47,
+      "changeDisplay": "0.5%",
+      "trend": "down",
       "source": "sina"
     },
     {
       "label": "黄金/USD",
-      "price": 3874.0,
-      "priceDisplay": "3,874.00",
-      "changePercent": -3.16,
-      "changeDisplay": "3.2%",
-      "trend": "down",
+      "price": 3883.8,
+      "priceDisplay": "3,883.80",
+      "changePercent": -0.04,
+      "changeDisplay": "0.0%",
+      "trend": "flat",
       "source": "yahoo"
     },
     {
@@ -49,10 +49,10 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "ETH/USDT",
-      "price": 1829.05,
-      "priceDisplay": "1,829.05",
-      "changePercent": 0.45,
-      "changeDisplay": "0.5%",
+      "price": 1834.29,
+      "priceDisplay": "1,834.29",
+      "changePercent": 1.24,
+      "changeDisplay": "1.2%",
       "trend": "up",
       "source": "binance"
     },
@@ -60,8 +60,8 @@ window.__MARKET_TICKER_DATA__ = {
       "label": "IF主力",
       "price": 3931.0,
       "priceDisplay": "3,931.0",
-      "changePercent": -0.27,
-      "changeDisplay": "0.3%",
+      "changePercent": -0.46,
+      "changeDisplay": "0.5%",
       "trend": "down",
       "source": "sina"
     }
