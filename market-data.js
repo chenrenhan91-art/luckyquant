@@ -1,13 +1,13 @@
 window.__MARKET_TICKER_DATA__ = {
-  "updatedAt": "2026-11-20T00:14:18.090398Z",
+  "updatedAt": "2026-11-20T02:07:58.546029Z",
   "timezone": "Asia/Shanghai",
   "items": [
     {
       "label": "BTC/USDT",
-      "price": 62024.0,
-      "priceDisplay": "62,024.00",
-      "changePercent": -1.29,
-      "changeDisplay": "1.3%",
+      "price": 61363.37,
+      "priceDisplay": "61,363.37",
+      "changePercent": -2.25,
+      "changeDisplay": "2.2%",
       "trend": "down",
       "source": "binance"
     },
@@ -22,19 +22,19 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "沪深300",
-      "price": 3984.8399,
-      "priceDisplay": "3,984.84",
-      "changePercent": 0.03,
-      "changeDisplay": "0.0%",
-      "trend": "flat",
+      "price": 3914.3974,
+      "priceDisplay": "3,914.40",
+      "changePercent": -1.77,
+      "changeDisplay": "1.8%",
+      "trend": "down",
       "source": "sina"
     },
     {
       "label": "黄金/USD",
-      "price": 3611.7,
-      "priceDisplay": "3,611.70",
-      "changePercent": -6.26,
-      "changeDisplay": "6.3%",
+      "price": 3563.3,
+      "priceDisplay": "3,563.30",
+      "changePercent": -7.52,
+      "changeDisplay": "7.5%",
       "trend": "down",
       "source": "yahoo"
     },
@@ -49,20 +49,20 @@ window.__MARKET_TICKER_DATA__ = {
     },
     {
       "label": "ETH/USDT",
-      "price": 1758.71,
-      "priceDisplay": "1,758.71",
-      "changePercent": -0.79,
-      "changeDisplay": "0.8%",
+      "price": 1729.91,
+      "priceDisplay": "1,729.91",
+      "changePercent": -2.54,
+      "changeDisplay": "2.5%",
       "trend": "down",
       "source": "binance"
     },
     {
       "label": "IF主力",
-      "price": 3928.0,
-      "priceDisplay": "3,928.0",
-      "changePercent": -0.16,
-      "changeDisplay": "0.2%",
-      "trend": "down",
+      "price": 3889.8,
+      "priceDisplay": "3,889.8",
+      "changePercent": 0.0,
+      "changeDisplay": "0.0%",
+      "trend": "flat",
       "source": "sina"
     }
   ]
